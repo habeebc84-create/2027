@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, Edit, Trash2, Plus, Eye, Shield, Bell, FileText, Truck, ChevronDown, X, Menu, MapPin, Clock, Star, Search, Filter, Globe, Lock, Mail, Phone, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import type { AdminPage, Product, Category, TransportZone, ContentBlock, OrderStatus } from '../types';
+import type { AdminPage, Product, Category, TransportZone, ContentBlock, OrderStatus, Notification } from '../types';
 import { ORDER_STATUSES } from '../types';
 
 export default function AdminDashboard() {
@@ -616,27 +616,117 @@ export default function AdminDashboard() {
   };
 
   // NOTIFICATIONS
-  const NotificationsSection = () => (
-    <div className="space-y-6">
-      <TopHeader title="Notifications" />
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-slate-400">{unreadNotifs} unread notifications</p>
-        <button onClick={() => ctx.clearNotifications()} className="text-xs font-bold text-blue-400 hover:text-blue-300">Mark All Read</button>
-      </div>
-      <div className="space-y-3">
-        {notifications.length === 0 ? <p className="text-xs text-slate-500 text-center py-12">No notifications</p> : notifications.map(n => (
-          <div key={n.id} onClick={() => ctx.markNotificationRead(n.id)} className={`bg-white/5 border rounded-2xl p-4 cursor-pointer transition hover:border-blue-500/30 ${n.read ? 'border-white/5 opacity-60' : 'border-blue-500/30'}`}>
-            <div className="flex items-center justify-between mb-1">
-              <div className="text-xs font-bold text-white">{n.title}</div>
-              {!n.read && <div className="w-2 h-2 bg-blue-400 rounded-full" />}
-            </div>
-            <div className="text-[10px] text-slate-400">{n.content}</div>
-            {n.createdAt && <div className="text-[10px] text-slate-500 mt-1">{new Date(n.createdAt).toLocaleString()}</div>}
+  const NotificationsSection = () => {
+    const [showAdd, setShowAdd] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [newTitle, setNewTitle] = useState('');
+    const [newContent, setNewContent] = useState('');
+    const [newType, setNewType] = useState('announcement');
+
+    const handleAdd = () => {
+      if (!newTitle.trim() || !newContent.trim()) return;
+      const notif: Notification = {
+        id: `notif-${Date.now()}`,
+        title: newTitle.trim(),
+        content: newContent.trim(),
+        type: newType,
+        active: true,
+        read: false,
+        createdAt: new Date().toISOString(),
+      };
+      ctx.addNotification(notif);
+      setNewTitle('');
+      setNewContent('');
+      setShowAdd(false);
+    };
+
+    const handleEdit = (id: string, title: string, content: string) => {
+      setEditingId(id);
+      setNewTitle(title);
+      setNewContent(content);
+    };
+
+    const handleSaveEdit = () => {
+      if (!editingId || !newTitle.trim() || !newContent.trim()) return;
+      ctx.updateNotification(editingId, { title: newTitle.trim(), content: newContent.trim() });
+      setEditingId(null);
+      setNewTitle('');
+      setNewContent('');
+    };
+
+    return (
+      <div className="space-y-6">
+        <TopHeader title="Notifications" />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <p className="text-xs text-slate-400">{unreadNotifs} unread</p>
+            <span className="text-xs text-slate-600">|</span>
+            <p className="text-xs text-slate-400">{notifications.filter(n => n.active).length} active</p>
           </div>
-        ))}
+          <div className="flex items-center space-x-2">
+            <button onClick={() => ctx.clearNotifications()} className="text-xs font-bold text-slate-400 hover:text-white border border-white/10 px-3 py-1.5 rounded-lg transition">Mark All Read</button>
+            <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); setNewTitle(''); setNewContent(''); }} className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-4 py-2 rounded-xl text-xs font-bold">
+              <Plus className="w-3.5 h-3.5" /><span>New Alert</span>
+            </button>
+          </div>
+        </div>
+
+        {showAdd && (
+          <div className="bg-white/5 border border-purple-500/30 rounded-2xl p-6 space-y-4">
+            <h3 className="text-sm font-bold text-white">Create Notification Alert</h3>
+            <input type="text" placeholder="Title (e.g. Flash Sale, Price Drop, Holiday Notice)" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-purple-500" />
+            <textarea placeholder="Message content for customers..." value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-purple-500 resize-none" />
+            <select value={newType} onChange={e => setNewType(e.target.value)} className="bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-purple-500">
+              <option value="announcement">📢 Announcement</option>
+              <option value="offer">🏷️ Offer / Sale</option>
+              <option value="update">🔄 Price Update</option>
+              <option value="alert">⚠️ Alert</option>
+            </select>
+            <div className="flex space-x-3">
+              <button onClick={handleAdd} className="bg-purple-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Publish Alert</button>
+              <button onClick={() => setShowAdd(false)} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+            </div>
+          </div>
+        )}
+
+        {editingId && (
+          <div className="bg-white/5 border border-amber-500/30 rounded-2xl p-6 space-y-4">
+            <h3 className="text-sm font-bold text-white">Edit Notification</h3>
+            <input type="text" placeholder="Title" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
+            <textarea placeholder="Message" value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500 resize-none" />
+            <div className="flex space-x-3">
+              <button onClick={handleSaveEdit} className="bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
+              <button onClick={() => { setEditingId(null); setNewTitle(''); setNewContent(''); }} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {notifications.length === 0 ? <p className="text-xs text-slate-500 text-center py-12">No notifications yet. Create your first alert above!</p> : notifications.map(n => (
+            <div key={n.id} className={`bg-white/5 border rounded-2xl p-4 transition hover:border-purple-500/30 ${n.read ? 'border-white/5' : 'border-blue-500/30'}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 cursor-pointer" onClick={() => ctx.markNotificationRead(n.id)}>
+                  <div className="flex items-center space-x-2 mb-1">
+                    {!n.read && <div className="w-2 h-2 bg-blue-400 rounded-full shrink-0" />}
+                    <div className="text-xs font-bold text-white">{n.title}</div>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-bold border border-purple-500/20">{n.type}</span>
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${n.active !== false ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' : 'bg-slate-500/20 text-slate-400 border border-slate-500/20'}`}>{n.active !== false ? 'Active' : 'Hidden'}</span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 pl-4">{n.content}</div>
+                  {n.createdAt && <div className="text-[10px] text-slate-500 mt-1 pl-4">{new Date(n.createdAt).toLocaleString()}</div>}
+                </div>
+                <div className="flex items-center space-x-1 shrink-0">
+                  <button onClick={() => ctx.updateNotification(n.id, { active: n.active === false ? true : false })} className={`text-[10px] px-2 py-1 rounded-lg font-bold transition ${n.active !== false ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' : 'bg-slate-500/20 text-slate-400 hover:bg-slate-500/30'}`}>{n.active !== false ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => handleEdit(n.id, n.title, n.content)} className="text-slate-400 hover:text-amber-400 transition p-1"><Edit className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => { if (window.confirm(`Delete notification "${n.title}"?`)) ctx.deleteNotification(n.id); }} className="text-slate-400 hover:text-rose-400 transition p-1"><Trash2 className="w-3.5 h-3.5" /></button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // TERMS
   const TermsSection = () => {

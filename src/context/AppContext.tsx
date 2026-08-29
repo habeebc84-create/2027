@@ -43,6 +43,8 @@ interface AppContextType {
   toggleContentBlock: (id: string) => void;
   notifications: Notification[];
   addNotification: (n: Notification) => void;
+  updateNotification: (id: string, updates: Partial<Notification>) => void;
+  deleteNotification: (id: string) => void;
   markNotificationRead: (id: string) => void;
   clearNotifications: () => void;
   banners: Banner[];
@@ -240,7 +242,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteContentBlock = useCallback((id: string) => { setContentBlocks(prev => prev.filter(b => b.id !== id)); showToast('Content deleted'); }, [showToast]);
   const toggleContentBlock = useCallback((id: string) => { setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, active: !b.active } : b)); }, []);
 
-  const addNotification = useCallback((n: Notification) => { setNotifications(prev => [n, ...prev]); }, []);
+  const addNotification = useCallback((n: Notification) => { setNotifications(prev => { const u = [n, ...prev]; save('hsn_notifications', u); return u; }); }, []);
+  const updateNotification = useCallback((id: string, updates: Partial<Notification>) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, ...updates } : n); save('hsn_notifications', u); return u; }); showToast('Notification updated'); }, [showToast]);
+  const deleteNotification = useCallback((id: string) => { setNotifications(prev => { const u = prev.filter(n => n.id !== id); save('hsn_notifications', u); return u; }); showToast('Notification deleted'); }, [showToast]);
   const markNotificationRead = useCallback((id: string) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, read: true } : n); save('hsn_notifications', u); return u; }); }, []);
   const clearNotifications = useCallback(() => { setNotifications(prev => { const u = prev.map(n => ({ ...n, read: true })); save('hsn_notifications', u); return u; }); }, []);
 
@@ -267,7 +271,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       orders, placeOrder, updateOrderStatus, deleteOrder, getOrderById,
       customers, deleteCustomer, transportZones, addTransportZone, updateTransportZone, deleteTransportZone,
       contentBlocks, addContentBlock, updateContentBlock, deleteContentBlock, toggleContentBlock,
-      notifications, addNotification, markNotificationRead, clearNotifications, banners,
+      notifications, addNotification, updateNotification, deleteNotification, markNotificationRead, clearNotifications, banners,
       siteContent, updateSiteContent, termsContent, updateTermsContent,
       siteSettings, updateSiteSettings,
       isAdmin, loginAdmin, logoutAdmin, adminPage, setAdminPage,

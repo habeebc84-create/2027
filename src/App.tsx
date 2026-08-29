@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import ToastContainer from './components/Toast';
+import NotificationPopup from './components/NotificationPopup';
 import FloatingButtons from './components/FloatingButtons';
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -116,6 +117,7 @@ function AppContent() {
       {showNav && <FloatingButtons />}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />
+      {!isAdmin && <NotificationPopup />}
     </div>
   );
 }
