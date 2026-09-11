@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2, Camera } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
+import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
 
 const pricingTiers = {
   cement: [
@@ -31,7 +32,7 @@ export default function Home() {
       <section className="relative min-h-[80vh] flex items-center overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0 z-0">
-          <img src={siteContent.heroImage} alt="" className="w-full h-full object-cover object-top" />
+          <img src={bustedImageSrc(siteContent.heroImage) || '/hero_bg_ultra_8k.png'} alt="" className="w-full h-full object-cover object-top" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/30" />
         </div>
@@ -247,20 +248,16 @@ export default function Home() {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={(e) => {
+            onChange={async (e) => {
               const file = e.target.files?.[0];
+              e.target.value = '';
               if (!file) return;
-              const reader = new FileReader();
-              reader.onload = (ev) => {
-                const result = ev.target?.result as string;
-                if (result) {
-                  const current = siteContent.frontPageImages || [];
-                  updateSiteContent({ frontPageImages: [...current, result] });
-                  setShowUploadHint(true);
-                  setTimeout(() => setShowUploadHint(false), 3000);
-                }
-              };
-              reader.readAsDataURL(file);
+              const compressed = await compressImageFile(file);
+              if (!compressed) return;
+              const current = siteContent.frontPageImages || [];
+              updateSiteContent({ frontPageImages: [...current, compressed] });
+              setShowUploadHint(true);
+              setTimeout(() => setShowUploadHint(false), 3000);
             }}
           />
         </label>

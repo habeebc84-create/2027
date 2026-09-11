@@ -234,7 +234,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
 
   /* Load admin-uploaded splash image */
   try {
-    var raw = localStorage.getItem('hsn_site_content');
+    var raw = localStorage.getItem('hsn_siteContent');
     if (raw) {
       var sc = JSON.parse(raw);
       var imgs = sc.frontPageImages;
@@ -242,6 +242,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
         var img = document.getElementById('splash-bg-img');
         img.src = imgs[0];
         img.onload = function() { img.classList.add('loaded'); };
+      } else if (sc.splashImage) {
+        var img2 = document.getElementById('splash-bg-img');
+        img2.src = sc.splashImage;
+        img2.onload = function() { img2.classList.add('loaded'); };
       }
     }
   } catch(e) {}

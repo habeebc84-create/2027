@@ -3,6 +3,7 @@ import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, 
 import { useApp } from '../context/AppContext';
 import type { AdminPage, Product, Category, TransportZone, ContentBlock, OrderStatus, Notification } from '../types';
 import { ORDER_STATUSES } from '../types';
+import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
 
 export default function AdminDashboard() {
   const ctx = useApp();
@@ -505,19 +506,40 @@ export default function AdminDashboard() {
           </div>
           <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
             <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Front Page Photo</span></span>
-            <input type="file" accept="image/*" className="hidden" onChange={e => {
+            <input type="file" accept="image/*" className="hidden" onChange={async e => {
               const file = e.target.files?.[0];
+              e.target.value = '';
               if (!file) return;
-              const reader = new FileReader();
-              reader.onload = ev => {
-                if (ev.target?.result) {
-                  const imgs = [...(siteContent.frontPageImages || []), ev.target.result as string];
-                  updateSiteContent({ frontPageImages: imgs });
-                }
-              };
-              reader.readAsDataURL(file);
+              const compressed = await compressImageFile(file);
+              if (!compressed) return;
+              const imgs = [...(siteContent.frontPageImages || []), compressed];
+              updateSiteContent({ frontPageImages: imgs });
             }} />
           </label>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <h4 className="text-xs font-bold text-white">Homepage Hero Image</h4>
+            <p className="text-[10px] text-slate-400">Shown behind the "HSN CEMENT AND STEEL" heading on the home page. Changes appear on every browser after upload.</p>
+            <div className="flex items-center gap-3">
+              <div className="w-32 h-20 rounded-xl overflow-hidden border border-white/10 bg-slate-900 shrink-0">
+                <img src={bustedImageSrc(siteContent.heroImage) || '/hero_bg_ultra_8k.png'} alt="Hero preview" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="block cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold text-center transition">
+                  <span className="flex items-center justify-center space-x-2"><ImageIcon className="w-3.5 h-3.5" /><span>Upload Hero Image</span></span>
+                  <input type="file" accept="image/*" className="hidden" onChange={async e => {
+                    const file = e.target.files?.[0];
+                    e.target.value = '';
+                    if (!file) return;
+                    const compressed = await compressImageFile(file);
+                    if (!compressed) return;
+                    updateSiteContent({ heroImage: compressed });
+                    markImageUpdated('/hero_bg_ultra_8k.png');
+                  }} />
+                </label>
+                <button onClick={() => updateSiteContent({ heroImage: '/hero_bg_ultra_8k.png' })} className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition">Reset to Default</button>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-white">Homepage Hero</h3>

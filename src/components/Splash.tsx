@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Shield, MapPin, Truck, Award, ArrowRight, Phone, Clock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { bustedImageSrc } from '../lib/images';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -16,7 +17,7 @@ export default function Splash() {
 
   const frontImages = siteContent.frontPageImages && siteContent.frontPageImages.length > 0
     ? siteContent.frontPageImages
-    : [siteContent.splashImage || '/hero_bg_ultra_8k.png'];
+    : [bustedImageSrc(siteContent.splashImage) || '/hero_bg_ultra_8k.png'];
 
   // Auto-rotate images if more than one
   useEffect(() => {

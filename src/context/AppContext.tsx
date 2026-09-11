@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms } from '../data';
+import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 
 interface AppContextType {
   currentPage: Page;
@@ -112,7 +113,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { save('hsn_products', products); }, [products]);
   useEffect(() => { save('hsn_categories', categories); }, [categories]);
   useEffect(() => { save('hsn_notifications', notifications); }, [notifications]);
-  useEffect(() => { save('hsn_siteContent', siteContent); }, [siteContent]);
+  useEffect(() => { safeSaveSiteContent(siteContent); }, [siteContent]);
   useEffect(() => { save('hsn_transportZones', transportZones); }, [transportZones]);
   useEffect(() => { save('hsn_contentBlocks', contentBlocks); }, [contentBlocks]);
   useEffect(() => { save('hsn_terms', termsContent); }, [termsContent]);
@@ -248,7 +249,43 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const markNotificationRead = useCallback((id: string) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, read: true } : n); save('hsn_notifications', u); return u; }); }, []);
   const clearNotifications = useCallback(() => { setNotifications(prev => { const u = prev.map(n => ({ ...n, read: true })); save('hsn_notifications', u); return u; }); }, []);
 
-  const updateSiteContent = useCallback((updates: Partial<SiteContent>) => { setSiteContent(prev => ({ ...prev, ...updates })); showToast('Site content updated'); }, [showToast]);
+  const updateSiteContent = useCallback((updates: Partial<SiteContent>) => {
+    // Compress raw image uploads so localStorage never overflows — large 8K PNGs
+    // stored raw silently break persistence across browsers.
+    const compress = async (dataUrl: string): Promise<string> => {
+      // Already small enough (e.g. pre-compressed at upload) — keep as-is.
+      if (dataUrl.length < 400 * 1024) return dataUrl;
+      try {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const compressed = await compressImageFile(new File([blob], 'img', { type: blob.type || 'image/png' }));
+        return compressed || dataUrl;
+      } catch {
+        return dataUrl;
+      }
+    };
+    const pending: Promise<void>[] = [];
+    if (typeof updates.heroImage === 'string' && updates.heroImage.startsWith('data:image/')) {
+      const orig = updates.heroImage;
+      pending.push(compress(orig).then(c => { if (c !== orig) setSiteContent(p => ({ ...p, heroImage: c })); }));
+    }
+    if (typeof updates.splashImage === 'string' && updates.splashImage.startsWith('data:image/')) {
+      const orig = updates.splashImage;
+      pending.push(compress(orig).then(c => { if (c !== orig) setSiteContent(p => ({ ...p, splashImage: c })); }));
+    }
+    if (updates.frontPageImages?.some(i => typeof i === 'string' && i.startsWith('data:image/'))) {
+      Promise.all(updates.frontPageImages.map(async i => {
+        if (typeof i === 'string' && i.startsWith('data:image/')) {
+          const c = await compress(i);
+          return c;
+        }
+        return i;
+      })).then(arr => setSiteContent(p => ({ ...p, frontPageImages: arr })));
+    }
+    setSiteContent(prev => ({ ...prev, ...updates }));
+    Promise.all(pending).catch(() => {});
+    showToast('Site content updated');
+  }, [showToast]);
   const updateTermsContent = useCallback((id: string, content: string) => { setTermsContent(prev => prev.map(t => t.id === id ? { ...t, content, lastUpdated: new Date().toISOString() } : t)); showToast('Terms updated'); }, [showToast]);
   const updateSiteSettings = useCallback((updates: Partial<SiteSettings>) => { setSiteSettings(prev => ({ ...prev, ...updates })); showToast('Settings updated'); }, [showToast]);
 
