@@ -17,7 +17,7 @@ export default function Splash() {
 
   const frontImages = siteContent.frontPageImages && siteContent.frontPageImages.length > 0
     ? siteContent.frontPageImages
-    : [bustedImageSrc(siteContent.splashImage) || '/hero_bg_ultra_8k.png'];
+    : [bustedImageSrc(siteContent.splashImage) || bustedImageSrc('/hero_bg_ultra_8k.png')];
 
   // Auto-rotate images if more than one
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function Splash() {
         <header className={`splash-navbar ${loaded ? 'visible' : ''}`}>
           <div className="splash-brand">
             <div className="splash-logo">
-              <img src="/windows-h-logo.png" alt="HSN" className="w-full h-full object-contain p-1" />
+              <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN" className="w-full h-full object-contain p-1" />
             </div>
             <div>
               <div className="splash-brand-title">HSN CEMENT &amp; STEEL</div>

@@ -32,7 +32,7 @@ export default function Home() {
       <section className="relative min-h-[80vh] flex items-center overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0 z-0">
-          <img src={bustedImageSrc(siteContent.heroImage) || '/hero_bg_ultra_8k.png'} alt="" className="w-full h-full object-cover object-top" />
+          <img src={bustedImageSrc(siteContent.heroImage) || bustedImageSrc('/hero_bg_ultra_8k.png')} alt="" className="w-full h-full object-cover object-top" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/30" />
         </div>

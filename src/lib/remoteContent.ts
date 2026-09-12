@@ -25,6 +25,12 @@ const FILE = 'site-content.json';
 const VERSION_FILE = 'version.txt';
 /** in-memory bust so repeated fetches within one session never hit the HTTP cache */
 let bustCounter = 0;
+/** Latest cloud version marker; used to cache-bust public/ asset images everywhere. */
+let assetVersion: string | null = null;
+
+export function getAssetVersion(): string | null {
+  return assetVersion;
+}
 
 export function isCloudConfigured(): boolean {
   return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -63,7 +69,9 @@ export async function fetchRemoteVersion(): Promise<string | null> {
       { cache: 'no-store' },
     );
     if (!res.ok) return null;
-    return (await res.text()).trim() || null;
+    const text = (await res.text()).trim() || null;
+    if (text) assetVersion = text;
+    return text;
   } catch {
     return null;
   }

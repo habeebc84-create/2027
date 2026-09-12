@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ArrowRight, Phone, ShoppingBag, Star, Truck, Shield, MapPin, Package, ChevronRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { bustedImageSrc } from '../lib/images';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -61,7 +62,7 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
         {/* Top Bar */}
         <div className={`flex items-center justify-between mb-8 sm:mb-12 transition-all duration-700 ${phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
           <div className="flex items-center space-x-3">
-            <img src="/windows-h-logo.png" alt="HSN Logo" className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-white/10 bg-slate-900/50 p-1.5" />
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-white/10 bg-slate-900/50 p-1.5" />
             <div>
               <h1 className="text-sm sm:text-lg font-black text-white font-industrial tracking-tight">HSN CEMENT & STEEL</h1>
               <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider">Premium Building Materials</p>

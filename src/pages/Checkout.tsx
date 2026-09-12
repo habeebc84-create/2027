@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, MapPin, Phone, CreditCard, Truck, CheckCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { bustedImageSrc } from '../lib/images';
 
 export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCart: () => void; onOrderSuccess: (orderId: string) => void }) {
   const { cart, cartTotal, cartCount, placeOrder, showToast, transportZones, siteContent, setPage } = useApp();
@@ -195,7 +196,7 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-md">
           <div className="bg-slate-900 border border-slate-700 p-12 rounded-3xl shadow-2xl flex flex-col items-center space-y-6">
             <div className="w-20 h-20 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)]">
-              <img src="/windows-h-logo.png" alt="Logo" className="w-14 h-14 object-contain" />
+              <img src={bustedImageSrc('/windows-h-logo.png')} alt="Logo" className="w-14 h-14 object-contain" />
             </div>
             <h3 className="text-lg font-bold text-slate-200 animate-pulse">Processing Order...</h3>
           </div>

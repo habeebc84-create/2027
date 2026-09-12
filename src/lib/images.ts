@@ -2,6 +2,7 @@
  * Image helpers: cache-busting for uploaded images and client-side compression
  * so large photos never blow the localStorage quota.
  */
+import { getAssetVersion } from './remoteContent';
 
 const BUST_KEY = 'hsn_img_bust_v1';
 
@@ -15,16 +16,19 @@ function readBustMap(): Record<string, number> {
 
 /**
  * Returns a cache-busted URL for a local public/ image path (e.g. "/hero.png").
- * Every time `markImageUpdated` is called for that path, the returned URL
- * changes, so no browser (any cache) can keep serving the old file.
+ * Busting sources, in order: the cloud version marker (changes whenever any
+ * admin device saves), then per-path local marks. Data/HTTP URLs untouched.
  */
 export function bustedImageSrc(path: string | undefined | null): string {
   if (!path) return '';
   // External URLs (unsplash, data URIs) are already unique; leave untouched.
   if (path.startsWith('data:') || path.startsWith('http')) return path;
-  const map = readBustMap();
-  const v = map[path];
-  return v ? `${path}?v=${v}` : path;
+  const parts: string[] = [];
+  const av = getAssetVersion();
+  if (av) parts.push(`av=${av}`);
+  const v = readBustMap()[path];
+  if (v) parts.push(`v=${v}`);
+  return parts.length > 0 ? `${path}?${parts.join('&')}` : path;
 }
 
 /** Remember that an image file changed, forcing all browsers to re-fetch it. */

@@ -1,6 +1,7 @@
 import { ShoppingCart, Phone, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { bustedImageSrc } from '../lib/images';
 import type { Page } from '../types';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -35,7 +36,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0">
-            <img src="/windows-h-logo.png" alt="HSN Logo" className="w-10 h-10 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-10 h-10 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
               <span className="text-xs sm:text-sm font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
               <span className="text-[8px] sm:text-[9px] tracking-[0.1em] font-bold text-slate-400 uppercase hidden sm:block">Premium Building Materials</span>

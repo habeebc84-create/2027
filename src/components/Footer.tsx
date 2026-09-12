@@ -1,5 +1,6 @@
 import { MapPin, Phone as PhoneIcon, Clock, Shield } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { bustedImageSrc } from '../lib/images';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -21,7 +22,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setPage('home')}>
-              <img src="/windows-h-logo.png" alt="HSN Logo" className="w-12 h-12 rounded-xl object-contain bg-slate-900 border border-slate-800 p-1 shadow-sm group-hover:border-pink-500 transition" />
+              <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 rounded-xl object-contain bg-slate-900 border border-slate-800 p-1 shadow-sm group-hover:border-pink-500 transition" />
               <span className="text-xl font-black text-white tracking-tight group-hover:text-pink-400 transition font-industrial">HSN CEMENT & STEEL</span>
             </div>
             <p className="text-slate-400 leading-relaxed">
@@ -87,7 +88,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="pt-8 border-t border-white/10 text-center flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-500">
           <div className="flex items-center space-x-2">
-            <img src="/windows-h-logo.png" alt="Logo" className="w-6 h-6 rounded-md object-contain" />
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="Logo" className="w-6 h-6 rounded-md object-contain" />
             <p className="cursor-default text-slate-400">
               © {new Date().getFullYear()} HSN CEMENT AND STEEL. All Rights Reserved. Kalikiri, AP.
             </p>

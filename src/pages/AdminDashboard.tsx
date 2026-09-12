@@ -33,7 +33,7 @@ export default function AdminDashboard() {
     <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-slate-950/95 backdrop-blur-xl border-r border-white/10 flex flex-col transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
       <div className="p-5 border-b border-white/10">
         <div className="flex items-center space-x-3">
-          <img src="/windows-h-logo.png" alt="Logo" className="w-10 h-10 rounded-xl border border-white/10 bg-slate-900 p-1" />
+          <img src={bustedImageSrc('/windows-h-logo.png')} alt="Logo" className="w-10 h-10 rounded-xl border border-white/10 bg-slate-900 p-1" />
           <div>
             <div className="text-sm font-black text-white font-industrial">HSN COMMAND CENTER</div>
             <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Admin Portal</div>
