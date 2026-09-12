@@ -145,21 +145,45 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localEditRef.current = false;
     if (!isCloudConfigured()) return;
     adminTouchedRef.current = true;
-    void pushRemoteContent(siteContent).then(version => {
+    // Full admin snapshot: any admin change (images, settings, products,
+    // categories, zones, content blocks, terms) reaches every device.
+    const snapshot = {
+      v: 2,
+      siteContent,
+      siteSettings,
+      products,
+      categories,
+      transportZones,
+      contentBlocks,
+      terms: termsContent,
+    };
+    void pushRemoteContent(snapshot).then(version => {
       if (version) {
         remoteVersionRef.current = version;
         showToast('Saved — updating on all devices…');
       } else {
-        showToast('Cloud sync failed — image change stays on this device only', 'error');
+        showToast('Cloud sync failed — change stays on this device only', 'error');
       }
     });
-  }, [siteContent, showToast]);
+  }, [siteContent, siteSettings, products, categories, transportZones, contentBlocks, termsContent, showToast]);
 
-  const applyCloudContent = useCallback((content: Record<string, unknown>, raw: string, version?: string | null) => {
+  const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
     if (version) remoteVersionRef.current = version;
     fromCloudRef.current = true;
-    setSiteContent(prev => ({ ...prev, ...content }));
+    // v2 snapshot: full admin state; legacy files hold siteContent only.
+    const sc = (json.v === 2 ? json.siteContent : json) as Partial<SiteContent> | undefined;
+    if (sc && typeof sc === 'object') {
+      setSiteContent(prev => ({ ...prev, ...sc }));
+    }
+    if (json.v === 2) {
+      if (json.siteSettings && typeof json.siteSettings === 'object') setSiteSettings(json.siteSettings as SiteSettings);
+      if (Array.isArray(json.products)) setProducts(json.products as Product[]);
+      if (Array.isArray(json.categories)) setCategories(json.categories as Category[]);
+      if (Array.isArray(json.transportZones)) setTransportZones(json.transportZones as TransportZone[]);
+      if (Array.isArray(json.contentBlocks)) setContentBlocks(json.contentBlocks as ContentBlock[]);
+      if (Array.isArray(json.terms)) setTermsContent(json.terms as TermsContent[]);
+    }
   }, []);
 
   // First load: pull the latest shared content from the cloud.
@@ -173,11 +197,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (adminTouchedRef.current) return;
       const raw = JSON.stringify(content);
       if (raw !== lastPulledRawRef.current) {
-        applyCloudContent(content, raw);
+        applyCloudSnapshot(content, raw);
       }
     })();
     return () => { cancelled = true; };
-  }, [applyCloudContent]);
+  }, [applyCloudSnapshot]);
 
   // Keep every open tab/device in near-realtime: poll a tiny version marker
   // (bytes, not megabytes) every 10s, and immediately when the tab regains focus.
@@ -195,7 +219,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!fromCloud || !content) return;
         const raw = JSON.stringify(content);
         if (raw !== lastPulledRawRef.current) {
-          applyCloudContent(content, raw, version);
+          applyCloudSnapshot(content, raw, version);
         }
       } finally {
         inFlight = false;
@@ -210,7 +234,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('focus', onVisible);
     };
-  }, [applyCloudContent]);
+  }, [applyCloudSnapshot]);
   useEffect(() => { save('hsn_transportZones', transportZones); }, [transportZones]);
   useEffect(() => { save('hsn_contentBlocks', contentBlocks); }, [contentBlocks]);
   useEffect(() => { save('hsn_terms', termsContent); }, [termsContent]);
@@ -236,15 +260,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('hsn_splash_dismissed', 'true');
   }, []);
 
-  const addProduct = useCallback((p: Product) => { setProducts(prev => [...prev, p]); showToast('Product added'); }, [showToast]);
-  const updateProduct = useCallback((id: string, updates: Partial<Product>) => { setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p)); showToast('Product updated'); }, [showToast]);
-  const deleteProduct = useCallback((id: string) => { setProducts(prev => prev.filter(p => p.id !== id)); showToast('Product deleted'); }, [showToast]);
-  const toggleProduct = useCallback((id: string) => { setProducts(prev => prev.map(p => p.id === id ? { ...p, enabled: !p.enabled } : p)); }, []);
+  const addProduct = useCallback((p: Product) => { localEditRef.current = true; setProducts(prev => [...prev, p]); showToast('Product added'); }, [showToast]);
+  const updateProduct = useCallback((id: string, updates: Partial<Product>) => { localEditRef.current = true; setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p)); showToast('Product updated'); }, [showToast]);
+  const deleteProduct = useCallback((id: string) => { localEditRef.current = true; setProducts(prev => prev.filter(p => p.id !== id)); showToast('Product deleted'); }, [showToast]);
+  const toggleProduct = useCallback((id: string) => { localEditRef.current = true; setProducts(prev => prev.map(p => p.id === id ? { ...p, enabled: !p.enabled } : p)); }, []);
 
-  const addCategory = useCallback((c: Category) => { setCategories(prev => [...prev, c]); showToast('Category added'); }, [showToast]);
-  const updateCategory = useCallback((id: string, updates: Partial<Category>) => { setCategories(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c)); showToast('Category updated'); }, [showToast]);
-  const deleteCategory = useCallback((id: string) => { setCategories(prev => prev.filter(c => c.id !== id)); showToast('Category deleted'); }, [showToast]);
-  const toggleCategory = useCallback((id: string) => { setCategories(prev => prev.map(c => c.id === id ? { ...c, enabled: c.enabled === false ? true : false } : c)); }, []);
+  const addCategory = useCallback((c: Category) => { localEditRef.current = true; setCategories(prev => [...prev, c]); showToast('Category added'); }, [showToast]);
+  const updateCategory = useCallback((id: string, updates: Partial<Category>) => { localEditRef.current = true; setCategories(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c)); showToast('Category updated'); }, [showToast]);
+  const deleteCategory = useCallback((id: string) => { localEditRef.current = true; setCategories(prev => prev.filter(c => c.id !== id)); showToast('Category deleted'); }, [showToast]);
+  const toggleCategory = useCallback((id: string) => { localEditRef.current = true; setCategories(prev => prev.map(c => c.id === id ? { ...c, enabled: c.enabled === false ? true : false } : c)); }, []);
 
   const addToCart = useCallback((product: Product, quantity: number, selectedSize?: string) => {
     setCart(prev => {
@@ -326,14 +350,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteCustomer = useCallback((customerId: string) => { setCustomers(prev => { const u = prev.filter(c => c.id !== customerId); save('hsn_customers', u); return u; }); showToast('Customer deleted'); }, [showToast]);
   const getOrderById = useCallback((orderId: string) => orders.find(o => o.orderId === orderId), [orders]);
 
-  const addTransportZone = useCallback((z: TransportZone) => { setTransportZones(prev => [...prev, z]); showToast('Zone added'); }, [showToast]);
-  const updateTransportZone = useCallback((id: string, updates: Partial<TransportZone>) => { setTransportZones(prev => prev.map(z => z.id === id ? { ...z, ...updates } : z)); showToast('Zone updated'); }, [showToast]);
-  const deleteTransportZone = useCallback((id: string) => { setTransportZones(prev => prev.filter(z => z.id !== id)); showToast('Zone deleted'); }, [showToast]);
+  const addTransportZone = useCallback((z: TransportZone) => { localEditRef.current = true; setTransportZones(prev => [...prev, z]); showToast('Zone added'); }, [showToast]);
+  const updateTransportZone = useCallback((id: string, updates: Partial<TransportZone>) => { localEditRef.current = true; setTransportZones(prev => prev.map(z => z.id === id ? { ...z, ...updates } : z)); showToast('Zone updated'); }, [showToast]);
+  const deleteTransportZone = useCallback((id: string) => { localEditRef.current = true; setTransportZones(prev => prev.filter(z => z.id !== id)); showToast('Zone deleted'); }, [showToast]);
 
-  const addContentBlock = useCallback((b: ContentBlock) => { setContentBlocks(prev => [...prev, b]); showToast('Content added'); }, [showToast]);
-  const updateContentBlock = useCallback((id: string, updates: Partial<ContentBlock>) => { setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b)); showToast('Content updated'); }, [showToast]);
-  const deleteContentBlock = useCallback((id: string) => { setContentBlocks(prev => prev.filter(b => b.id !== id)); showToast('Content deleted'); }, [showToast]);
-  const toggleContentBlock = useCallback((id: string) => { setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, active: !b.active } : b)); }, []);
+  const addContentBlock = useCallback((b: ContentBlock) => { localEditRef.current = true; setContentBlocks(prev => [...prev, b]); showToast('Content added'); }, [showToast]);
+  const updateContentBlock = useCallback((id: string, updates: Partial<ContentBlock>) => { localEditRef.current = true; setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b)); showToast('Content updated'); }, [showToast]);
+  const deleteContentBlock = useCallback((id: string) => { localEditRef.current = true; setContentBlocks(prev => prev.filter(b => b.id !== id)); showToast('Content deleted'); }, [showToast]);
+  const toggleContentBlock = useCallback((id: string) => { localEditRef.current = true; setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, active: !b.active } : b)); }, []);
 
   const addNotification = useCallback((n: Notification) => { setNotifications(prev => { const u = [n, ...prev]; save('hsn_notifications', u); return u; }); }, []);
   const updateNotification = useCallback((id: string, updates: Partial<Notification>) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, ...updates } : n); save('hsn_notifications', u); return u; }); showToast('Notification updated'); }, [showToast]);
@@ -381,8 +405,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     Promise.all(pending).catch(() => {});
     showToast('Site content updated');
   }, [showToast]);
-  const updateTermsContent = useCallback((id: string, content: string) => { setTermsContent(prev => prev.map(t => t.id === id ? { ...t, content, lastUpdated: new Date().toISOString() } : t)); showToast('Terms updated'); }, [showToast]);
-  const updateSiteSettings = useCallback((updates: Partial<SiteSettings>) => { setSiteSettings(prev => ({ ...prev, ...updates })); showToast('Settings updated'); }, [showToast]);
+  const updateTermsContent = useCallback((id: string, content: string) => { localEditRef.current = true; setTermsContent(prev => prev.map(t => t.id === id ? { ...t, content, lastUpdated: new Date().toISOString() } : t)); showToast('Terms updated'); }, [showToast]);
+  const updateSiteSettings = useCallback((updates: Partial<SiteSettings>) => { localEditRef.current = true; setSiteSettings(prev => ({ ...prev, ...updates })); showToast('Settings updated'); }, [showToast]);
 
   const loginAdmin = useCallback((email: string, password: string) => {
     const storedPassword = localStorage.getItem('hsn_admin_password') || 'admin123';
