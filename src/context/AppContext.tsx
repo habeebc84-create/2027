@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, ty
 import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
-import { pullRemoteContent, pushRemoteContent, isCloudConfigured } from '../lib/remoteContent';
+import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
 
 interface AppContextType {
   currentPage: Page;
@@ -102,7 +102,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Cloud sync refs: site content lives in a shared cloud copy so image changes
   // reach every browser/mobile instantly (localStorage alone is per-device).
   const lastPulledRawRef = useRef<string | null>(null);
+  const remoteVersionRef = useRef<string | null>(null);
+  const adminTouchedRef = useRef(false);
   const fromCloudRef = useRef(false);
+  // Only genuine local edits (updateSiteContent) may push to the cloud —
+  // never a visitor's initial localStorage state on page load.
+  const localEditRef = useRef(false);
   const [banners] = useState<Banner[]>(() => load('hsn_banners', defaultBanners));
   const [transportZones, setTransportZones] = useState<TransportZone[]>(() => load('hsn_transportZones', defaultTransportZones));
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(() => load('hsn_contentBlocks', []));
@@ -125,21 +130,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { save('hsn_products', products); }, [products]);
   useEffect(() => { save('hsn_categories', categories); }, [categories]);
   useEffect(() => { save('hsn_notifications', notifications); }, [notifications]);
-  // Persist locally; push local edits to the shared cloud copy (skips cloud-driven updates).
+  // Persist locally; push genuine local edits to the shared cloud copy.
+  // Cloud-driven updates and plain page loads are never pushed, so visitors
+  // can't clobber the shared copy with their own cached state.
   useEffect(() => {
     safeSaveSiteContent(siteContent);
     if (fromCloudRef.current) {
       fromCloudRef.current = false;
-      return;
+      if (!localEditRef.current) return;
+      // Admin edit collided with a cloud update — re-push the merged state.
+    } else if (!localEditRef.current) {
+      return; // initial mount / non-edit change: leave the cloud copy alone
     }
-    if (!isCloudConfigured()) return; // no keys yet — local-only mode, as before
-    void pushRemoteContent(siteContent).then(ok => {
-      if (!ok) showToast('Cloud sync failed — image change stays on this device only', 'error');
+    localEditRef.current = false;
+    if (!isCloudConfigured()) return;
+    adminTouchedRef.current = true;
+    void pushRemoteContent(siteContent).then(version => {
+      if (version) {
+        remoteVersionRef.current = version;
+        showToast('Saved — updating on all devices…');
+      } else {
+        showToast('Cloud sync failed — image change stays on this device only', 'error');
+      }
     });
   }, [siteContent, showToast]);
 
-  const applyCloudContent = useCallback((content: Record<string, unknown>, raw: string) => {
+  const applyCloudContent = useCallback((content: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
+    if (version) remoteVersionRef.current = version;
     fromCloudRef.current = true;
     setSiteContent(prev => ({ ...prev, ...content }));
   }, []);
@@ -150,6 +168,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (async () => {
       const { content, fromCloud } = await pullRemoteContent();
       if (cancelled || !fromCloud || !content) return;
+      // If the admin already edited during load, keep their edit (it will push
+      // and win) — do not let the initial pull race it back.
+      if (adminTouchedRef.current) return;
       const raw = JSON.stringify(content);
       if (raw !== lastPulledRawRef.current) {
         applyCloudContent(content, raw);
@@ -158,20 +179,37 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => { cancelled = true; };
   }, [applyCloudContent]);
 
-  // Keep open tabs fresh: re-poll while the page is visible so image changes
-  // appear without a manual refresh on every device.
+  // Keep every open tab/device in near-realtime: poll a tiny version marker
+  // (bytes, not megabytes) every 10s, and immediately when the tab regains focus.
   useEffect(() => {
     if (!isCloudConfigured()) return;
-    const iv = setInterval(async () => {
-      if (document.visibilityState !== 'visible') return;
-      const { content, fromCloud } = await pullRemoteContent();
-      if (!fromCloud || !content) return;
-      const raw = JSON.stringify(content);
-      if (raw !== lastPulledRawRef.current) {
-        applyCloudContent(content, raw);
+    let inFlight = false;
+    const check = async () => {
+      if (inFlight || document.visibilityState !== 'visible') return;
+      inFlight = true;
+      try {
+        const version = await fetchRemoteVersion();
+        if (!version || version === remoteVersionRef.current) return;
+        remoteVersionRef.current = version;
+        const { content, fromCloud } = await pullRemoteContent();
+        if (!fromCloud || !content) return;
+        const raw = JSON.stringify(content);
+        if (raw !== lastPulledRawRef.current) {
+          applyCloudContent(content, raw, version);
+        }
+      } finally {
+        inFlight = false;
       }
-    }, 45000);
-    return () => clearInterval(iv);
+    };
+    const iv = setInterval(check, 10000);
+    const onVisible = () => { if (document.visibilityState === 'visible') void check(); };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      clearInterval(iv);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
   }, [applyCloudContent]);
   useEffect(() => { save('hsn_transportZones', transportZones); }, [transportZones]);
   useEffect(() => { save('hsn_contentBlocks', contentBlocks); }, [contentBlocks]);
@@ -304,6 +342,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const clearNotifications = useCallback(() => { setNotifications(prev => { const u = prev.map(n => ({ ...n, read: true })); save('hsn_notifications', u); return u; }); }, []);
 
   const updateSiteContent = useCallback((updates: Partial<SiteContent>) => {
+    // Mark every state change from this call (including async compression
+    // follow-ups) as a genuine local edit so the final state is pushed to cloud.
+    localEditRef.current = true;
     // Compress raw image uploads so localStorage never overflows — large 8K PNGs
     // stored raw silently break persistence across browsers.
     const compress = async (dataUrl: string): Promise<string> => {
@@ -321,11 +362,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const pending: Promise<void>[] = [];
     if (typeof updates.heroImage === 'string' && updates.heroImage.startsWith('data:image/')) {
       const orig = updates.heroImage;
-      pending.push(compress(orig).then(c => { if (c !== orig) setSiteContent(p => ({ ...p, heroImage: c })); }));
+      pending.push(compress(orig).then(c => { if (c !== orig) { localEditRef.current = true; setSiteContent(p => ({ ...p, heroImage: c })); } }));
     }
     if (typeof updates.splashImage === 'string' && updates.splashImage.startsWith('data:image/')) {
       const orig = updates.splashImage;
-      pending.push(compress(orig).then(c => { if (c !== orig) setSiteContent(p => ({ ...p, splashImage: c })); }));
+      pending.push(compress(orig).then(c => { if (c !== orig) { localEditRef.current = true; setSiteContent(p => ({ ...p, splashImage: c })); } }));
     }
     if (updates.frontPageImages?.some(i => typeof i === 'string' && i.startsWith('data:image/'))) {
       Promise.all(updates.frontPageImages.map(async i => {
@@ -334,7 +375,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return c;
         }
         return i;
-      })).then(arr => setSiteContent(p => ({ ...p, frontPageImages: arr })));
+      })).then(arr => { localEditRef.current = true; setSiteContent(p => ({ ...p, frontPageImages: arr })); });
     }
     setSiteContent(prev => ({ ...prev, ...updates }));
     Promise.all(pending).catch(() => {});

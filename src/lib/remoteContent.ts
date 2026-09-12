@@ -16,11 +16,13 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  *   VITE_SUPABASE_ANON_KEY
  */
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string | undefined) || 'https://jteynbnnxxtulphkxtlc.supabase.co';
+const SUPABASE_ANON_KEY = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) || 'sb_publishable_4_YoQz3hZM1KhAzqqrf7BQ_3gTCrkc5';
 
 const BUCKET = 'site-content';
 const FILE = 'site-content.json';
+/** Tiny timestamp file polled by open tabs so they notice changes cheaply (bytes, not MBs). */
+const VERSION_FILE = 'version.txt';
 /** in-memory bust so repeated fetches within one session never hit the HTTP cache */
 let bustCounter = 0;
 
@@ -51,6 +53,22 @@ export interface PullResult {
   fromCloud: boolean;
 }
 
+/** Read the tiny version marker (a timestamp string). Null when absent/unconfigured. */
+export async function fetchRemoteVersion(): Promise<string | null> {
+  if (!isCloudConfigured()) return null;
+  try {
+    bustCounter += 1;
+    const res = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${VERSION_FILE}?bust=${Date.now()}_${bustCounter}`,
+      { cache: 'no-store' },
+    );
+    if (!res.ok) return null;
+    return (await res.text()).trim() || null;
+  } catch {
+    return null;
+  }
+}
+
 /** Pull the latest shared content JSON from the cloud. Never throws. */
 export async function pullRemoteContent(): Promise<PullResult> {
   if (!isCloudConfigured()) return { content: null, fromCloud: false };
@@ -65,12 +83,13 @@ export async function pullRemoteContent(): Promise<PullResult> {
 }
 
 /**
- * Admin-side push: overwrite the shared JSON in the cloud so every device
- * sees the new images on its next page load. Returns false if offline/unconfigured.
+ * Admin-side push: overwrite the shared JSON in the cloud (and bump the tiny
+ * version marker) so every device sees the new images within seconds.
+ * Returns the new version string, or null if the push failed.
  */
-export async function pushRemoteContent(value: unknown): Promise<boolean> {
+export async function pushRemoteContent(value: unknown): Promise<string | null> {
   const c = getClient();
-  if (!c) return false;
+  if (!c) return null;
   try {
     const body = JSON.stringify(value);
     const { error } = await c.storage
@@ -82,11 +101,20 @@ export async function pushRemoteContent(value: unknown): Promise<boolean> {
       });
     if (error) {
       console.error('[remoteContent] push failed', error.message);
-      return false;
+      return null;
     }
-    return true;
+    const version = String(Date.now());
+    const { error: vErr } = await c.storage
+      .from(BUCKET)
+      .upload(VERSION_FILE, version, {
+        contentType: 'text/plain',
+        upsert: true,
+        cacheControl: '0',
+      });
+    if (vErr) console.error('[remoteContent] version bump failed', vErr.message);
+    return version;
   } catch (e) {
     console.error('[remoteContent] push threw', e);
-    return false;
+    return null;
   }
 }
