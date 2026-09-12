@@ -263,7 +263,7 @@ export default function Home() {
         </label>
         {showUploadHint && (
           <div className="absolute bottom-full right-0 mb-3 bg-slate-900/95 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-nowrap shadow-xl border border-amber-500/30 animate-in fade-in slide-in-from-bottom-2">
-            ✓ Splash image updated!
+            ✓ Splash image synced to all devices!
           </div>
         )}
       </div>

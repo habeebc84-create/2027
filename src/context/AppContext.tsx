@@ -1,7 +1,8 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
+import { pullRemoteContent, pushRemoteContent, isCloudConfigured } from '../lib/remoteContent';
 
 interface AppContextType {
   currentPage: Page;
@@ -97,6 +98,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [brands] = useState<Brand[]>(() => load('hsn_brands', defaultBrands));
   const [notifications, setNotifications] = useState<Notification[]>(() => load('hsn_notifications', defaultNotifications));
   const [siteContent, setSiteContent] = useState<SiteContent>(() => ({ ...defaultSiteContent, ...load('hsn_siteContent', {}) }));
+
+  // Cloud sync refs: site content lives in a shared cloud copy so image changes
+  // reach every browser/mobile instantly (localStorage alone is per-device).
+  const lastPulledRawRef = useRef<string | null>(null);
+  const fromCloudRef = useRef(false);
   const [banners] = useState<Banner[]>(() => load('hsn_banners', defaultBanners));
   const [transportZones, setTransportZones] = useState<TransportZone[]>(() => load('hsn_transportZones', defaultTransportZones));
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(() => load('hsn_contentBlocks', []));
@@ -108,23 +114,71 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }));
   const [customers, setCustomers] = useState<Customer[]>(() => load('hsn_customers', []));
 
+  const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
+    const id = `t-${Date.now()}-${Math.random()}`;
+    setToasts(p => [...p, { id, message, type }]);
+    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 2500);
+  }, []);
+
   useEffect(() => { save('hsn_cart', cart); }, [cart]);
   useEffect(() => { save('hsn_orders', orders); }, [orders]);
   useEffect(() => { save('hsn_products', products); }, [products]);
   useEffect(() => { save('hsn_categories', categories); }, [categories]);
   useEffect(() => { save('hsn_notifications', notifications); }, [notifications]);
-  useEffect(() => { safeSaveSiteContent(siteContent); }, [siteContent]);
+  // Persist locally; push local edits to the shared cloud copy (skips cloud-driven updates).
+  useEffect(() => {
+    safeSaveSiteContent(siteContent);
+    if (fromCloudRef.current) {
+      fromCloudRef.current = false;
+      return;
+    }
+    if (!isCloudConfigured()) return; // no keys yet — local-only mode, as before
+    void pushRemoteContent(siteContent).then(ok => {
+      if (!ok) showToast('Cloud sync failed — image change stays on this device only', 'error');
+    });
+  }, [siteContent, showToast]);
+
+  const applyCloudContent = useCallback((content: Record<string, unknown>, raw: string) => {
+    lastPulledRawRef.current = raw;
+    fromCloudRef.current = true;
+    setSiteContent(prev => ({ ...prev, ...content }));
+  }, []);
+
+  // First load: pull the latest shared content from the cloud.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { content, fromCloud } = await pullRemoteContent();
+      if (cancelled || !fromCloud || !content) return;
+      const raw = JSON.stringify(content);
+      if (raw !== lastPulledRawRef.current) {
+        applyCloudContent(content, raw);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [applyCloudContent]);
+
+  // Keep open tabs fresh: re-poll while the page is visible so image changes
+  // appear without a manual refresh on every device.
+  useEffect(() => {
+    if (!isCloudConfigured()) return;
+    const iv = setInterval(async () => {
+      if (document.visibilityState !== 'visible') return;
+      const { content, fromCloud } = await pullRemoteContent();
+      if (!fromCloud || !content) return;
+      const raw = JSON.stringify(content);
+      if (raw !== lastPulledRawRef.current) {
+        applyCloudContent(content, raw);
+      }
+    }, 45000);
+    return () => clearInterval(iv);
+  }, [applyCloudContent]);
   useEffect(() => { save('hsn_transportZones', transportZones); }, [transportZones]);
   useEffect(() => { save('hsn_contentBlocks', contentBlocks); }, [contentBlocks]);
   useEffect(() => { save('hsn_terms', termsContent); }, [termsContent]);
   useEffect(() => { save('hsn_settings', siteSettings); }, [siteSettings]);
   useEffect(() => { save('hsn_customers', customers); }, [customers]);
 
-  const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
-    const id = `t-${Date.now()}-${Math.random()}`;
-    setToasts(p => [...p, { id, message, type }]);
-    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 2500);
-  }, []);
 
   const setPage = useCallback((page: Page) => {
     setCurrentPage(page);
