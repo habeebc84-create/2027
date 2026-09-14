@@ -3,6 +3,7 @@ import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, Co
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
+import { verifyAdminPassword, changeAdminPassword } from '../lib/password';
 
 interface AppContextType {
   currentPage: Page;
@@ -57,7 +58,7 @@ interface AppContextType {
   siteSettings: SiteSettings;
   updateSiteSettings: (updates: Partial<SiteSettings>) => void;
   isAdmin: boolean;
-  loginAdmin: (email: string, password: string) => boolean;
+  loginAdmin: (email: string, password: string) => Promise<boolean>;
   logoutAdmin: () => void;
   adminPage: AdminPage;
   setAdminPage: (page: AdminPage) => void;
@@ -408,9 +409,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateTermsContent = useCallback((id: string, content: string) => { localEditRef.current = true; setTermsContent(prev => prev.map(t => t.id === id ? { ...t, content, lastUpdated: new Date().toISOString() } : t)); showToast('Terms updated'); }, [showToast]);
   const updateSiteSettings = useCallback((updates: Partial<SiteSettings>) => { localEditRef.current = true; setSiteSettings(prev => ({ ...prev, ...updates })); showToast('Settings updated'); }, [showToast]);
 
-  const loginAdmin = useCallback((email: string, password: string) => {
-    const storedPassword = localStorage.getItem('hsn_admin_password') || 'admin123';
-    if (email === 'habeebc84@gmail.com' && password === storedPassword) {
+  const ADMIN_EMAIL = 'habeebc84@gmail.com';
+  const loginAdmin = useCallback(async (email: string, password: string) => {
+    // One-time migration: old versions stored the password in plain text.
+    // Convert it to a salted hash (keeping it as the working password), then delete it.
+    try {
+      const legacy = localStorage.getItem('hsn_admin_password');
+      if (legacy) {
+        localStorage.removeItem('hsn_admin_password');
+        if (legacy.trim()) await changeAdminPassword(legacy);
+      }
+    } catch { /* storage unavailable */ }
+    if (email.trim().toLowerCase() === ADMIN_EMAIL && await verifyAdminPassword(password)) {
       setIsAdmin(true); localStorage.setItem('hsn_admin', 'true'); showToast('Admin authenticated'); return true;
     }
     showToast('Invalid credentials', 'error'); return false;

@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext';
 import type { AdminPage, Product, Category, TransportZone, ContentBlock, OrderStatus, Notification } from '../types';
 import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
+import { changeAdminPassword } from '../lib/password';
 
 export default function AdminDashboard() {
   const ctx = useApp();
@@ -809,8 +810,8 @@ export default function AdminDashboard() {
           <div><label className="text-xs font-bold text-slate-300 block mb-1.5">Email</label><div className="bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200">habeebc84@gmail.com</div></div>
           <div><label className="text-xs font-bold text-slate-300 block mb-1.5">Password</label>
             <div className="flex space-x-2">
-              <input type="password" defaultValue="admin123" readOnly className="flex-1 bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200" />
-              <button onClick={() => { const np = prompt('Enter new password:'); if (np) { localStorage.setItem('hsn_admin_password', np); alert('Password updated'); } }} className="bg-white/10 border border-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">Change</button>
+              <input type="password" value="Encrypted •••" disabled className="flex-1 bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200" />
+              <button onClick={() => { const np = prompt('Enter new password (min 6 chars):'); if (np && np.length >= 6) { changeAdminPassword(np); alert('Password updated and encrypted'); } else if (np) { alert('Password must be at least 6 characters'); } }} className="bg-white/10 border border-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">Change</button>
             </div>
           </div>
         </div>
