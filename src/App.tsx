@@ -37,7 +37,7 @@ function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?
 }
 
 function AppContent() {
-  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, dismissSplash } = useApp();
+  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
   const [successOrderId, setSuccessOrderId] = useState<string | null>(null);
 
@@ -58,7 +58,9 @@ function AppContent() {
       setPage('product-detail');
     } else if (result.page === 'order-success' && result.orderId) {
       setSuccessOrderId(result.orderId);
-      setPage('order-success');
+      setPage('order-success', result.orderId);
+    } else if (result.page === 'order-tracking') {
+      setPage('order-tracking', result.orderId);
     } else if (path !== '/') {
       setPage(result.page);
     }
@@ -71,10 +73,16 @@ function AppContent() {
       if (result.page === 'product-detail') {
         const productId = path.replace('/product/', '');
         setSelectedProductId(productId);
+        setPage('product-detail');
       } else if (result.page === 'order-success' && result.orderId) {
         setSuccessOrderId(result.orderId);
+        setPage('order-success', result.orderId);
+      } else if (result.page === 'order-tracking') {
+        // Passes undefined on plain /track-order so a stale QR order is cleared.
+        setPage('order-tracking', result.orderId);
+      } else {
+        setPage(result.page);
       }
-      setPage(result.page);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -94,9 +102,9 @@ function AppContent() {
       case 'gallery': return <Gallery />;
       case 'about': return <About />;
       case 'contact': return <Contact />;
-      case 'checkout': return <Checkout onBackToCart={() => setCartOpen(true)} onOrderSuccess={(id) => { setSuccessOrderId(id); setPage('order-success'); }} />;
+      case 'checkout': return <Checkout onBackToCart={() => setCartOpen(true)} onOrderSuccess={(id) => { setSuccessOrderId(id); setPage('order-success', id); }} />;
       case 'order-success': return <OrderSuccess orderId={successOrderId || ''} />;
-      case 'order-tracking': return <OrderTracking />;
+      case 'order-tracking': return <OrderTracking key={trackingOrderId || 'manual'} initialOrderId={trackingOrderId} />;
       case 'admin-login': return <AdminLogin />;
       case 'admin': return isAdmin ? <AdminDashboard /> : <AdminLogin />;
       case 'terms': return <Terms />;

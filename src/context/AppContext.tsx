@@ -7,7 +7,8 @@ import { verifyAdminPassword, changeAdminPassword } from '../lib/password';
 
 interface AppContextType {
   currentPage: Page;
-  setPage: (page: Page) => void;
+  setPage: (page: Page, orderId?: string) => void;
+  trackingOrderId: string | undefined;
   selectedProductId: string | null;
   setSelectedProductId: (id: string | null) => void;
   products: Product[];
@@ -94,6 +95,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('hsn_admin') === 'true');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [trackingOrderId, setTrackingOrderId] = useState<string | undefined>(undefined);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [splashDismissed, setSplashDismissed] = useState(false);
   const [adminPage, setAdminPage] = useState<AdminPage>('overview');
@@ -264,15 +266,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { save('hsn_customers', customers); }, [customers]);
 
 
-  const setPage = useCallback((page: Page) => {
+  const setPage = useCallback((page: Page, orderId?: string) => {
     setCurrentPage(page);
+    if (page === 'order-tracking') setTrackingOrderId(orderId);
     const rm: Record<Page, string> = {
       home: '/', splash: '/splash', 'welcome-gate': '/', products: '/products', 'product-detail': '/product',
       services: '/services', gallery: '/gallery', about: '/about',
       contact: '/contact', checkout: '/checkout', 'order-success': '/order-success', 'order-tracking': '/track-order',
       terms: '/terms', 'admin-login': '/manage-portal-9f3a', admin: '/manage-portal-9f3a',
     };
-    const path = rm[page] || '/';
+    // Deep-linkable pages keep their id in the URL (QR codes link to /track-order/<orderId>).
+    const path = rm[page] + ((page === 'order-tracking' || page === 'order-success') && orderId ? `/${orderId}` : '');
     if (window.location.pathname !== path) window.history.pushState({}, '', path);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -467,7 +471,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      currentPage, setPage, selectedProductId, setSelectedProductId,
+      currentPage, setPage, trackingOrderId, selectedProductId, setSelectedProductId,
       products, addProduct, updateProduct, deleteProduct, toggleProduct,
       categories, addCategory, updateCategory, deleteCategory, toggleCategory, brands,
       cart, addToCart, removeFromCart, updateCartQuantity, cartTotal, cartCount, clearCart,

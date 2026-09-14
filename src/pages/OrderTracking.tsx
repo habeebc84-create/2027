@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { ORDER_STATUSES } from '../types';
@@ -7,12 +7,13 @@ const statusIcons: Record<string, any> = {
   placed: Package, confirmed: CheckCircle, processing: Clock, ready_dispatch: Package, out_delivery: Truck, delivered: CheckCircle, cancelled: Package, returned: Package,
 };
 
-export default function OrderTracking() {
+export default function OrderTracking({ initialOrderId }: { initialOrderId?: string }) {
   const { getOrderById, setPage } = useApp();
-  const [orderId, setOrderId] = useState('');
+  const [orderId, setOrderId] = useState(initialOrderId || '');
   const [mobile, setMobile] = useState('');
   const [found, setFound] = useState(false);
   const [error, setError] = useState('');
+  const [searching, setSearching] = useState(false);
 
   const handleSearch = () => {
     setError(''); setFound(false);
@@ -22,6 +23,22 @@ export default function OrderTracking() {
     if (mobile && order.customer.mobile !== mobile.trim()) { setError('Mobile number does not match this order.'); return; }
     setFound(true);
   };
+
+  // Opened from an order's QR code: open that exact order automatically.
+  // If the order isn't on this device yet, wait briefly for the cloud sync.
+  useEffect(() => {
+    if (!initialOrderId) return;
+    setSearching(true);
+    let tries = 0;
+    const attempt = () => {
+      const order = getOrderById(initialOrderId);
+      if (order) { setFound(true); setSearching(false); return; }
+      tries += 1;
+      if (tries < 8) { setTimeout(attempt, 1200); } // wait for cloud pull (~10s poll)
+      else { setSearching(false); setError('Order not found on this device yet. Please try again in a moment.'); }
+    };
+    attempt();
+  }, [initialOrderId, getOrderById]);
 
   const order = found ? getOrderById(orderId.trim()) : null;
 
@@ -52,7 +69,7 @@ export default function OrderTracking() {
                 className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition" />
             </div>
             <button onClick={handleSearch} className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center space-x-2 hover:from-blue-400 hover:to-indigo-500 transition shadow-lg">
-              <Search className="w-4 h-4" /><span>Track Order</span>
+              <Search className="w-4 h-4" /><span>{searching ? 'Searching…' : 'Track Order'}</span>
             </button>
           </div>
         </div>

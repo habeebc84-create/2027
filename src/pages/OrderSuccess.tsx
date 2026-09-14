@@ -64,7 +64,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
   const subtotal = orderItems.reduce((a, i) => a + i.lineTotal, 0);
 
-  const trackingUrl = `${window.location.origin}/track-order`;
+  const trackingUrl = `${window.location.origin}/track-order/${order.orderId}`;
 
   return (
     <div className="min-h-screen bg-[#050816] relative overflow-hidden">
@@ -117,7 +117,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
             <Download className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />
             <span className="text-[10px] font-bold text-slate-300">Download Invoice</span>
           </button>
-          <a href={`https://wa.me/${siteContent.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello HSN Cement & Steel, I have placed an order. Order ID: #' + order.orderId + '. Please confirm my order and delivery details.' + (order.customerLocation ? '\n📍 My delivery location: ' + order.customerLocation : ''))}`}
+          <a href={`https://wa.me/${siteContent.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello HSN Cement & Steel, I have placed an order. Order ID: #' + order.orderId + '. Please confirm my order and delivery details.')}`}
             target="_blank" rel="noreferrer" className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-[#25D366]/30 transition group">
             <WhatsAppIcon className="w-5 h-5 text-[#25D366] group-hover:scale-110 transition" />
             <span className="text-[10px] font-bold text-slate-300">WhatsApp Store</span>
@@ -133,7 +133,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
         </div>
 
         {/* Track Order Button */}
-        <button onClick={() => { setPage('order-tracking'); }}
+        <button onClick={() => setPage('order-tracking', order.orderId)}
           className={`w-full bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 text-white font-black py-4 rounded-2xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:from-blue-400 hover:via-indigo-500 hover:to-purple-500 transition mb-8 ${animPhase >= 6 ? 'opacity-100' : 'opacity-0'}`}>
           <MapPin className="w-5 h-5" /><span>TRACK MY ORDER</span>
         </button>
@@ -256,7 +256,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
               <div className="w-24 h-24 mx-auto mb-3 rounded-xl overflow-hidden bg-white p-2">
                 <QRCodeSVG value={trackingUrl} size={88} level="M" marginSize={0} />
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Scan to Track Order</div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Scan to Track Order #{order.orderId}</div>
             </div>
 
             {/* Customer Support */}
