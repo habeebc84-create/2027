@@ -123,6 +123,18 @@ export default function Contact() {
         <div className="mt-12 rounded-2xl overflow-hidden border border-slate-800" style={{ height: '320px' }}>
           <iframe src={siteContent.googleMapsEmbed} width="100%" height="320" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
         </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[11px] text-slate-500">Pinned location: HSN Cement and Steel, Kalikiri, Andhra Pradesh 517234</p>
+          <a
+            href="https://www.google.com/maps/dir/?api=1&destination=13.68962045,78.78345215"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center space-x-2 bg-blue-500 hover:bg-blue-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition"
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Get Directions</span>
+          </a>
+        </div>
       </div>
     </div>
   );

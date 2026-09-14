@@ -170,7 +170,7 @@ export const defaultSiteContent: SiteContent = {
   phone: '07989494779',
   whatsapp: '+91 9179173040',
   businessHours: 'Open 12 Hours (7:00 AM - 7:00 PM Daily)',
-  googleMapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15523.518174413158!2d78.78345215000001!3d13.68962045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb36146c879d749%3A0xb35fa32490807b5a!2sKalikiri%2C%20Andhra%20Pradesh%20517234!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
+  googleMapsEmbed: 'https://maps.google.com/maps?q=13.68962045,78.78345215(HSN%20Cement%20and%20Steel)&z=16&output=embed',
   aboutStory: "Established as Kalikiri's premier construction materials distributor, HSN CEMENT AND STEEL has provided high-grade cement, TMT steel bars, cutting blades, binding wire, hardware tools, and chemicals to thousands of home builders, engineering contractors, and government project leads.",
   aboutExperience: 'Over 15+ years of unblemished service delivering top-tier raw materials to site locations.',
   services: [
