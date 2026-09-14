@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, Edit, Trash2, Plus, Eye, Shield, Bell, FileText, Truck, ChevronDown, X, Menu, MapPin, Clock, Star, Search, Filter, Globe, Lock, Mail, Phone, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import type { AdminPage, Product, Category, TransportZone, ContentBlock, OrderStatus, Notification } from '../types';
+import type { AdminPage, Product, Category, TransportZone, ContentBlock, OrderStatus, Notification, Achievement } from '../types';
 import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
 import { changeAdminPassword } from '../lib/password';
 
 export default function AdminDashboard() {
   const ctx = useApp();
-  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage } = ctx;
+  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, addAchievement, deleteAchievement, setOrderFinalDeliveryCharge } = ctx;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const totalRevenue = orders.reduce((a, o) => a + o.total, 0);
@@ -419,15 +419,34 @@ export default function AdminDashboard() {
                   <div>Items: {o.items.map(i => `${i.product.name} x${i.quantity}`).join(', ')}</div>
                   <div>Delivery: {o.deliveryLocation} | Payment: {o.paymentMode}</div>
                   <div>Address: {o.customer.address}, {o.customer.landmark}</div>
+                  {o.customerLocation && (
+                    <div className="mt-2 bg-blue-500/10 border border-blue-500/25 rounded-xl p-2.5">
+                      <div className="text-[10px] font-bold text-blue-300 mb-1">📍 Customer-shared delivery location:</div>
+                      <a href={o.customerLocation} target="_blank" rel="noreferrer" className="text-[11px] text-blue-400 hover:text-blue-300 underline break-all line-clamp-1">Open on Google Maps →</a>
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className="flex items-center space-x-2">
                     <span className="text-[10px] font-bold text-slate-400">Update Status:</span>
                     <select value={o.status} onChange={e => updateOrderStatus(o.orderId, e.target.value as OrderStatus)} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-blue-500">
                       {ORDER_STATUSES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
                     </select>
                   </div>
-                  <button onClick={() => { if (window.confirm(`Delete order ${o.orderId}? This cannot be undone.`)) deleteOrder(o.orderId); }} className="flex items-center space-x-1 text-[10px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg transition">
+                  {o.deliveryMethod === 'delivery' && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-[10px] font-bold text-slate-400">Final Delivery (after location review):</span>
+                      <input
+                        type="number"
+                        defaultValue={o.finalDeliveryCharge ?? o.deliveryCharge}
+                        key={`${o.orderId}-${o.finalDeliveryCharge ?? o.deliveryCharge}`}
+                        onBlur={e => { const v = Number(e.target.value); if (!Number.isNaN(v) && v !== (o.finalDeliveryCharge ?? o.deliveryCharge)) setOrderFinalDeliveryCharge(o.orderId, v); }}
+                        className="w-24 bg-slate-900 border border-slate-700 text-slate-200 px-2 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-emerald-500"
+                      />
+                      <span className="text-[9px] text-slate-500">(original: Rs.{o.deliveryCharge})</span>
+                    </div>
+                  )}
+                  <button onClick={() => { if (window.confirm(`Delete order ${o.orderId}? This cannot be undone.`)) deleteOrder(o.orderId); }} className="flex items-center space-x-1 text-[10px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg transition ml-auto">
                     <Trash2 className="w-3 h-3" /><span>Delete</span>
                   </button>
                 </div>
@@ -482,6 +501,7 @@ export default function AdminDashboard() {
   const ContentSection = () => {
     const [showAdd, setShowAdd] = useState(false);
     const [newBlock, setNewBlock] = useState({ title: '', subtitle: '', type: 'banner' as ContentBlock['type'] });
+    const [newAch, setNewAch] = useState<{ title: string; description: string; imageUrl: string; kind: Achievement['kind']; date: string }>({ title: '', description: '', imageUrl: '', kind: 'achievement', date: '' });
     const handleAdd = () => {
       if (!newBlock.title) return;
       ctx.addContentBlock({ id: `cb-${Date.now()}`, ...newBlock, active: true, order: contentBlocks.length + 1 });
@@ -550,6 +570,53 @@ export default function AdminDashboard() {
             <div><label className="text-[10px] font-bold text-slate-400 block mb-1">WhatsApp</label><input type="text" value={siteContent.whatsapp} onChange={e => updateSiteContent({ whatsapp: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" /></div>
             <div><label className="text-[10px] font-bold text-slate-400 block mb-1">Address</label><input type="text" value={siteContent.address} onChange={e => updateSiteContent({ address: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" /></div>
           </div>
+        </div>
+        {/* Achievements & Contracts (shows in public Gallery) */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+          <h3 className="text-sm font-bold text-white">Achievements & Contracts (Public Gallery)</h3>
+          <p className="text-[10px] text-slate-400">Upload completed project photos, government/contract awards, or contract documents. They appear in the Gallery page for all customers.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input type="text" placeholder="Title (e.g. Government School Supply Contract)" value={newAch.title} onChange={e => setNewAch({ ...newAch, title: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+            <select value={newAch.kind} onChange={e => setNewAch({ ...newAch, kind: e.target.value as Achievement['kind'] })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+              <option value="achievement">🏆 Achievement</option>
+              <option value="contract">📜 Contract</option>
+              <option value="certificate">🎖️ Certificate</option>
+            </select>
+            <input type="text" placeholder="Date (optional, e.g. Jan 2026)" value={newAch.date} onChange={e => setNewAch({ ...newAch, date: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+          </div>
+          <textarea placeholder="Description (what was delivered, quantity, client name...)" value={newAch.description} onChange={e => setNewAch({ ...newAch, description: e.target.value })} rows={2} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500 resize-none" />
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-2.5 text-center transition">
+              <span className="text-xs font-bold text-slate-300 flex items-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newAch.imageUrl ? 'Photo ✓ Change' : 'Add Photo (required)'}</span></span>
+              <input type="file" accept="image/*" className="hidden" onChange={async e => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (!file) return;
+                const compressed = await compressImageFile(file);
+                if (compressed) setNewAch(prev => ({ ...prev, imageUrl: compressed }));
+              }} />
+            </label>
+            {newAch.imageUrl && <img src={newAch.imageUrl} alt="" className="w-14 h-14 object-cover rounded-lg border border-slate-700" />}
+            <button onClick={() => {
+              if (!newAch.title.trim() || !newAch.imageUrl) return;
+              ctx.addAchievement({ id: `ach-${Date.now()}`, title: newAch.title.trim(), description: newAch.description.trim(), imageUrl: newAch.imageUrl, kind: newAch.kind, date: newAch.date.trim() || undefined });
+              setNewAch({ title: '', description: '', imageUrl: '', kind: 'achievement', date: '' });
+            }} className="bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold">Publish to Gallery</button>
+          </div>
+          {achievements.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              {achievements.map(a => (
+                <div key={a.id} className="flex items-center gap-3 bg-slate-900/50 border border-white/10 rounded-xl p-2.5">
+                  <img src={a.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-bold text-slate-200 line-clamp-1">{a.kind === 'contract' ? '📜' : a.kind === 'certificate' ? '🎖️' : '🏆'} {a.title}</div>
+                    <div className="text-[10px] text-slate-500 line-clamp-1">{a.date || ''} {a.description}</div>
+                  </div>
+                  <button onClick={() => deleteAchievement(a.id)} className="text-slate-400 hover:text-rose-400 shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-white">Banners & Promotions</h3>

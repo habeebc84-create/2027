@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
-import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage } from '../types';
+import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage, Achievement } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
@@ -30,6 +30,7 @@ interface AppContextType {
   clearCart: () => void;
   orders: Order[];
   placeOrder: (order: Omit<Order, 'id' | 'date' | 'status' | 'timeline' | 'orderId'>) => void;
+  setOrderFinalDeliveryCharge: (orderId: string, charge: number) => void;
   updateOrderStatus: (orderId: string, status: OrderStatus, note?: string) => void;
   deleteOrder: (orderId: string) => void;
   deleteCustomer: (customerId: string) => void;
@@ -39,6 +40,9 @@ interface AppContextType {
   addTransportZone: (z: TransportZone) => void;
   updateTransportZone: (id: string, updates: Partial<TransportZone>) => void;
   deleteTransportZone: (id: string) => void;
+  achievements: Achievement[];
+  addAchievement: (a: Achievement) => void;
+  deleteAchievement: (id: string) => void;
   contentBlocks: ContentBlock[];
   addContentBlock: (b: ContentBlock) => void;
   updateContentBlock: (id: string, updates: Partial<ContentBlock>) => void;
@@ -111,6 +115,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const localEditRef = useRef(false);
   const [banners] = useState<Banner[]>(() => load('hsn_banners', defaultBanners));
   const [transportZones, setTransportZones] = useState<TransportZone[]>(() => load('hsn_transportZones', defaultTransportZones));
+  const [achievements, setAchievements] = useState<Achievement[]>(() => load('hsn_achievements', []));
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(() => load('hsn_contentBlocks', []));
   const [termsContent, setTermsContent] = useState<TermsContent[]>(() => load('hsn_terms', defaultTerms));
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => load('hsn_settings', {
@@ -157,6 +162,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       transportZones,
       contentBlocks,
       terms: termsContent,
+      achievements,
+      orders,  // orders included so the owner sees location-shared orders on all devices
     };
     void pushRemoteContent(snapshot).then(version => {
       if (version) {
@@ -166,7 +173,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         showToast('Cloud sync failed — change stays on this device only', 'error');
       }
     });
-  }, [siteContent, siteSettings, products, categories, transportZones, contentBlocks, termsContent, showToast]);
+  }, [siteContent, siteSettings, products, categories, transportZones, contentBlocks, termsContent, achievements, orders, showToast]);
 
   const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
@@ -184,6 +191,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (Array.isArray(json.transportZones)) setTransportZones(json.transportZones as TransportZone[]);
       if (Array.isArray(json.contentBlocks)) setContentBlocks(json.contentBlocks as ContentBlock[]);
       if (Array.isArray(json.terms)) setTermsContent(json.terms as TermsContent[]);
+      if (Array.isArray(json.achievements)) setAchievements(json.achievements as Achievement[]);
+      // Orders: merge cloud orders that this device doesn't have (never remove local ones).
+      if (Array.isArray(json.orders)) {
+        const cloudOrders = json.orders as Order[];
+        setOrders(prev => {
+          const ids = new Set(prev.map(o => o.id));
+          const missing = cloudOrders.filter(o => !ids.has(o.id));
+          if (missing.length === 0) return prev;
+          const merged = [...prev, ...missing].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          save('hsn_orders', merged);
+          return merged;
+        });
+      }
     }
   }, []);
 
@@ -237,6 +257,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [applyCloudSnapshot]);
   useEffect(() => { save('hsn_transportZones', transportZones); }, [transportZones]);
+  useEffect(() => { save('hsn_achievements', achievements); }, [achievements]);
   useEffect(() => { save('hsn_contentBlocks', contentBlocks); }, [contentBlocks]);
   useEffect(() => { save('hsn_terms', termsContent); }, [termsContent]);
   useEffect(() => { save('hsn_settings', siteSettings); }, [siteSettings]);
@@ -270,6 +291,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateCategory = useCallback((id: string, updates: Partial<Category>) => { localEditRef.current = true; setCategories(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c)); showToast('Category updated'); }, [showToast]);
   const deleteCategory = useCallback((id: string) => { localEditRef.current = true; setCategories(prev => prev.filter(c => c.id !== id)); showToast('Category deleted'); }, [showToast]);
   const toggleCategory = useCallback((id: string) => { localEditRef.current = true; setCategories(prev => prev.map(c => c.id === id ? { ...c, enabled: c.enabled === false ? true : false } : c)); }, []);
+
+  const addAchievement = useCallback((a: Achievement) => { localEditRef.current = true; setAchievements(prev => [a, ...prev]); showToast('Added to gallery'); }, [showToast]);
+  const deleteAchievement = useCallback((id: string) => { localEditRef.current = true; setAchievements(prev => prev.filter(a => a.id !== id)); showToast('Removed'); }, [showToast]);
 
   const addToCart = useCallback((product: Product, quantity: number, selectedSize?: string) => {
     setCart(prev => {
@@ -336,7 +360,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
     });
     clearCart();
     showToast(`Order ${orderId} placed successfully!`);
+    // Customer orders with a shared location reach the owner's other devices too.
+    localEditRef.current = true;
   }, [clearCart, showToast]);
+
+  /** Owner review: set the final delivery charge after seeing the shared location. */
+  const setOrderFinalDeliveryCharge = useCallback((orderId: string, charge: number) => {
+    localEditRef.current = true;
+    setOrders(prev => {
+      const u = prev.map(o => o.orderId === orderId ? { ...o, finalDeliveryCharge: charge } : o);
+      save('hsn_orders', u);
+      return u;
+    });
+    showToast(`Final delivery charge saved for ${orderId}`);
+  }, [showToast]);
 
   const updateOrderStatus = useCallback((orderId: string, status: OrderStatus, note?: string) => {
     setOrders(prev => {
@@ -434,8 +471,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       products, addProduct, updateProduct, deleteProduct, toggleProduct,
       categories, addCategory, updateCategory, deleteCategory, toggleCategory, brands,
       cart, addToCart, removeFromCart, updateCartQuantity, cartTotal, cartCount, clearCart,
-      orders, placeOrder, updateOrderStatus, deleteOrder, getOrderById,
+      orders, placeOrder, setOrderFinalDeliveryCharge, updateOrderStatus, deleteOrder, getOrderById,
       customers, deleteCustomer, transportZones, addTransportZone, updateTransportZone, deleteTransportZone,
+      achievements, addAchievement, deleteAchievement,
       contentBlocks, addContentBlock, updateContentBlock, deleteContentBlock, toggleContentBlock,
       notifications, addNotification, updateNotification, deleteNotification, markNotificationRead, clearNotifications, banners,
       siteContent, updateSiteContent, termsContent, updateTermsContent,

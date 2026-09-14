@@ -18,6 +18,8 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
   const [deliveryLocation, setDeliveryLocation] = useState(transportZones[0]?.name || '');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [customerLocation, setCustomerLocation] = useState('');
+  const [locating, setLocating] = useState(false);
 
   const selectedZone = transportZones.find(z => z.name === deliveryLocation) || transportZones[0] || { name: '', charge: 0 };
   const deliveryCharge = deliveryMethod === 'pickup' ? 0 : selectedZone.charge;
@@ -69,6 +71,7 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
                     customer: { name, mobile, email, address, village, mandal, pincode, landmark },
                     paymentMode, deliveryNote, deliveryLocation: selectedZone.name,
                     deliveryCharge, handlingCharge, deliveryMethod,
+                    customerLocation: customerLocation || undefined,
                   });
                   onOrderSuccess(oid);
                 }, 1500);
@@ -106,6 +109,57 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
                 <div>
                   <label className="font-bold text-slate-300 block mb-1.5">Landmark *</label>
                   <input type="text" value={landmark} onChange={e => setLandmark(e.target.value)} required placeholder="Near Water Tank / Panchayat Office" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-blue-400 transition placeholder-slate-600" />
+                </div>
+
+                {/* Share exact location via maps */}
+                <div className="bg-blue-500/5 border border-blue-500/25 rounded-2xl p-4 space-y-3">
+                  <label className="font-bold text-slate-200 block text-xs">📍 Share Delivery Location (recommended)</label>
+                  <p className="text-[10px] text-slate-400">Sharing your exact spot on the map helps us calculate the true transport distance and gives you the fairest final delivery price.</p>
+                  {customerLocation ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-3 py-2 rounded-xl text-[11px] font-bold">
+                        <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span className="flex-1 line-clamp-1">Location attached ✓</span>
+                        <button type="button" onClick={() => setCustomerLocation('')} className="text-emerald-400 hover:text-emerald-300 text-[10px] underline shrink-0">Remove</button>
+                      </div>
+                      <a href={customerLocation} target="_blank" rel="noreferrer" className="inline-flex items-center space-x-1 text-[10px] text-blue-400 hover:text-blue-300 underline">
+                        <MapPin className="w-3 h-3" /><span>Preview on Google Maps</span>
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <button type="button" onClick={() => {
+                        if (!navigator.geolocation) { showToast('GPS not supported on this device', 'error'); return; }
+                        setLocating(true);
+                        navigator.geolocation.getCurrentPosition(
+                          pos => { setCustomerLocation(`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`); setLocating(false); showToast('Current location attached'); },
+                          () => { setLocating(false); showToast('Could not get GPS location — allow location permission or paste a link', 'error'); },
+                          { enableHighAccuracy: true, timeout: 12000 },
+                        );
+                      }} disabled={locating} className="p-2.5 rounded-xl border text-[11px] font-bold transition bg-blue-500/20 text-white border-blue-400/50 hover:bg-blue-500/30 disabled:opacity-50">
+                        {locating ? 'Locating…' : '📡 Use My GPS'}
+                      </button>
+                      <button type="button" onClick={() => {
+                        const input = window.prompt('Open Google Maps, long-press your delivery spot, then paste the shared link here:');
+                        if (input && input.trim()) {
+                          if (/maps\.|goo\.gl|plus\.codes|@-?\d/i.test(input.trim())) { setCustomerLocation(input.trim()); showToast('Location attached'); }
+                          else showToast('That does not look like a Maps link', 'error');
+                        }
+                      }} className="p-2.5 rounded-xl border text-[11px] font-bold transition bg-slate-950/50 text-slate-300 border-slate-700/50 hover:bg-slate-900">
+                        🔗 Paste Map Link
+                      </button>
+                      <button type="button" onClick={() => {
+                        window.open(`https://www.google.com/maps/search/${encodeURIComponent('near me')}`, '_blank');
+                        const input = window.prompt('In the map that opened, tap your delivery spot, press Share, copy the link, and paste it here:');
+                        if (input && input.trim()) {
+                          if (/maps\.|goo\.gl|plus\.codes|@-?\d/i.test(input.trim())) { setCustomerLocation(input.trim()); showToast('Location attached'); }
+                          else showToast('That does not look like a Maps link', 'error');
+                        }
+                      }} className="p-2.5 rounded-xl border text-[11px] font-bold transition bg-slate-950/50 text-slate-300 border-slate-700/50 hover:bg-slate-900">
+                        🗺️ Pick on Map
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Delivery Method */}

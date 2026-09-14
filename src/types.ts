@@ -96,6 +96,16 @@ export interface GalleryImage {
   category: string;
 }
 
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  /** achievement | contract | certificate */
+  kind: 'achievement' | 'contract' | 'certificate';
+  date?: string;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;
@@ -125,6 +135,10 @@ export interface Order {
   deliveryMethod: 'delivery' | 'pickup';
   deliveryCharge: number;
   handlingCharge: number;
+  /** Customer-shared map link (Google Maps URL of the delivery spot). */
+  customerLocation?: string;
+  /** Owner-reviewed final delivery charge (Rs.) after seeing the shared location. */
+  finalDeliveryCharge?: number;
   date: string;
   status: OrderStatus;
   timeline: OrderTimelineEvent[];

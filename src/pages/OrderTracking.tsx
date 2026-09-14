@@ -103,7 +103,7 @@ export default function OrderTracking() {
             {/* Delivery Info */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
               <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-blue-400" /><span className="text-slate-300">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
-              <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-emerald-400" /><span className="text-slate-300">{order.deliveryLocation} (Rs.{order.deliveryCharge})</span></div>
+              <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-emerald-400" /><span className="text-slate-300">{order.deliveryLocation} (Rs.{order.finalDeliveryCharge ?? order.deliveryCharge}{order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge ? ' final' : ''})</span></div>
               <div className="flex items-center space-x-2"><Phone className="w-3.5 h-3.5 text-purple-400" /><span className="text-slate-300">{order.customer.mobile}</span></div>
             </div>
           </div>
