@@ -11,7 +11,7 @@ const statusIcons: Record<string, any> = {
 };
 
 export default function OrderTracking({ initialOrderId }: { initialOrderId?: string }) {
-  const { getOrderById, setPage, siteContent } = useApp();
+  const { getOrderById, setPage, siteContent, refreshFromCloud } = useApp();
   const [orderId, setOrderId] = useState(initialOrderId || '');
   const [mobile, setMobile] = useState('');
   const [found, setFound] = useState(false);
@@ -27,21 +27,29 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
     setFound(true);
   };
 
-  // Opened from an order's QR code: open that exact order automatically.
-  // If the order isn't on this device yet, wait briefly for the cloud sync.
+  // Opened from an order's QR code: fetch that exact order automatically.
+  // If it isn't on this device yet, actively re-pull the cloud copy between
+  // retries so the order's details load directly from the scan.
   useEffect(() => {
     if (!initialOrderId) return;
+    let alive = true;
     setSearching(true);
-    let tries = 0;
-    const attempt = () => {
-      const order = getOrderById(initialOrderId);
-      if (order) { setFound(true); setSearching(false); return; }
-      tries += 1;
-      if (tries < 8) { setTimeout(attempt, 1200); } // wait for cloud pull (~10s poll)
-      else { setSearching(false); setError('Order not found on this device yet. Please try again in a moment.'); }
+    const attempt = async (tries = 0) => {
+      if (getOrderById(initialOrderId)) {
+        if (alive) { setFound(true); setSearching(false); }
+        return;
+      }
+      await refreshFromCloud();
+      if (getOrderById(initialOrderId)) {
+        if (alive) { setFound(true); setSearching(false); }
+        return;
+      }
+      if (tries < 7 && alive) { setTimeout(() => attempt(tries + 1), 1200); }
+      else if (alive) { setSearching(false); setError('Order not found on this device yet. Please try again in a moment.'); }
     };
-    attempt();
-  }, [initialOrderId, getOrderById]);
+    void attempt();
+    return () => { alive = false; };
+  }, [initialOrderId, getOrderById, refreshFromCloud]);
 
   const order = found ? getOrderById(orderId.trim()) : null;
   const trackUrl = order ? `${window.location.origin}/track-order/${order.orderId}` : '';

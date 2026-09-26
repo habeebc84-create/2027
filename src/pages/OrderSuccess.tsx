@@ -65,6 +65,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   drawLogo(8);
   drawLogo(W - 30);
 
+  // Letterhead: name centered, contact info left-aligned beside the right logo
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(17);
@@ -74,7 +75,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text('PREMIUM BUILDING MATERIALS', W / 2, 18, { align: 'center' });
   const headerLines = doc.splitTextToSize(`${siteSettings.address}  |  GSTIN: ${siteSettings.gstNumber}  |  Ph: ${siteSettings.phone}`, 118) as string[];
   let hy = 23;
-  headerLines.slice(0, 3).forEach(l => { doc.text(l, W / 2, hy); hy += 4; });
+  headerLines.slice(0, 3).forEach(l => { doc.text(l, 36, hy, { align: 'left' }); hy += 4; });
 
   // ===== Title =====
   let y = 46;

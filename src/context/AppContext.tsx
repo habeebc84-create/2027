@@ -36,6 +36,8 @@ interface AppContextType {
   deleteOrder: (orderId: string) => void;
   deleteCustomer: (customerId: string) => void;
   getOrderById: (orderId: string) => Order | undefined;
+  /** Actively re-fetch the cloud copy (used by QR deep-links to load orders missing on this device). */
+  refreshFromCloud: () => Promise<void>;
   customers: Customer[];
   transportZones: TransportZone[];
   addTransportZone: (z: TransportZone) => void;
@@ -121,7 +123,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(() => load('hsn_contentBlocks', []));
   const [termsContent, setTermsContent] = useState<TermsContent[]>(() => load('hsn_terms', defaultTerms));
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => load('hsn_settings', {
-    businessName: 'HSN CEMENT AND STEEL', phone: '07989494779', whatsapp: '+91 9179173040',
+    businessName: 'HSN CEMENT AND STEEL', phone: '7989494779', whatsapp: '+91 9179173040',
     email: 'habeebc84@gmail.com', address: 'Kalikiri, AP - 517234', businessHours: '7 AM - 7 PM Daily',
     gstNumber: '37AAAAA0000A1Z5', logo: '/windows-h-logo.png',
   }));
@@ -392,6 +394,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteCustomer = useCallback((customerId: string) => { setCustomers(prev => { const u = prev.filter(c => c.id !== customerId); save('hsn_customers', u); return u; }); showToast('Customer deleted'); }, [showToast]);
   const getOrderById = useCallback((orderId: string) => orders.find(o => o.orderId === orderId), [orders]);
 
+  /** Actively re-fetch the shared cloud copy so QR deep-links can load orders missing on this device. */
+  const refreshFromCloud = useCallback(async () => {
+    if (!isCloudConfigured()) return;
+    const { content, fromCloud } = await pullRemoteContent();
+    if (!fromCloud || !content) return;
+    const raw = JSON.stringify(content);
+    if (raw !== lastPulledRawRef.current) applyCloudSnapshot(content, raw);
+  }, [applyCloudSnapshot]);
+
   const addTransportZone = useCallback((z: TransportZone) => { localEditRef.current = true; setTransportZones(prev => [...prev, z]); showToast('Zone added'); }, [showToast]);
   const updateTransportZone = useCallback((id: string, updates: Partial<TransportZone>) => { localEditRef.current = true; setTransportZones(prev => prev.map(z => z.id === id ? { ...z, ...updates } : z)); showToast('Zone updated'); }, [showToast]);
   const deleteTransportZone = useCallback((id: string) => { localEditRef.current = true; setTransportZones(prev => prev.filter(z => z.id !== id)); showToast('Zone deleted'); }, [showToast]);
@@ -475,7 +486,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       products, addProduct, updateProduct, deleteProduct, toggleProduct,
       categories, addCategory, updateCategory, deleteCategory, toggleCategory, brands,
       cart, addToCart, removeFromCart, updateCartQuantity, cartTotal, cartCount, clearCart,
-      orders, placeOrder, setOrderFinalDeliveryCharge, updateOrderStatus, deleteOrder, getOrderById,
+      orders, placeOrder, setOrderFinalDeliveryCharge, updateOrderStatus, deleteOrder, getOrderById, refreshFromCloud,
       customers, deleteCustomer, transportZones, addTransportZone, updateTransportZone, deleteTransportZone,
       achievements, addAchievement, deleteAchievement,
       contentBlocks, addContentBlock, updateContentBlock, deleteContentBlock, toggleContentBlock,
