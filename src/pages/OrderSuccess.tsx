@@ -249,12 +249,31 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
 }
 
 export default function OrderSuccess({ orderId }: { orderId: string }) {
-  const { getOrderById, setPage, siteContent, siteSettings, transportZones } = useApp();
+  const { getOrderById, setPage, siteContent, siteSettings, transportZones, refreshFromCloud } = useApp();
   const [copied, setCopied] = useState(false);
   const [invoiceBusy, setInvoiceBusy] = useState(false);
+  const [cloudFetching, setCloudFetching] = useState(false);
   const [animPhase, setAnimPhase] = useState(0);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const order = getOrderById(orderId);
+
+  // QR scans open this page on other devices too: if the order is not in this
+  // browser yet, keep pulling the cloud copy until it appears (same as the
+  // tracking page retry loop).
+  useEffect(() => {
+    if (!orderId || getOrderById(orderId)) return;
+    let alive = true;
+    setCloudFetching(true);
+    const attempt = async (tries = 0) => {
+      if (getOrderById(orderId)) { if (alive) setCloudFetching(false); return; }
+      await refreshFromCloud();
+      if (getOrderById(orderId)) { if (alive) setCloudFetching(false); return; }
+      if (tries < 7 && alive) { setTimeout(() => attempt(tries + 1), 1200); }
+      else if (alive) setCloudFetching(false);
+    };
+    void attempt();
+    return () => { alive = false; };
+  }, [orderId, getOrderById, refreshFromCloud]);
 
   useEffect(() => {
     const timers = [setTimeout(() => setAnimPhase(1), 200), setTimeout(() => setAnimPhase(2), 500), setTimeout(() => setAnimPhase(3), 800), setTimeout(() => setAnimPhase(4), 1000), setTimeout(() => setAnimPhase(5), 1200), setTimeout(() => setAnimPhase(6), 1400), setTimeout(() => setAnimPhase(7), 1600), setTimeout(() => setAnimPhase(8), 1800)];
@@ -267,9 +286,19 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050816] text-white">
         <div className="text-center space-y-4">
-          <Package className="w-12 h-12 text-slate-600 mx-auto" />
-          <h2 className="text-xl font-bold">Order not found</h2>
-          <p className="text-sm text-slate-400">Order ID: {orderId}</p>
+          {cloudFetching ? (
+            <>
+              <Loader2 className="w-12 h-12 text-blue-400 mx-auto animate-spin" />
+              <h2 className="text-xl font-bold">Fetching order #{orderId}…</h2>
+              <p className="text-sm text-slate-400">Loading live order details from the store.</p>
+            </>
+          ) : (
+            <>
+              <Package className="w-12 h-12 text-slate-600 mx-auto" />
+              <h2 className="text-xl font-bold">Order not found</h2>
+              <p className="text-sm text-slate-400">Order ID: {orderId}</p>
+            </>
+          )}
           <button onClick={() => setPage('home')} className="bg-blue-500 text-white font-bold px-6 py-3 rounded-xl text-sm">Go to Home</button>
         </div>
       </div>
@@ -335,10 +364,12 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
           </div>
 
           <h1 className={`text-2xl sm:text-3xl font-black text-white font-industrial tracking-tight transition-all duration-700 delay-200 ${animPhase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            ORDER PLACED SUCCESSFULLY!
+            {order.status === 'placed' ? 'ORDER PLACED SUCCESSFULLY!' : 'ORDER DETAILS'}
           </h1>
           <p className={`text-slate-400 text-sm mt-2 transition-all duration-500 delay-300 ${animPhase >= 4 ? 'opacity-100' : 'opacity-0'}`}>
-            Thank you for ordering with {siteSettings.businessName}. Your order has been successfully registered.
+            {order.status === 'placed'
+              ? `Thank you for ordering with ${siteSettings.businessName}. Your order has been successfully registered.`
+              : `Live status and invoice for order #${order.orderId} at ${siteSettings.businessName}.`}
           </p>
         </div>
 

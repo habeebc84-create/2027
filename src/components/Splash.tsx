@@ -36,7 +36,12 @@ export default function Splash() {
     setExiting(true);
     setTimeout(() => {
       dismissSplash();
-      setPage('welcome-gate');
+      // QR scans / shared links land on deep-link pages (/order-success/<id>,
+      // /track-order/<id>) even before the splash is dismissed. Keep the
+      // parsed route instead of overriding it with the home page.
+      const path = window.location.pathname;
+      const isDeepLink = path.startsWith('/order-success/') || path.startsWith('/track-order/');
+      if (!isDeepLink) setPage('welcome-gate');
     }, 800);
   };
 
