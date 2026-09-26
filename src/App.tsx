@@ -51,6 +51,15 @@ function AppContent() {
       window.history.replaceState({}, '', window.location.pathname);
     }
 
+    // QR deep link (?track=<orderId>): open that order's tracking directly,
+    // then upgrade the URL to the pretty path.
+    const trackParam = params.get('track');
+    if (trackParam) {
+      setPage('order-tracking', trackParam);
+      window.history.replaceState({}, '', `/track-order/${encodeURIComponent(trackParam)}`);
+      return;
+    }
+
     const result = getPageFromPath(path, isAdmin);
     if (result.page === 'product-detail') {
       const productId = path.replace('/product/', '');

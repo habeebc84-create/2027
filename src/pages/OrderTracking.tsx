@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, nationalDigits } from '../lib/phone';
+import { orderTrackingUrl } from '../lib/deepLink';
 import { bustedImageSrc } from '../lib/images';
 import { QRCodeSVG } from 'qrcode.react';
 import { ORDER_STATUSES } from '../types';
@@ -52,7 +53,7 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
   }, [initialOrderId, getOrderById, refreshFromCloud]);
 
   const order = found ? getOrderById(orderId.trim()) : null;
-  const trackUrl = order ? `${window.location.origin}/track-order/${order.orderId}` : '';
+  const trackUrl = order ? orderTrackingUrl(order.orderId) : '';
 
   return (
     <div className="py-12 min-h-screen bg-transparent relative z-10">

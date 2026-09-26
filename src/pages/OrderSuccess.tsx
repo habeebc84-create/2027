@@ -4,6 +4,7 @@ import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
 import { telHref, waHref } from '../lib/phone';
+import { orderTrackingUrl } from '../lib/deepLink';
 import { ORDER_STATUSES } from '../types';
 import type { Order } from '../types';
 
@@ -34,7 +35,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   const adjustment = Math.round((order.total - subtotal - delivery - handling) * 100) / 100;
   const inr = (n: number) => `Rs.${n.toLocaleString('en-IN')}`;
   const dateStr = new Date(order.date).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  const trackingUrl = `${window.location.origin}/track-order/${order.orderId}`;
+  const trackingUrl = orderTrackingUrl(order.orderId);
 
   const doc = new (await import('jspdf')).jsPDF({ unit: 'mm', format: 'a4' });
   const W = 210;
@@ -274,7 +275,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
   const subtotal = orderItems.reduce((a, i) => a + i.lineTotal, 0);
 
-  const trackingUrl = `${window.location.origin}/track-order/${order.orderId}`;
+  const trackingUrl = orderTrackingUrl(order.orderId);
 
   const handleDownloadInvoice = () => {
     const qrDataUrl = qrCanvasRef.current?.toDataURL('image/png') ?? null;
