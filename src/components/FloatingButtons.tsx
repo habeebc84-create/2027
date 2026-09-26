@@ -1,5 +1,6 @@
 import { Phone } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { telHref, waHref } from '../lib/phone';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -13,7 +14,7 @@ export default function FloatingButtons() {
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end space-y-3">
       <a
-        href={`https://wa.me/${siteContent.whatsapp.replace(/[^0-9]/g, '')}?text=Hi,%20I%20want%20to%20inquire%20about%20construction%20materials`}
+        href={waHref(siteContent.whatsapp, 'Hi, I want to inquire about construction materials')}
         target="_blank"
         rel="noreferrer"
         className="w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:scale-110 transition-all duration-300"
@@ -22,7 +23,7 @@ export default function FloatingButtons() {
         <WhatsAppIcon className="w-7 h-7 text-white" />
       </a>
       <a
-        href={`tel:${siteContent.phone}`}
+        href={telHref(siteContent.phone)}
         className="w-14 h-14 bg-blue-500 hover:bg-blue-400 rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:scale-110 transition-all duration-300"
         title="Call Store"
       >

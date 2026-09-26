@@ -1,5 +1,6 @@
 import { Building2, Truck, Scissors, ShieldCheck, Phone, ExternalLink, Check } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { telHref, waHref } from '../lib/phone';
 
 const iconMap: Record<string, any> = {
   Building2,
@@ -75,12 +76,12 @@ export default function Services() {
                   ))}
                 </ul>
                 <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between mt-auto">
-                  <a href={`tel:${siteContent.phone}`} className="text-white hover:text-amber-300 font-bold text-xs flex items-center space-x-1">
+                  <a href={telHref(siteContent.phone)} className="text-white hover:text-amber-300 font-bold text-xs flex items-center space-x-1">
                     <Phone className="w-3.5 h-3.5" />
                     <span>Call for Quote</span>
                   </a>
                   <a
-                    href={`https://wa.me/${siteContent.whatsapp.replace(/[^0-9]/g, '')}?text=Hi,%20I%20want%20to%20inquire%20about%20${encodeURIComponent(svc.title)}`}
+                    href={waHref(siteContent.whatsapp, `Hi, I want to inquire about ${svc.title}`)}
                     target="_blank"
                     rel="noreferrer"
                     className="bg-pink-600/20 hover:bg-pink-600/30 text-fuchsia-300 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1 border border-pink-500/30"

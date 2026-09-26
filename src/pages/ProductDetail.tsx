@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ArrowLeft, ShoppingCart, Phone, Minus, Plus, Shield, Truck, Star, ChevronRight, MapPin, Clock, Check, Package, ZoomIn, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { telHref, waHref } from '../lib/phone';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -41,8 +42,7 @@ export default function ProductDetail() {
   const handleAddToCart = () => { addToCart(product, quantity, selectedSize || undefined); };
   const handleBuyNow = () => { addToCart(product, quantity, selectedSize || undefined); setPage('checkout'); };
   const handleWhatsApp = () => {
-    const msg = encodeURIComponent(`Hello HSN Cement & Steel,\n\nI am interested in:\nProduct: ${product.name}\nVariant: ${selectedSize || 'Standard'}\nQuantity: ${quantity}\nPrice: Rs.${currentPrice}/${unit}\n\nPlease provide availability and delivery details.`);
-    window.open(`https://wa.me/${siteContent.whatsapp.replace(/[^0-9]/g, '')}?text=${msg}`, '_blank');
+    window.open(waHref(siteContent.whatsapp, `Hello HSN Cement & Steel,\n\nI am interested in:\nProduct: ${product.name}\nVariant: ${selectedSize || 'Standard'}\nQuantity: ${quantity}\nPrice: Rs.${currentPrice}/${unit}\n\nPlease provide availability and delivery details.`), '_blank');
   };
 
   return (
@@ -180,7 +180,7 @@ export default function ProductDetail() {
               <button onClick={handleWhatsApp} className="flex items-center justify-center space-x-2 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-bold py-3 rounded-2xl text-xs hover:bg-[#25D366]/20 transition">
                 <WhatsAppIcon className="w-4 h-4" /><span>Inquire on WhatsApp</span>
               </button>
-              <a href={`tel:${siteContent.phone}`} className="flex items-center justify-center space-x-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 font-bold py-3 rounded-2xl text-xs hover:bg-blue-500/20 transition">
+              <a href={telHref(siteContent.phone)} className="flex items-center justify-center space-x-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 font-bold py-3 rounded-2xl text-xs hover:bg-blue-500/20 transition">
                 <Phone className="w-4 h-4" /><span>Call for Bulk Quote</span>
               </a>
             </div>

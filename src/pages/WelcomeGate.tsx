@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ArrowRight, Phone, ShoppingBag, Star, Truck, Shield, MapPin, Package, ChevronRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { telHref, waHref } from '../lib/phone';
 import { bustedImageSrc } from '../lib/images';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -69,11 +70,11 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <a href={`tel:${siteContent.phone}`} className="flex items-center space-x-1.5 bg-white/10 hover:bg-white/15 border border-white/10 text-white px-3 py-2 rounded-xl text-[10px] sm:text-xs font-bold transition hover:scale-105">
+            <a href={telHref(siteContent.phone)} className="flex items-center space-x-1.5 bg-white/10 hover:bg-white/15 border border-white/10 text-white px-3 py-2 rounded-xl text-[10px] sm:text-xs font-bold transition hover:scale-105">
               <Phone className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Call Now</span>
             </a>
-            <a href={`https://wa.me/${siteContent.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer"
+            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer"
               className="flex items-center space-x-1.5 bg-[#25D366]/90 hover:bg-[#25D366] text-white px-3 py-2 rounded-xl text-[10px] sm:text-xs font-bold transition hover:scale-105 border border-[#25D366]/30">
               <WhatsAppIcon className="w-3.5 h-3.5" />
               <span>WhatsApp</span>

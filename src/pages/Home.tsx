@@ -3,6 +3,7 @@ import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Pac
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
+import { telHref } from '../lib/phone';
 
 const pricingTiers = {
   cement: [
@@ -66,7 +67,7 @@ export default function Home() {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition" />
             </button>
             <a
-              href={`tel:${siteContent.phone}`}
+              href={telHref(siteContent.phone)}
               className="bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white font-bold px-8 py-4 rounded-2xl text-center transition flex items-center justify-center space-x-2 text-base backdrop-blur-md shadow-xl"
             >
               <Phone className="w-5 h-5" />

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { telHref, nationalDigits } from '../lib/phone';
+import { bustedImageSrc } from '../lib/images';
+import { QRCodeSVG } from 'qrcode.react';
 import { ORDER_STATUSES } from '../types';
 
 const statusIcons: Record<string, any> = {
@@ -8,7 +11,7 @@ const statusIcons: Record<string, any> = {
 };
 
 export default function OrderTracking({ initialOrderId }: { initialOrderId?: string }) {
-  const { getOrderById, setPage } = useApp();
+  const { getOrderById, setPage, siteContent } = useApp();
   const [orderId, setOrderId] = useState(initialOrderId || '');
   const [mobile, setMobile] = useState('');
   const [found, setFound] = useState(false);
@@ -41,6 +44,7 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
   }, [initialOrderId, getOrderById]);
 
   const order = found ? getOrderById(orderId.trim()) : null;
+  const trackUrl = order ? `${window.location.origin}/track-order/${order.orderId}` : '';
 
   return (
     <div className="py-12 min-h-screen bg-transparent relative z-10">
@@ -117,6 +121,18 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
               })}
             </div>
 
+            {/* Share / re-open this tracking page (same QR as the invoice) */}
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 flex items-center space-x-4">
+              <div className="w-20 h-20 shrink-0 rounded-lg bg-white p-1.5">
+                <QRCodeSVG value={trackUrl} size={68} level="M" marginSize={0} />
+              </div>
+              <div className="min-w-0">
+                <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN logo" className="h-8 mb-1 rounded object-contain" />
+                <div className="text-xs font-bold text-white">HSN Cement & Steel</div>
+                <div className="text-[10px] text-slate-400">Scan to re-open live status of this order</div>
+              </div>
+            </div>
+
             {/* Delivery Info */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
               <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-blue-400" /><span className="text-slate-300">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
@@ -128,7 +144,7 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
 
         {/* Help */}
         <div className="text-center mt-8 text-xs text-slate-500">
-          Need help? <a href={`tel:07989494779`} className="text-blue-400 font-bold hover:underline">Call 07989494779</a>
+          Need help? <a href={telHref(siteContent.phone)} className="text-blue-400 font-bold hover:underline">Call {nationalDigits(siteContent.phone)}</a>
         </div>
       </div>
     </div>

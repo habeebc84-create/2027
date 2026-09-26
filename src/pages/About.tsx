@@ -1,5 +1,6 @@
 import { Shield, Truck, Heart, Phone } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { telHref } from '../lib/phone';
 
 export default function About() {
   const { siteContent } = useApp();
@@ -29,7 +30,7 @@ export default function About() {
               </div>
             </div>
             <div className="pt-2">
-              <a href={`tel:${siteContent.phone}`} className="bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold px-6 py-3 rounded-xl text-sm inline-flex items-center space-x-2 transition">
+              <a href={telHref(siteContent.phone)} className="bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold px-6 py-3 rounded-xl text-sm inline-flex items-center space-x-2 transition">
                 <Phone className="w-4 h-4" />
                 <span>Contact Store Manager</span>
               </a>

@@ -1,6 +1,7 @@
 import { MapPin, Phone as PhoneIcon, Clock, Shield } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
+import { telHref, waHref, nationalDigits } from '../lib/phone';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -71,11 +72,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center space-x-2">
                 <PhoneIcon className="w-4 h-4 text-white shrink-0" />
-                <a href={`tel:${siteContent.phone}`} className="hover:text-white font-bold">{siteContent.phone}</a>
+                <a href={telHref(siteContent.phone)} className="hover:text-white font-bold">{nationalDigits(siteContent.phone)}</a>
               </li>
               <li className="flex items-center space-x-2">
                 <WhatsAppIcon className="w-4 h-4 text-pink-400 shrink-0" />
-                <a href={`https://wa.me/${siteContent.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="hover:text-pink-400 font-bold">{siteContent.whatsapp}</a>
+                <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hover:text-pink-400 font-bold">{siteContent.whatsapp}</a>
               </li>
               <li className="flex items-center space-x-2">
                 <Clock className="w-4 h-4 text-white shrink-0" />

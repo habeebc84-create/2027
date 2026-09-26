@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ArrowLeft, MapPin, Phone, CreditCard, Truck } from 'lucide-react';
+import { ArrowLeft, MapPin, CreditCard, Truck } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
 
 export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCart: () => void; onOrderSuccess: (orderId: string) => void }) {
-  const { cart, cartTotal, cartCount, placeOrder, showToast, transportZones, siteContent, setPage } = useApp();
+  const { cart, cartTotal, cartCount, placeOrder, showToast, transportZones } = useApp();
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [email, setEmail] = useState('');

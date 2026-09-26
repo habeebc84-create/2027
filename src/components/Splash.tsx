@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Shield, MapPin, Truck, Award, ArrowRight, Phone, Clock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { telHref, waHref } from '../lib/phone';
 import { bustedImageSrc } from '../lib/images';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -39,8 +40,8 @@ export default function Splash() {
     }, 800);
   };
 
-  const phone = siteContent.phone || '919999999999';
-  const whatsapp = (siteContent.whatsapp || '919999999999').replace(/[^0-9]/g, '');
+  const callHref = telHref(siteContent.phone);
+  const whatsappHref = waHref(siteContent.whatsapp);
 
   return (
     <div
@@ -81,11 +82,11 @@ export default function Splash() {
             </div>
           </div>
           <div className="splash-nav-actions">
-            <button className="splash-nav-btn splash-call" onClick={() => window.location.href = `tel:+${phone}`} aria-label="Call Now">
+            <button className="splash-nav-btn splash-call" onClick={() => window.location.href = callHref} aria-label="Call Now">
               <Phone className="w-4 h-4" />
               <span>Call Now</span>
             </button>
-            <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="splash-nav-btn splash-whatsapp" aria-label="WhatsApp">
+            <a href={whatsappHref} target="_blank" rel="noreferrer" className="splash-nav-btn splash-whatsapp" aria-label="WhatsApp">
               <WhatsAppIcon className="w-4 h-4" />
               <span>WhatsApp</span>
             </a>
@@ -122,7 +123,7 @@ export default function Splash() {
               </span>
               <span className="splash-arrow">→</span>
             </button>
-            <button className="splash-secondary-btn" onClick={() => window.location.href = `tel:+${phone}`} aria-label="Call store now">
+            <button className="splash-secondary-btn" onClick={() => window.location.href = callHref} aria-label="Call store now">
               <Phone className="w-5 h-5" />
               <span>Call Store Now</span>
             </button>

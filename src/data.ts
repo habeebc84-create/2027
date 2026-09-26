@@ -167,7 +167,7 @@ export const defaultSiteContent: SiteContent = {
   address: 'Kalikiri, Annamayya District, Andhra Pradesh – 517234',
   locationDetails: 'Near Main Highway, Kalikiri Landmark Hub',
   pincode: '517234',
-  phone: '07989494779',
+  phone: '7989494779',
   whatsapp: '+91 9179173040',
   businessHours: 'Open 12 Hours (7:00 AM - 7:00 PM Daily)',
   googleMapsEmbed: 'https://maps.google.com/maps?q=MR23%2BGF%20Kalikiri%2C%20Andhra%20Pradesh&z=17&output=embed',

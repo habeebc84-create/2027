@@ -1,4 +1,5 @@
 import { useApp } from '../context/AppContext';
+import { nationalDigits } from '../lib/phone';
 
 export default function Terms() {
   const { setPage, siteContent } = useApp();
@@ -49,7 +50,7 @@ export default function Terms() {
           <div>
             <h2 className="text-lg font-bold text-white mb-3">6. Contact</h2>
             <p className="leading-relaxed">
-              For any queries regarding these terms, please contact us at {siteContent.phone} or visit our store at {siteContent.address}.
+              For any queries regarding these terms, please contact us at {nationalDigits(siteContent.phone)} or visit our store at {siteContent.address}.
             </p>
           </div>
         </div>
