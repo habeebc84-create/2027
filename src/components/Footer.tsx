@@ -75,8 +75,8 @@ export default function Footer() {
                 <a href={telHref(siteContent.phone)} className="hover:text-white font-bold">{nationalDigits(siteContent.phone)}</a>
               </li>
               <li className="flex items-center space-x-2">
-                <WhatsAppIcon className="w-4 h-4 text-pink-400 shrink-0" />
-                <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hover:text-pink-400 font-bold">{siteContent.whatsapp}</a>
+                <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
+                <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hover:text-[#25D366] font-bold">{siteContent.whatsapp}</a>
               </li>
               <li className="flex items-center space-x-2">
                 <Clock className="w-4 h-4 text-white shrink-0" />

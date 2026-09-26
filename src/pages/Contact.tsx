@@ -55,10 +55,10 @@ export default function Contact() {
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <WhatsAppIcon className="w-5 h-5 text-pink-400 shrink-0 mt-1" />
+                <WhatsAppIcon className="w-5 h-5 text-[#25D366] shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">WhatsApp Number</div>
-                  <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="text-pink-400 font-bold hover:underline">{siteContent.whatsapp}</a>
+                  <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="text-[#25D366] font-bold hover:underline">{siteContent.whatsapp}</a>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
@@ -71,7 +71,7 @@ export default function Contact() {
             </div>
             <div className="pt-4 border-t border-slate-800 flex space-x-3">
               <a href={telHref(siteContent.phone)} className="flex-1 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold py-3 rounded-xl text-xs text-center transition">Call Store</a>
-              <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
+              <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
             </div>
           </div>
 

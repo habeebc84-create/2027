@@ -84,7 +84,7 @@ export default function Services() {
                     href={waHref(siteContent.whatsapp, `Hi, I want to inquire about ${svc.title}`)}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-pink-600/20 hover:bg-pink-600/30 text-fuchsia-300 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1 border border-pink-500/30"
+                    className="bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1 border border-[#25D366]/30"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>WhatsApp Inquiry</span>
