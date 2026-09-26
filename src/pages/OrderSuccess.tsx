@@ -66,19 +66,22 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   drawLogo(8);
   drawLogo(W - 30);
 
-  // Letterhead: name centered, tagline, contact info left-aligned beside the right logo
+  // Letterhead: business name, tagline and contact info all left-aligned at
+  // the same x position, stacked as one block beside the left logo.
+  const lx = 36;
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(17);
-  doc.text(siteSettings.businessName.toUpperCase(), W / 2, 13, { align: 'center' });
+  doc.setFontSize(16);
+  doc.text(siteSettings.businessName.toUpperCase(), lx, 13.5, { align: 'left' });
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(7.5);
   doc.setTextColor(196, 181, 253);
-  doc.text('P R E M I U M   B U I L D I N G   M A T E R I A L S', W / 2, 18, { align: 'center' });
+  doc.text('P R E M I U M   B U I L D I N G   M A T E R I A L S', lx, 18.5, { align: 'left' });
   doc.setTextColor(255, 255, 255);
-  const headerLines = doc.splitTextToSize(`${siteSettings.address}  |  GSTIN: ${siteSettings.gstNumber}  |  Ph: ${siteSettings.phone}`, 118) as string[];
-  let hy = 23;
-  headerLines.slice(0, 3).forEach(l => { doc.text(l, 36, hy, { align: 'left' }); hy += 4; });
+  doc.setFontSize(8);
+  const headerLines = doc.splitTextToSize(`${siteSettings.address}  |  GSTIN: ${siteSettings.gstNumber}  |  Ph: ${siteSettings.phone}`, 136) as string[];
+  let hy = 23.5;
+  headerLines.slice(0, 2).forEach(l => { doc.text(l, lx, hy, { align: 'left' }); hy += 4.2; });
 
   // ===== Title =====
   let y = 46;
