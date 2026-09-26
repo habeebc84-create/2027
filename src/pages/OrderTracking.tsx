@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft } from 'lucide-react';
+import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft, Copy, Check, Loader2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, nationalDigits } from '../lib/phone';
 import { orderTrackingUrl } from '../lib/deepLink';
@@ -18,6 +18,8 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
   const [found, setFound] = useState(false);
   const [error, setError] = useState('');
   const [searching, setSearching] = useState(false);
+  const [autoOpening, setAutoOpening] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const handleSearch = () => {
     setError(''); setFound(false);
@@ -35,18 +37,19 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
     if (!initialOrderId) return;
     let alive = true;
     setSearching(true);
+    setAutoOpening(true);
     const attempt = async (tries = 0) => {
       if (getOrderById(initialOrderId)) {
-        if (alive) { setFound(true); setSearching(false); }
+        if (alive) { setFound(true); setSearching(false); setAutoOpening(false); }
         return;
       }
       await refreshFromCloud();
       if (getOrderById(initialOrderId)) {
-        if (alive) { setFound(true); setSearching(false); }
+        if (alive) { setFound(true); setSearching(false); setAutoOpening(false); }
         return;
       }
       if (tries < 7 && alive) { setTimeout(() => attempt(tries + 1), 1200); }
-      else if (alive) { setSearching(false); setError('Order not found on this device yet. Please try again in a moment.'); }
+      else if (alive) { setSearching(false); setAutoOpening(false); setError('Order not found on this device yet. Please try again in a moment.'); }
     };
     void attempt();
     return () => { alive = false; };
@@ -54,6 +57,13 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
 
   const order = found ? getOrderById(orderId.trim()) : null;
   const trackUrl = order ? orderTrackingUrl(order.orderId) : '';
+
+  const copyTrackingLink = () => {
+    if (!trackUrl) return;
+    navigator.clipboard.writeText(trackUrl);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  };
 
   return (
     <div className="py-12 min-h-screen bg-transparent relative z-10">
@@ -71,6 +81,12 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
         <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8">
           <div className="space-y-4">
             {error && <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl text-xs font-bold text-center">{error}</div>}
+            {autoOpening && !found && (
+              <div className="bg-blue-500/10 border border-blue-500/30 text-blue-300 px-4 py-3 rounded-xl text-xs font-bold text-center flex items-center justify-center space-x-2">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Opening live tracking for order #{initialOrderId}…</span>
+              </div>
+            )}
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-1.5">Order ID</label>
               <input type="text" value={orderId} onChange={e => setOrderId(e.target.value)} placeholder="e.g., HSN-2026-00001"
@@ -137,8 +153,11 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
               </div>
               <div className="min-w-0">
                 <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN logo" className="h-8 mb-1 rounded object-contain" />
-                <div className="text-xs font-bold text-white">HSN Cement & Steel</div>
+                <div className="text-xs font-bold text-white">HSN Cement &amp; Steel</div>
                 <div className="text-[10px] text-slate-400">Scan to re-open live status of this order</div>
+                <button onClick={copyTrackingLink} className="mt-2 inline-flex items-center space-x-1.5 bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-[10px] font-bold text-slate-300 hover:text-white hover:bg-white/15 transition">
+                  {linkCopied ? <><Check className="w-3 h-3 text-emerald-400" /><span className="text-emerald-400">Link copied!</span></> : <><Copy className="w-3 h-3" /><span>Copy tracking link</span></>}
+                </button>
               </div>
             </div>
 

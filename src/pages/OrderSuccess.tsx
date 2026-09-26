@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Check, Copy, Download, Phone, ShoppingCart, MapPin, Clock, Truck, CreditCard, Package } from 'lucide-react';
+import { Check, Copy, Download, Phone, ShoppingCart, MapPin, Clock, Truck, CreditCard, Package, Loader2, ExternalLink } from 'lucide-react';
 import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
@@ -33,8 +33,8 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   const delivery = order.finalDeliveryCharge ?? order.deliveryCharge;
   const handling = order.handlingCharge;
   const adjustment = Math.round((order.total - subtotal - delivery - handling) * 100) / 100;
-  const inr = (n: number) => `Rs.${n.toLocaleString('en-IN')}`;
-  const dateStr = new Date(order.date).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const inr = (n: number) => `Rs. ${n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const dateStr = new Date(order.date).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
   const trackingUrl = orderTrackingUrl(order.orderId);
 
   const doc = new (await import('jspdf')).jsPDF({ unit: 'mm', format: 'a4' });
@@ -66,14 +66,16 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   drawLogo(8);
   drawLogo(W - 30);
 
-  // Letterhead: name centered, contact info left-aligned beside the right logo
+  // Letterhead: name centered, tagline, contact info left-aligned beside the right logo
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(17);
   doc.text(siteSettings.businessName.toUpperCase(), W / 2, 13, { align: 'center' });
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.text('PREMIUM BUILDING MATERIALS', W / 2, 18, { align: 'center' });
+  doc.setTextColor(196, 181, 253);
+  doc.text('P R E M I U M   B U I L D I N G   M A T E R I A L S', W / 2, 18, { align: 'center' });
+  doc.setTextColor(255, 255, 255);
   const headerLines = doc.splitTextToSize(`${siteSettings.address}  |  GSTIN: ${siteSettings.gstNumber}  |  Ph: ${siteSettings.phone}`, 118) as string[];
   let hy = 23;
   headerLines.slice(0, 3).forEach(l => { doc.text(l, 36, hy, { align: 'left' }); hy += 4; });
@@ -231,7 +233,17 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
   doc.text('Goods once sold will not be returned unless defective. Payment due as per agreed terms. Subject to Kalikiri, AP jurisdiction.', W / 2, footerY + 5, { align: 'center' });
-  doc.text(`Thank you for your business! — ${siteSettings.businessName}`, W / 2, footerY + 9, { align: 'center' });
+  doc.text(`Thank you for your business! - ${siteSettings.businessName}`, W / 2, footerY + 9, { align: 'center' });
+
+  // ===== Page numbers =====
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...GRAY);
+    doc.text(`Page ${i} of ${pageCount}`, 198, 293, { align: 'right' });
+  }
 
   doc.save(`HSN-Invoice-${order.orderId}.pdf`);
 }
@@ -239,6 +251,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
 export default function OrderSuccess({ orderId }: { orderId: string }) {
   const { getOrderById, setPage, siteContent, siteSettings, transportZones } = useApp();
   const [copied, setCopied] = useState(false);
+  const [invoiceBusy, setInvoiceBusy] = useState(false);
   const [animPhase, setAnimPhase] = useState(0);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const order = getOrderById(orderId);
@@ -277,9 +290,15 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
   const trackingUrl = orderTrackingUrl(order.orderId);
 
-  const handleDownloadInvoice = () => {
-    const qrDataUrl = qrCanvasRef.current?.toDataURL('image/png') ?? null;
-    void downloadInvoice(order, siteSettings, bustedImageSrc('/windows-h-logo.png'), qrDataUrl);
+  const handleDownloadInvoice = async () => {
+    if (invoiceBusy) return;
+    setInvoiceBusy(true);
+    try {
+      const qrDataUrl = qrCanvasRef.current?.toDataURL('image/png') ?? null;
+      await downloadInvoice(order, siteSettings, bustedImageSrc('/windows-h-logo.png'), qrDataUrl);
+    } finally {
+      setInvoiceBusy(false);
+    }
   };
 
   return (
@@ -334,9 +353,9 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
         {/* Action Buttons */}
         <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 transition-all duration-500 ${animPhase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <button onClick={handleDownloadInvoice} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-500/30 transition group">
-            <Download className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />
-            <span className="text-[10px] font-bold text-slate-300">Download Invoice</span>
+          <button onClick={handleDownloadInvoice} disabled={invoiceBusy} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-500/30 disabled:opacity-60 transition group">
+            {invoiceBusy ? <Loader2 className="w-5 h-5 text-blue-400 animate-spin" /> : <Download className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />}
+            <span className="text-[10px] font-bold text-slate-300">{invoiceBusy ? 'Preparing PDF…' : 'Download Invoice'}</span>
           </button>
           <a href={waHref(siteContent.whatsapp, `Hello HSN Cement & Steel, I have placed an order. Order ID: #${order.orderId}. Please confirm my order and delivery details.`)}
             target="_blank" rel="noreferrer" className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-[#25D366]/30 transition group">
@@ -432,7 +451,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500" />
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">HSN CEMENT & STEEL</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">HSN CEMENT &amp; STEEL</div>
                   <div className="text-[9px] text-slate-500">Premium Building Materials</div>
                 </div>
                 <span className={`text-[10px] font-black px-3 py-1 rounded-full border ${ORDER_STATUSES.find(s => s.key === order.status)?.color || 'text-slate-400 bg-white/5 border-white/10'}`}>
@@ -478,6 +497,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
                 <QRCodeSVG value={trackingUrl} size={112} level="M" marginSize={2} />
               </div>
               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Scan to Track Order #{order.orderId}</div>
+              <a href={trackingUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center space-x-1 text-[10px] font-bold text-blue-400 hover:text-blue-300 hover:underline transition">Track this order online <ExternalLink className="w-3 h-3" /></a>
             </div>
 
             {/* Customer Support */}
