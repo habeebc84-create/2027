@@ -8,7 +8,7 @@ import { changeAdminPassword } from '../lib/password';
 
 export default function AdminDashboard() {
   const ctx = useApp();
-  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, addAchievement, deleteAchievement, setOrderFinalDeliveryCharge } = ctx;
+  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, addCategory, updateCategory, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, addAchievement, deleteAchievement, setOrderFinalDeliveryCharge } = ctx;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const totalRevenue = orders.reduce((a, o) => a + o.total, 0);
@@ -381,21 +381,69 @@ export default function AdminDashboard() {
 
   // CATEGORIES
   const CategoriesSection = () => {
-    const [newCat, setNewCat] = useState('');
-    const handleAdd = () => {
-      if (!newCat) return;
-      ctx.addCategory({ id: `cat-${Date.now()}`, name: newCat, image: '/cement_banner_new.png', description: '', enabled: true });
-      setNewCat('');
+    const [newCatName, setNewCatName] = useState('');
+    const [newCatImage, setNewCatImage] = useState('');
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editCat, setEditCat] = useState({ name: '', image: '', description: '' });
+
+    const pickImage = (file: File | undefined, apply: (dataUrl: string) => void) => {
+      if (!file) return;
+      void compressImageFile(file).then(dataUrl => { if (dataUrl) apply(dataUrl); });
     };
+
+    const handleAdd = () => {
+      if (!newCatName.trim()) return;
+      ctx.addCategory({ id: `cat-${Date.now()}`, name: newCatName.trim(), image: newCatImage || '/cement_banner_new.png', description: '', enabled: true });
+      setNewCatName('');
+      setNewCatImage('');
+    };
+
+    const startEdit = (c: Category) => { setEditingId(c.id); setEditCat({ name: c.name, image: c.image, description: c.description }); };
+    const saveEdit = (id: string) => {
+      if (!editCat.name.trim()) return;
+      updateCategory(id, { name: editCat.name.trim(), image: editCat.image, description: editCat.description });
+      setEditingId(null);
+    };
+
     return (
       <div className="space-y-6">
         <TopHeader title="Categories" />
-        <div className="flex items-center space-x-3">
-          <input type="text" value={newCat} onChange={e => setNewCat(e.target.value)} placeholder="New category name" className="flex-1 bg-slate-900/50 border border-slate-700/50 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-          <button onClick={handleAdd} className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2"><Plus className="w-3.5 h-3.5" /><span>Add</span></button>
+        {/* Add new category */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+          <h3 className="text-xs font-black text-white uppercase tracking-wider mb-3">Add New Category</h3>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 space-y-3">
+              <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Category name (e.g. TMT Steel Bars)" className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+              <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+                <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newCatImage ? 'Change Image' : 'Upload Category Image'}</span></span>
+                <input type="file" accept="image/*" className="hidden" onChange={e => pickImage(e.target.files?.[0], setNewCatImage)} />
+              </label>
+            </div>
+            <div className="flex sm:flex-col items-center justify-center gap-3">
+              {newCatImage ? <img src={newCatImage} alt="Preview" className="w-20 h-20 object-cover rounded-xl border border-slate-700" /> : <div className="w-20 h-20 rounded-xl border border-dashed border-slate-700 flex items-center justify-center text-slate-600"><ImageIcon className="w-6 h-6" /></div>}
+              <button onClick={handleAdd} className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 self-stretch justify-center"><Plus className="w-3.5 h-3.5" /><span>Add</span></button>
+            </div>
+          </div>
         </div>
+        {/* Category grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map(c => (
+          {categories.map(c => editingId === c.id ? (
+            <div key={c.id} className="bg-white/5 border border-blue-500/40 rounded-2xl p-4 space-y-3 sm:col-span-2 lg:col-span-1">
+              <input type="text" value={editCat.name} onChange={e => setEditCat({ ...editCat, name: e.target.value })} className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+              <input type="text" value={editCat.description} onChange={e => setEditCat({ ...editCat, description: e.target.value })} placeholder="Short description (optional)" className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+              <div className="flex items-center gap-3">
+                <img src={editCat.image} alt="" className="w-12 h-12 rounded-xl object-cover border border-slate-700" />
+                <label className="flex-1 cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-3 py-2.5 text-center transition">
+                  <span className="text-[10px] font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-3.5 h-3.5" /><span>Change Image</span></span>
+                  <input type="file" accept="image/*" className="hidden" onChange={e => pickImage(e.target.files?.[0], img => setEditCat({ ...editCat, image: img }))} />
+                </label>
+              </div>
+              <div className="flex space-x-2">
+                <button onClick={() => saveEdit(c.id)} className="flex-1 bg-emerald-500 text-white px-3 py-2 rounded-xl text-[10px] font-bold">Save</button>
+                <button onClick={() => setEditingId(null)} className="flex-1 bg-slate-800 text-slate-300 px-3 py-2 rounded-xl text-[10px] font-bold">Cancel</button>
+              </div>
+            </div>
+          ) : (
             <div key={c.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:border-blue-500/30 transition">
               <div className="flex items-center space-x-3">
                 <img src={c.image} alt="" className="w-10 h-10 rounded-xl object-cover" />
@@ -404,7 +452,10 @@ export default function AdminDashboard() {
                   <div className="text-[10px] text-slate-400">{products.filter(p => p.category === c.name).length} products</div>
                 </div>
               </div>
-              <button onClick={() => deleteCategory(c.id)} className="text-slate-400 hover:text-rose-400"><Trash2 className="w-3.5 h-3.5" /></button>
+              <div className="flex items-center space-x-2">
+                <button onClick={() => startEdit(c)} className="text-slate-400 hover:text-blue-400" title="Edit"><Edit className="w-3.5 h-3.5" /></button>
+                <button onClick={() => deleteCategory(c.id)} className="text-slate-400 hover:text-rose-400" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
+              </div>
             </div>
           ))}
         </div>
