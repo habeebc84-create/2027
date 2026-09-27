@@ -7,14 +7,19 @@ const LOCK_KEY = 'hsn_admin_login_lock';
 interface LockState {
   attempts: number; // failed credential attempts so far
   until: number; // timestamp (ms) until which login is locked; 0 = unlocked
+  lastFail?: number; // timestamp (ms) of the most recent failed attempt
 }
+
+// A failure streak only feeds the escalating cooldown while failures stay
+// recent; after a quiet gap the next wrong attempt starts the timer at 10s again.
+const ATTEMPT_DECAY_MS = 5 * 60 * 1000;
 
 function readLock(): LockState {
   try {
     const raw = localStorage.getItem(LOCK_KEY);
     if (!raw) return { attempts: 0, until: 0 };
     const parsed = JSON.parse(raw) as Partial<LockState>;
-    return { attempts: parsed.attempts ?? 0, until: parsed.until ?? 0 };
+    return { attempts: parsed.attempts ?? 0, until: parsed.until ?? 0, lastFail: parsed.lastFail ?? 0 };
   } catch {
     return { attempts: 0, until: 0 };
   }
@@ -28,8 +33,11 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [lock, setLock] = useState<LockState>(() => {
     const l = readLock();
-    // Expired locks start fresh (attempts kept so escalation continues)
-    return l.until > Date.now() ? l : { attempts: l.attempts, until: 0 };
+    if (l.until > Date.now()) return l;
+    // Expired lock: keep past attempts only while failures are recent, so a
+    // stale streak never inflates a fresh cooldown (always restarts at 10s).
+    const stale = !l.lastFail || Date.now() - l.lastFail > ATTEMPT_DECAY_MS;
+    return { attempts: stale ? 0 : l.attempts, until: 0, lastFail: l.lastFail ?? 0 };
   });
   const [now, setNow] = useState(Date.now());
 
@@ -66,16 +74,21 @@ export default function AdminLogin() {
     const success = await loginAdmin(email, password);
     setSubmitting(false);
     if (success) {
-      setLock({ attempts: 0, until: 0 });
+      // Reset the streak AND persist it immediately — the component unmounts
+      // right after setPage('admin'), which can skip the persistence effect and
+      // leak old attempts into the next login session.
+      const cleared: LockState = { attempts: 0, until: 0, lastFail: 0 };
+      setLock(cleared);
+      try { localStorage.setItem(LOCK_KEY, JSON.stringify(cleared)); } catch { /* storage unavailable */ }
       setPage('admin');
     } else {
       const next = lock.attempts + 1;
       if (next >= 2) {
         // 2nd failure -> 10s, 3rd -> 20s, 4th -> 30s, ...
         const secs = (next - 1) * 10;
-        setLock({ attempts: next, until: Date.now() + secs * 1000 });
+        setLock({ attempts: next, until: Date.now() + secs * 1000, lastFail: Date.now() });
       } else {
-        setLock({ attempts: next, until: 0 });
+        setLock({ attempts: next, until: 0, lastFail: Date.now() });
         setError('Invalid credentials. Access denied.');
       }
     }
