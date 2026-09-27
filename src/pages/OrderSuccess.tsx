@@ -18,6 +18,9 @@ const NAVY: [number, number, number] = [26, 26, 46];
 const PURPLE: [number, number, number] = [124, 58, 237];
 const GRAY: [number, number, number] = [90, 90, 105];
 const LIGHT: [number, number, number] = [235, 236, 242];
+const GREEN: [number, number, number] = [16, 185, 129];
+const ROSE: [number, number, number] = [244, 63, 94];
+const WHITE: [number, number, number] = [255, 255, 255];
 
 /**
  * Generates a real PDF invoice with the HSN logo on BOTH sides of the header
@@ -92,6 +95,17 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setDrawColor(...PURPLE);
   doc.setLineWidth(0.5);
   doc.line(80, y + 2, 130, y + 2);
+  // Order status badge on the right of the title
+  const statusLabel = (ORDER_STATUSES.find(s => s.key === order.status)?.label || order.status).toUpperCase();
+  const badgeFill = order.status === 'delivered' ? GREEN : order.status === 'cancelled' ? ROSE : PURPLE;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  const badgeW = doc.getTextWidth(statusLabel) + 7;
+  const badgeX = 198 - badgeW;
+  doc.setFillColor(...badgeFill);
+  doc.roundedRect(badgeX, y - 5.8, badgeW, 6, 3, 3, 'F');
+  doc.setTextColor(...WHITE);
+  doc.text(statusLabel, badgeX + badgeW / 2, y - 1.9, { align: 'center' });
   y += 9;
 
   // ===== Meta boxes =====
@@ -99,6 +113,8 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setFillColor(...LIGHT);
   doc.roundedRect(12, metaTop, 88, 26, 2, 2, 'F');
   doc.roundedRect(104, metaTop, 94, 26, 2, 2, 'F');
+  doc.setFillColor(...PURPLE);
+  doc.roundedRect(12, metaTop, 2, 26, 1, 1, 'F');
 
   const metaLine = (label: string, value: string, ly: number) => {
     doc.setFont('helvetica', 'normal');
@@ -135,7 +151,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   // ===== Items table =====
   const cols = { no: 13, product: 20, brand: 88, variant: 114, qty: 134, rate: 148, amount: 196 };
   const drawTableHeader = (ty: number) => {
-    doc.setFillColor(...NAVY);
+    doc.setFillColor(...PURPLE);
     doc.rect(12, ty, 186, 8, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
@@ -148,6 +164,10 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.text('RATE', cols.rate, ty + 5.5);
     doc.text('AMOUNT', cols.amount, ty + 5.5, { align: 'right' });
   };
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  doc.setTextColor(...GRAY);
+  doc.text('ITEMS', 12, y - 2.5);
   drawTableHeader(y);
   y += 8;
 
@@ -176,15 +196,19 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   });
 
   // ===== Totals =====
-  y += 6;
+  y += 8;
   const totalsX = 118;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  doc.setTextColor(...GRAY);
+  doc.text('SUMMARY', totalsX + 4, y - 2.5);
   const totalRow = (label: string, value: string, bold = false, fill = false) => {
-    if (fill) { doc.setFillColor(...LIGHT); doc.rect(totalsX, y - 4.5, 80, 8, 'F'); }
+    if (fill) { doc.setFillColor(...PURPLE); doc.roundedRect(totalsX, y - 4.5, 80, 8, 1.5, 1.5, 'F'); }
     doc.setFont('helvetica', bold ? 'bold' : 'normal');
     doc.setFontSize(bold ? 11 : 9);
-    doc.setTextColor(...(bold ? NAVY : GRAY));
+    doc.setTextColor(...(fill ? WHITE : bold ? NAVY : GRAY));
     doc.text(label, totalsX + 4, y);
-    doc.setTextColor(...NAVY);
+    doc.setTextColor(...(fill ? WHITE : NAVY));
     doc.text(value, 198, y, { align: 'right' });
     y += bold ? 9 : 6.5;
   };
@@ -203,9 +227,9 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.setLineWidth(0.3);
     doc.roundedRect(qx, qy, 40, 47, 2, 2, 'S');
     doc.addImage(qrDataUrl, 'PNG', qx + 6, qy + 4, 28, 28);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
-    doc.setTextColor(...GRAY);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(6.5);
+    doc.setTextColor(...PURPLE);
     doc.text('SCAN TO TRACK ORDER', qx + 20, qy + 37, { align: 'center' });
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
@@ -232,6 +256,8 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text(`Track online: ${trackingUrl}`, W / 2, footerY - 4, { align: 'center' });
   doc.setFillColor(...NAVY);
   doc.rect(0, footerY, W, 12, 'F');
+  doc.setFillColor(...PURPLE);
+  doc.rect(0, footerY - 0.8, W, 0.8, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
