@@ -149,7 +149,10 @@ export default function AdminDashboard() {
     const today = orders.filter(o => new Date(o.date).toDateString() === now.toDateString());
     const thisWeek = orders.filter(o => { const d = new Date(o.date); const diff = (now.getTime() - d.getTime()) / 86400000; return diff <= 7; });
     const thisMonth = orders.filter(o => new Date(o.date).getMonth() === now.getMonth() && new Date(o.date).getFullYear() === now.getFullYear());
-    const bestSelling = [...products].sort((a, b) => b.stock - a.stock).slice(0, 5);
+    // Top sellers computed from real order lines (units sold), not stock levels.
+    const unitsByProduct = orders.flatMap(o => o.items.map(i => [i.product.name, i.quantity] as const))
+      .reduce((acc, [name, qty]) => { acc[name] = (acc[name] || 0) + qty; return acc; }, {} as Record<string, number>);
+    const bestSelling = Object.entries(unitsByProduct).sort((a, b) => b[1] - a[1]).slice(0, 5);
     const lowStock = products.filter(p => p.stock < 50 && p.enabled);
 
     return (
@@ -201,6 +204,26 @@ export default function AdminDashboard() {
                     <span className="text-xs font-bold text-amber-400">{p.stock} left</span>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 lg:col-span-2">
+            <h3 className="text-sm font-bold text-white mb-4">Top Selling Products — Units Sold</h3>
+            {bestSelling.length === 0 ? <p className="text-xs text-slate-500 text-center py-8">No sales recorded yet</p> : (
+              <div className="space-y-3">
+                {bestSelling.map(([name, units], i) => {
+                  const maxUnits = bestSelling[0][1] || 1;
+                  return (
+                    <div key={name} className="flex items-center space-x-3">
+                      <span className="w-5 h-5 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 text-[9px] font-black text-white flex items-center justify-center shrink-0">{i + 1}</span>
+                      <span className="w-36 sm:w-44 text-xs font-bold text-slate-200 line-clamp-1">{name}</span>
+                      <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all" style={{ width: `${(units / maxUnits) * 100}%` }} />
+                      </div>
+                      <span className="text-xs font-black text-white w-16 text-right">{units} units</span>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

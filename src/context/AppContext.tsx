@@ -117,6 +117,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Only genuine local edits (updateSiteContent) may push to the cloud —
   // never a visitor's initial localStorage state on page load.
   const localEditRef = useRef(false);
+  // Orders intentionally deleted by the admin. Sent with every cloud snapshot
+  // so other devices drop them too instead of re-merging them from stale cloud data.
+  const deletedOrderIdsRef = useRef<Set<string>>(new Set());
   const [banners] = useState<Banner[]>(() => load('hsn_banners', defaultBanners));
   const [transportZones, setTransportZones] = useState<TransportZone[]>(() => load('hsn_transportZones', defaultTransportZones));
   const [achievements, setAchievements] = useState<Achievement[]>(() => load('hsn_achievements', []));
@@ -168,6 +171,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       terms: termsContent,
       achievements,
       orders,  // orders included so the owner sees location-shared orders on all devices
+      deletedOrders: [...deletedOrderIdsRef.current], // tombstones: every device removes these for good
     };
     void pushRemoteContent(snapshot).then(version => {
       if (version) {
@@ -196,16 +200,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (Array.isArray(json.contentBlocks)) setContentBlocks(json.contentBlocks as ContentBlock[]);
       if (Array.isArray(json.terms)) setTermsContent(json.terms as TermsContent[]);
       if (Array.isArray(json.achievements)) setAchievements(json.achievements as Achievement[]);
-      // Orders: merge cloud orders that this device doesn't have (never remove local ones).
+      // Orders: merge cloud orders this device doesn't have — except ones the
+      // admin deleted (tombstoned in deletedOrders), which are removed for good.
       if (Array.isArray(json.orders)) {
         const cloudOrders = json.orders as Order[];
+        const deletedIds = new Set(Array.isArray(json.deletedOrders) ? json.deletedOrders as string[] : []);
         setOrders(prev => {
-          const ids = new Set(prev.map(o => o.id));
-          const missing = cloudOrders.filter(o => !ids.has(o.id));
-          if (missing.length === 0) return prev;
-          const merged = [...prev, ...missing].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          // Drop tombstoned orders locally so deletions win on every device.
+          const survivors = prev.filter(o => !deletedIds.has(o.orderId));
+          if (survivors.length !== prev.length) { localEditRef.current = true; save('hsn_orders', survivors); }
+          const ids = new Set(survivors.map(o => o.id));
+          const missing = cloudOrders.filter(o => !ids.has(o.id) && !deletedIds.has(o.orderId));
+          if (missing.length === 0) return survivors.length !== prev.length ? survivors : prev;
+          const merged = [...survivors, ...missing].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           save('hsn_orders', merged);
-          return merged;
+ return merged;
         });
       }
     }
@@ -390,7 +399,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     showToast(`Order ${orderId} updated to ${status}`);
   }, [showToast]);
 
-  const deleteOrder = useCallback((orderId: string) => { setOrders(prev => { const u = prev.filter(o => o.orderId !== orderId); save('hsn_orders', u); return u; }); showToast('Order deleted'); }, [showToast]);
+  const deleteOrder = useCallback((orderId: string) => {
+    localEditRef.current = true; // propagate the deletion to the cloud snapshot
+    deletedOrderIdsRef.current = new Set([...deletedOrderIdsRef.current, orderId]);
+    setOrders(prev => {
+      const u = prev.filter(o => o.orderId !== orderId);
+      save('hsn_orders', u);
+      return u;
+    });
+    showToast('Order deleted — removing from all devices…');
+  }, [showToast]);
   const deleteCustomer = useCallback((customerId: string) => { setCustomers(prev => { const u = prev.filter(c => c.id !== customerId); save('hsn_customers', u); return u; }); showToast('Customer deleted'); }, [showToast]);
   const getOrderById = useCallback((orderId: string) => orders.find(o => o.orderId === orderId), [orders]);
 
