@@ -62,6 +62,9 @@ export default function Splash() {
             key={i}
             src={img}
             alt=""
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = '/hero_bg_ultra_8k.png';
+            }}
             className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${
               i === currentImg ? 'opacity-100' : 'opacity-0'
             }`}

@@ -13,44 +13,52 @@ export default function Terms() {
 
         <div className="bg-white/5 border border-slate-800 rounded-3xl p-6 sm:p-10 space-y-8 text-sm text-slate-300">
           <div>
-            <h2 className="text-lg font-bold text-white mb-3">1. General Terms</h2>
+            <h2 className="text-lg font-bold text-white mb-3">1. General Terms & Regulatory Compliance</h2>
             <p className="leading-relaxed">
-              Welcome to HSN CEMENT AND STEEL. By accessing or using our services, you agree to be bound by these terms and conditions. All products and services are subject to availability and pricing at the time of purchase.
+              Welcome to HSN CEMENT AND STEEL. By accessing or using our portal, you agree to be bound by these terms and conditions, complying with the Consumer Protection (Direct Selling &amp; E-Commerce) Rules 2020 and applicable Indian laws.
             </p>
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-white mb-3">2. Pricing & Payment</h2>
+            <h2 className="text-lg font-bold text-white mb-3">2. Statutory GST &amp; Invoicing</h2>
             <p className="leading-relaxed">
-              All prices displayed are daily wholesale rates and may vary based on market conditions. Final pricing is confirmed at the time of order placement. Payment modes accepted include Cash on Delivery and Online UPI/QR payment.
+              HSN CEMENT AND STEEL is a registered dealer operating under GSTIN guidelines. Tax Invoices with proper HSN/SAC code classifications (e.g., HSN 2523 for Cement, HSN 7214 for TMT Steel Rebar) are issued for all orders.
             </p>
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-white mb-3">3. Delivery Policy</h2>
+            <h2 className="text-lg font-bold text-white mb-3">3. BIS Quality Standards &amp; Mill Test Certificates</h2>
             <p className="leading-relaxed">
-              Delivery is available within Kalikiri mandal and nearby regions. Same-day dispatch for orders placed before 2:00 PM. Delivery charges vary by location as listed in our delivery zones section. Unloading support is provided at the site.
+              All steel rebar and cement supplies strictly comply with Bureau of Indian Standards (BIS) specifications (IS 1786 for High Strength Deformed Steel Bars and IS 1489/IS 269 for OPC/PPC Cement). Original manufacturer Mill Test Certificates (MTC) are provided on request for all structural building supplies.
             </p>
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-white mb-3">4. Product Quality</h2>
+            <h2 className="text-lg font-bold text-white mb-3">4. Legal Metrology &amp; Weights Measures</h2>
             <p className="leading-relaxed">
-              All cement and steel products are sourced directly from authorized manufacturers. Original Mill Test Certificates (MTC) are provided for all steel rebar and cement batches. 100% genuine quality guaranteed.
+              In full compliance with the Legal Metrology Act 2009, all packaged products (Cement, Binding Wires, Cutting Blades) bear standard declared net weights and MRP tags. Steel rebars are weighed using calibrated electronic weighbridges certified by the Department of Legal Metrology, Andhra Pradesh.
+            </p>
+
+          </div>
+
+          <div>
+            <h2 className="text-lg font-bold text-white mb-3">5. Pricing & Payment</h2>
+            <p className="leading-relaxed">
+              All prices displayed reflect live daily wholesale rates subject to steel/cement market fluctuations. Final billing prices are locked at order confirmation. Accepted payment options include Cash on Delivery (COD) and direct UPI/QR transfers.
             </p>
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-white mb-3">5. Returns & Refunds</h2>
+            <h2 className="text-lg font-bold text-white mb-3">6. Delivery & Dispatch Policy</h2>
             <p className="leading-relaxed">
-              Due to the nature of construction materials, returns are accepted only for damaged or incorrect products within 24 hours of delivery. Refunds will be processed within 3-5 business days after inspection.
+              Express site transportation is available in Kalikiri and adjacent mandals. Same-day dispatch applies for verified orders placed before 2:00 PM. On-site unloading assistance is provided as agreed per transport zone tariffs.
             </p>
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-white mb-3">6. Contact</h2>
+            <h2 className="text-lg font-bold text-white mb-3">7. Returns & Grievance Redressal</h2>
             <p className="leading-relaxed">
-              For any queries regarding these terms, please contact us at {nationalDigits(siteContent.phone)} or visit our store at {siteContent.address}.
+              Damaged, defective, or incorrect deliveries must be notified within 24 hours of site arrival. Approved returns or refunds are processed within 3-5 business days. Consumer grievances can be directed to our nodal officer at {nationalDigits(siteContent.phone)} or visited in person at {siteContent.address}.
             </p>
           </div>
         </div>
