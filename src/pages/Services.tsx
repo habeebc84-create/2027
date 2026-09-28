@@ -1,8 +1,8 @@
-import { Building2, Truck, Scissors, ShieldCheck, Phone, ExternalLink, Check } from 'lucide-react';
+import { Building2, Truck, Scissors, ShieldCheck, Phone, ExternalLink, Check, type LucideIcon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, LucideIcon> = {
   Building2,
   Truck,
   Scissors,
