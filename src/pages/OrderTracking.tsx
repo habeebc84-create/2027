@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft, Copy, Check, Loader2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, nationalDigits } from '../lib/phone';
@@ -7,7 +7,7 @@ import { bustedImageSrc } from '../lib/images';
 import { QRCodeSVG } from 'qrcode.react';
 import { ORDER_STATUSES } from '../types';
 
-const statusIcons: Record<string, any> = {
+const statusIcons: Record<string, React.ElementType> = {
   placed: Package, confirmed: CheckCircle, processing: Clock, ready_dispatch: Package, out_delivery: Truck, delivered: CheckCircle, cancelled: Package, returned: Package,
 };
 

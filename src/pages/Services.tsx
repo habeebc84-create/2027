@@ -1,8 +1,9 @@
+import React from 'react';
 import { Building2, Truck, Scissors, ShieldCheck, Phone, ExternalLink, Check } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, React.ElementType> = {
   Building2,
   Truck,
   Scissors,
