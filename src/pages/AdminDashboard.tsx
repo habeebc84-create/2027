@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, Edit, Trash2, Plus, Eye, Shield, Bell, FileText, Truck, ChevronDown, X, Menu, MapPin, Clock, Star, Search, Filter, Globe, Lock, Mail, Phone, CheckCircle, Image as ImageIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, Edit, Trash2, Plus, Bell, FileText, Truck, Menu, Clock, Search, Filter, Globe, Lock, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import type { AdminPage, Product, Category, TransportZone, ContentBlock, OrderStatus, Notification, Achievement } from '../types';
+import type { AdminPage, Product, Category, ContentBlock, OrderStatus, Notification, Achievement } from '../types';
 import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
 import { changeAdminPassword } from '../lib/password';
 
 export default function AdminDashboard() {
   const ctx = useApp();
-  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, addCategory, updateCategory, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, addAchievement, deleteAchievement, setOrderFinalDeliveryCharge } = ctx;
+  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, updateCategory, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, deleteAchievement, setOrderFinalDeliveryCharge } = ctx;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const totalRevenue = orders.reduce((a, o) => a + o.total, 0);
@@ -16,7 +17,7 @@ export default function AdminDashboard() {
   const deliveredOrders = orders.filter(o => o.status === 'delivered');
   const unreadNotifs = notifications.filter(n => !n.read).length;
 
-  const navItems: { id: AdminPage; label: string; icon: any; badge?: number }[] = [
+  const navItems: { id: AdminPage; label: string; icon: LucideIcon; badge?: number }[] = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp },
     { id: 'products', label: 'Products', icon: Package },
