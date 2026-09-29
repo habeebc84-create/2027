@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft, Copy, Check, Loader2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, nationalDigits } from '../lib/phone';
@@ -7,7 +7,7 @@ import { bustedImageSrc } from '../lib/images';
 import { QRCodeSVG } from 'qrcode.react';
 import { ORDER_STATUSES } from '../types';
 
-const statusIcons: Record<string, any> = {
+const statusIcons: Record<string, React.ElementType> = {
   placed: Package, confirmed: CheckCircle, processing: Clock, ready_dispatch: Package, out_delivery: Truck, delivered: CheckCircle, cancelled: Package, returned: Package,
 };
 
@@ -66,7 +66,7 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
   };
 
   return (
-    <div className="py-12 min-h-screen bg-transparent relative z-10">
+    <div className="py-6 sm:py-12 min-h-screen bg-transparent relative z-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <button onClick={() => setPage('home')} className="inline-flex items-center space-x-2 text-xs font-bold text-slate-300 hover:text-white transition mb-6">
           <ArrowLeft className="w-4 h-4" /><span>Back to Home</span>
@@ -78,7 +78,7 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
         </div>
 
         {/* Search Form */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8">
+        <div className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-8 backdrop-blur-xl mb-8">
           <div className="space-y-4">
             {error && <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl text-xs font-bold text-center">{error}</div>}
             {autoOpening && !found && (
@@ -105,13 +105,13 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
 
         {/* Order Result */}
         {order && (
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-8 backdrop-blur-xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
               <div>
                 <div className="text-lg font-black text-white">{order.orderId}</div>
                 <div className="text-xs text-slate-400">Placed on {new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
               </div>
-              <div className="text-right">
+              <div className="sm:text-right">
                 <div className="text-lg font-black text-white">Rs.{order.total.toLocaleString('en-IN')}</div>
                 <div className="text-xs text-slate-400">{order.items.length} item(s)</div>
               </div>
@@ -147,11 +147,11 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
             </div>
 
             {/* Share / re-open this tracking page (same QR as the invoice) */}
-            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 flex items-center space-x-4">
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
               <div className="w-20 h-20 shrink-0 rounded-lg bg-white p-1.5">
                 <QRCodeSVG value={trackUrl} size={68} level="M" marginSize={0} />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex flex-col items-center sm:items-start">
                 <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN logo" className="h-8 mb-1 rounded object-contain" />
                 <div className="text-xs font-bold text-white">HSN Cement &amp; Steel</div>
                 <div className="text-[10px] text-slate-400">Scan to re-open live status of this order</div>

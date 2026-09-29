@@ -142,7 +142,7 @@ function AppContent() {
   const showNav = !hideNavPages.includes(currentPage);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       {showNav && <Navbar onCartClick={() => setCartOpen(true)} />}
       <div className={showNav ? 'pt-[64px]' : ''}>
         {renderPage()}

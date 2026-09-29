@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { X, Megaphone, Tag, RefreshCw, AlertTriangle, Bell, LucideIcon } from 'lucide-react';
+import { X, Megaphone, Tag, RefreshCw, AlertTriangle, Bell } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
-const typeConfig: Record<string, { icon: LucideIcon; color: string; bg: string; border: string }> = {
+const typeConfig: Record<string, { icon: any; color: string; bg: string; border: string }> = {
   announcement: { icon: Megaphone, color: 'text-blue-400', bg: 'bg-blue-500/15', border: 'border-blue-500/30' },
   offer: { icon: Tag, color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/30' },
   update: { icon: RefreshCw, color: 'text-amber-400', bg: 'bg-amber-500/15', border: 'border-amber-500/30' },
