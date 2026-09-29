@@ -36,6 +36,14 @@ function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?
   return { page: routeMap[path] || 'home' };
 }
 
+// QR scans and shared invoice links (/track-order/<id>, /order-success/<id>,
+// legacy ?track=<id>) must open the order page immediately — never gated
+// behind the splash screen.
+function isOrderDeepLink(): boolean {
+  if (new URLSearchParams(window.location.search).has('track')) return true;
+  return /^\/(track-order|order-success)\/.+/.test(window.location.pathname);
+}
+
 function AppContent() {
   const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
@@ -55,6 +63,7 @@ function AppContent() {
     // then upgrade the URL to the pretty path.
     const trackParam = params.get('track');
     if (trackParam) {
+      dismissSplash(); // skip the splash gate — QR scans land straight on tracking
       setPage('order-tracking', trackParam);
       window.history.replaceState({}, '', `/track-order/${encodeURIComponent(trackParam)}`);
       return;
@@ -66,9 +75,11 @@ function AppContent() {
       setSelectedProductId(productId);
       setPage('product-detail');
     } else if (result.page === 'order-success' && result.orderId) {
+      dismissSplash(); // QR scans land straight on the order page
       setSuccessOrderId(result.orderId);
       setPage('order-success', result.orderId);
     } else if (result.page === 'order-tracking') {
+      if (result.orderId) dismissSplash(); // QR scans land straight on tracking
       setPage('order-tracking', result.orderId);
     } else if (path !== '/') {
       setPage(result.page);
@@ -98,7 +109,10 @@ function AppContent() {
   }, [isAdmin, setPage, setSelectedProductId]);
 
   const isLoginPage = window.location.pathname === '/manage-portal-9f3a';
-  if (!splashDismissed && !isLoginPage) return <Splash />;
+  // First paint on a QR deep link skips the splash gate; the mount effect
+  // persists the dismissal so navigating away never re-shows it either.
+  const deepLink = !isLoginPage && isOrderDeepLink();
+  if (!splashDismissed && !isLoginPage && !deepLink) return <Splash />;
 
   const renderPage = () => {
     switch (currentPage) {
