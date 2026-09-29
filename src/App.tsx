@@ -24,16 +24,19 @@ import Splash from './components/Splash';
 import type { Page } from './types';
 
 function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?: string } {
-  if (path === '/manage-portal-9f3a') return { page: isAdmin ? 'admin' : 'admin-login' };
-  if (path.startsWith('/product/')) return { page: 'product-detail' };
-  if (path.startsWith('/order-success/')) return { page: 'order-success', orderId: path.replace('/order-success/', '') };
-  if (path.startsWith('/track-order/')) return { page: 'order-tracking', orderId: path.replace('/track-order/', '') };
+  // Normalise scanner-app quirks: trailing slashes and URL-encoded IDs.
+  const clean = path.replace(/\/+$/, '');
+  const decode = (s: string) => { try { return decodeURIComponent(s); } catch { return s; } };
+  if (clean === '/manage-portal-9f3a') return { page: isAdmin ? 'admin' : 'admin-login' };
+  if (clean.startsWith('/product/')) return { page: 'product-detail' };
+  if (clean.startsWith('/order-success/')) return { page: 'order-success', orderId: decode(clean.replace('/order-success/', '')) };
+  if (clean.startsWith('/track-order/')) return { page: 'order-tracking', orderId: decode(clean.replace('/track-order/', '')) };
   const routeMap: Record<string, Page> = {
     '/': 'home', '/splash': 'splash', '/products': 'products', '/services': 'services',
     '/gallery': 'gallery', '/about': 'about', '/contact': 'contact',
     '/checkout': 'checkout', '/terms': 'terms', '/track-order': 'order-tracking',
   };
-  return { page: routeMap[path] || 'home' };
+  return { page: routeMap[clean] || routeMap[path] || 'home' };
 }
 
 // QR scans and shared invoice links (/track-order/<id>, /order-success/<id>,

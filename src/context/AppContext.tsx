@@ -410,7 +410,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     showToast('Order deleted — removing from all devices…');
   }, [showToast]);
   const deleteCustomer = useCallback((customerId: string) => { setCustomers(prev => { const u = prev.filter(c => c.id !== customerId); save('hsn_customers', u); return u; }); showToast('Customer deleted'); }, [showToast]);
-  const getOrderById = useCallback((orderId: string) => orders.find(o => o.orderId === orderId), [orders]);
+  // QR scans land here from arbitrary scanner apps: match the order ID
+  // tolerantly (trim, case-insensitive, URL-decoded) so the correct order
+  // always opens.
+  const getOrderById = useCallback((orderId: string) => {
+    const raw = (orderId || '').trim();
+    if (!raw) return undefined;
+    let wanted = raw.toLowerCase();
+    try { wanted = decodeURIComponent(wanted); } catch { /* keep raw */ }
+    return orders.find(o => o.orderId.toLowerCase() === wanted || o.id.toLowerCase() === wanted);
+  }, [orders]);
 
   /** Actively re-fetch the shared cloud copy so QR deep-links can load orders missing on this device. */
   const refreshFromCloud = useCallback(async () => {
