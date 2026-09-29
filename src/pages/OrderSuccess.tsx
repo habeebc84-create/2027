@@ -22,6 +22,33 @@ const GREEN: [number, number, number] = [16, 185, 129];
 const ROSE: [number, number, number] = [244, 63, 94];
 const WHITE: [number, number, number] = [255, 255, 255];
 
+// GST HSN codes by product category (building materials).
+const HSN_BY_CATEGORY: Record<string, string> = {
+  Cement: '2523', 'TMT Steel': '7214', Steel: '7214', Bricks: '6904', Blocks: '6810',
+  Sand: '2505', Aggregates: '2517', Jelly: '2517', Paints: '3209', Tiles: '6907',
+  Plumbing: '3917', Electrical: '8544', Hardware: '7318', Plywood: '4412',
+};
+
+const ONES = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+const TENS = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+const twoDigit = (n: number): string => (n < 20 ? ONES[n] : `${TENS[Math.floor(n / 10)]}${n % 10 ? ' ' + ONES[n % 10] : ''}`);
+const threeDigit = (n: number): string => (n >= 100 ? `${ONES[Math.floor(n / 100)]} Hundred${n % 100 ? ' ' + twoDigit(n % 100) : ''}` : twoDigit(n));
+
+/** Indian-system amount in words, e.g. "Rupees Twelve Thousand Three Hundred Forty Five Only". */
+function amountInWords(amount: number): string {
+  let n = Math.round(Math.abs(amount));
+  if (n === 0) return 'Rupees Zero Only';
+  const parts: string[] = [];
+  const crore = Math.floor(n / 10000000); n %= 10000000;
+  const lakh = Math.floor(n / 100000); n %= 100000;
+  const thousand = Math.floor(n / 1000); n %= 1000;
+  if (crore) parts.push(`${threeDigit(crore)} Crore`);
+  if (lakh) parts.push(`${twoDigit(lakh)} Lakh`);
+  if (thousand) parts.push(`${twoDigit(thousand)} Thousand`);
+  if (n) parts.push(threeDigit(n));
+  return `Rupees ${parts.join(' ')} Only`;
+}
+
 /**
  * Generates a real PDF invoice with the HSN logo on BOTH sides of the header
  * and a scannable QR that deep-links to the order tracking page.
@@ -30,7 +57,8 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   const items = order.items.map(item => {
     let price = item.product.price;
     if (item.selectedSize && item.product.sizes) { const s = item.product.sizes.find(sz => sz.size === item.selectedSize); if (s) price = s.price; }
-    return { name: item.product.name, brand: item.product.brand, size: item.selectedSize || '-', qty: item.quantity, price, total: price * item.quantity };
+    const hsn = HSN_BY_CATEGORY[item.product.category] || '-';
+    return { name: item.product.name, brand: item.product.brand, size: item.selectedSize || '-', qty: item.quantity, unit: item.product.unit || '', hsn, price, total: price * item.quantity };
   });
   const subtotal = items.reduce((a, i) => a + i.total, 0);
   const delivery = order.finalDeliveryCharge ?? order.deliveryCharge;
@@ -106,15 +134,20 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.roundedRect(badgeX, y - 5.8, badgeW, 6, 3, 3, 'F');
   doc.setTextColor(...WHITE);
   doc.text(statusLabel, badgeX + badgeW / 2, y - 1.9, { align: 'center' });
-  y += 9;
+  // Statutory copy-type marking under the title
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.5);
+  doc.setTextColor(...GRAY);
+  doc.text('ORIGINAL FOR RECIPIENT', W / 2, y + 5.5, { align: 'center' });
+  y += 11;
 
   // ===== Meta boxes =====
   const metaTop = y;
   doc.setFillColor(...LIGHT);
-  doc.roundedRect(12, metaTop, 88, 26, 2, 2, 'F');
-  doc.roundedRect(104, metaTop, 94, 26, 2, 2, 'F');
+  doc.roundedRect(12, metaTop, 88, 32, 2, 2, 'F');
+  doc.roundedRect(104, metaTop, 94, 32, 2, 2, 'F');
   doc.setFillColor(...PURPLE);
-  doc.roundedRect(12, metaTop, 2, 26, 1, 1, 'F');
+  doc.roundedRect(12, metaTop, 2, 32, 1, 1, 'F');
 
   const metaLine = (label: string, value: string, ly: number) => {
     doc.setFont('helvetica', 'normal');
@@ -129,6 +162,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   metaLine('Date', dateStr, metaTop + 11.5);
   metaLine('Payment', order.paymentMode, metaTop + 17);
   metaLine('Deliver To', order.deliveryLocation || 'Site Delivery', metaTop + 22.5);
+  metaLine('Place of Supply', 'Andhra Pradesh', metaTop + 28);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
@@ -146,10 +180,10 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   let cy = metaTop + 16;
   custLines.slice(0, 2).forEach(l => { doc.text(l, 108, cy); cy += 4; });
   doc.text(`Mobile: ${order.customer.mobile}${order.customer.email ? '  |  ' + order.customer.email : ''}`, 108, cy);
-  y = metaTop + 32;
+  y = metaTop + 38;
 
   // ===== Items table =====
-  const cols = { no: 13, product: 20, brand: 88, variant: 114, qty: 134, rate: 148, amount: 196 };
+  const cols = { no: 13, hsn: 24, product: 30, brand: 88, variant: 113, qty: 134, rate: 148, amount: 196 };
   const drawTableHeader = (ty: number) => {
     doc.setFillColor(...PURPLE);
     doc.rect(12, ty, 186, 8, 'F');
@@ -157,6 +191,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     doc.text('#', cols.no, ty + 5.5);
+    doc.text('HSN', cols.hsn, ty + 5.5);
     doc.text('PRODUCT', cols.product, ty + 5.5);
     doc.text('BRAND', cols.brand, ty + 5.5);
     doc.text('VARIANT', cols.variant, ty + 5.5);
@@ -172,7 +207,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   y += 8;
 
   items.forEach((item, idx) => {
-    const nameLines = doc.splitTextToSize(item.name, 66) as string[];
+    const nameLines = doc.splitTextToSize(item.name, 56) as string[];
     const rowH = Math.max(8, nameLines.length * 4.5 + 3.5);
     if (y + rowH > 245) { doc.addPage(); y = 16; drawTableHeader(y); y += 8; }
     if (idx % 2 === 1) { doc.setFillColor(246, 247, 250); doc.rect(12, y, 186, rowH, 'F'); }
@@ -180,12 +215,13 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.text(String(idx + 1), cols.no, y + 5.5);
+    doc.text(item.hsn, cols.hsn, y + 5.5);
     doc.setFont('helvetica', 'bold');
     nameLines.forEach((l, li) => doc.text(l, cols.product, y + 5.5 + li * 4.5));
     doc.setFont('helvetica', 'normal');
     doc.text(item.brand, cols.brand, y + 5.5);
     doc.text(item.size, cols.variant, y + 5.5);
-    doc.text(String(item.qty), cols.qty, y + 5.5);
+    doc.text(item.unit ? `${item.qty} ${item.unit}` : String(item.qty), cols.qty, y + 5.5);
     doc.text(inr(item.price), cols.rate, y + 5.5);
     doc.setFont('helvetica', 'bold');
     doc.text(inr(item.total), cols.amount, y + 5.5, { align: 'right' });
@@ -195,31 +231,71 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.line(12, y, 198, y);
   });
 
-  // ===== Totals =====
+  // ===== Amount in words + Summary card =====
   y += 8;
-  const totalsX = 118;
+  const totalRowsCount = 2 + (handling > 0 ? 1 : 0) + (Math.abs(adjustment) > 0.5 ? 1 : 0);
+  const sumCardH = 9 + totalRowsCount * 6.5 + 10.5;
+  const sumTop = Math.max(y, 0);
+  doc.setFillColor(250, 250, 252);
+  doc.roundedRect(108, sumTop, 90, sumCardH, 2, 2, 'F');
+  doc.setDrawColor(226, 224, 240);
+  doc.setLineWidth(0.25);
+  doc.roundedRect(108, sumTop, 90, sumCardH, 2, 2, 'S');
+  doc.setFillColor(...PURPLE);
+  doc.roundedRect(108, sumTop, 1.2, sumCardH, 0.6, 0.6, 'F');
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(7.5);
+  doc.setFontSize(7);
   doc.setTextColor(...GRAY);
-  doc.text('SUMMARY', totalsX + 4, y - 2.5);
-  const totalRow = (label: string, value: string, bold = false, fill = false) => {
-    if (fill) { doc.setFillColor(...PURPLE); doc.roundedRect(totalsX, y - 4.5, 80, 8, 1.5, 1.5, 'F'); }
+  doc.text('SUMMARY', 112, sumTop + 6);
+  const ty0 = sumTop + 14;
+  const totalRow = (label: string, value: string, rowY: number, bold = false, fill = false) => {
+    if (fill) { doc.setFillColor(...PURPLE); doc.roundedRect(111, rowY - 4.2, 84, 8, 1.5, 1.5, 'F'); }
     doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    doc.setFontSize(bold ? 11 : 9);
+    doc.setFontSize(bold ? 10.5 : 8.5);
     doc.setTextColor(...(fill ? WHITE : bold ? NAVY : GRAY));
-    doc.text(label, totalsX + 4, y);
+    doc.text(label, 115, rowY);
     doc.setTextColor(...(fill ? WHITE : NAVY));
-    doc.text(value, 198, y, { align: 'right' });
-    y += bold ? 9 : 6.5;
+    doc.text(value, 192, rowY, { align: 'right' });
   };
-  totalRow('Subtotal', inr(subtotal));
-  totalRow('Delivery', delivery === 0 ? 'FREE' : inr(delivery));
-  if (handling > 0) totalRow('Handling', inr(handling));
-  if (Math.abs(adjustment) > 0.5) totalRow('Store Adjustment', inr(adjustment));
-  totalRow('GRAND TOTAL', inr(order.total), true, true);
+  let ry = ty0;
+  totalRow('Subtotal', inr(subtotal), ry); ry += 6.5;
+  totalRow('Delivery', delivery === 0 ? 'FREE' : inr(delivery), ry); ry += 6.5;
+  if (handling > 0) { totalRow('Handling', inr(handling), ry); ry += 6.5; }
+  if (Math.abs(adjustment) > 0.5) { totalRow('Store Adjustment', inr(adjustment), ry); ry += 6.5; }
+  totalRow('GRAND TOTAL', inr(order.total), ry + 1.5, true, true);
 
-  // ===== QR tracking block + signature =====
-  const blockTop = Math.max(y + 6, 190);
+  // Amount in words (statutory on Indian tax invoices) — full width strip
+  const wordsY = sumTop + sumCardH + 5;
+  doc.setDrawColor(...PURPLE);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(12, wordsY, 186, 9, 1.5, 1.5, 'S');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(...PURPLE);
+  doc.text('Amount in Words:', 15, wordsY + 5.8);
+  const wordsX = 15 + doc.getTextWidth('Amount in Words:') + 1.5;
+  doc.setFont('helvetica', 'bolditalic');
+  doc.setTextColor(...NAVY);
+  doc.text(amountInWords(order.total), wordsX, wordsY + 5.8);
+  y = wordsY + 9;
+
+  // ===== QR tracking block + terms + signature =====
+  const blockTop = Math.max(y + 6, 185);
+  // Left: bank-style detail rows (purpose + terms) above the signature.
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(...GRAY);
+  doc.text('TERMS & CONDITIONS', 12, blockTop + 2);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.3);
+  doc.setTextColor(...GRAY);
+  [
+    '1. Goods once sold will not be returned unless defective.',
+    '2. Payment due as per agreed credit terms.',
+    '3. Subject to Kalikiri, Andhra Pradesh jurisdiction.',
+    '4. Verify quantity, brand and grade at delivery.',
+  ].forEach((t, i) => doc.text(t, 12, blockTop + 6.5 + i * 3.6));
+  const signY = blockTop + 24;
   if (qrDataUrl) {
     const qx = 158;
     const qy = blockTop;
@@ -239,14 +315,14 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(...NAVY);
-  doc.text(`For ${siteSettings.businessName}`, 12, blockTop + 6);
+  doc.text(`For ${siteSettings.businessName}`, 12, signY);
   doc.setDrawColor(180, 182, 192);
   doc.setLineWidth(0.3);
-  doc.line(12, blockTop + 22, 70, blockTop + 22);
+  doc.line(12, signY + 16, 70, signY + 16);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(...GRAY);
-  doc.text('Authorised Signatory', 12, blockTop + 27);
+  doc.text('Authorised Signatory', 12, signY + 21);
 
   // ===== Footer =====
   const footerY = 285;
