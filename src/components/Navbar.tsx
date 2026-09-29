@@ -1,8 +1,8 @@
-import { ShoppingCart, Phone, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
-import { telHref, waHref } from '../lib/phone';
+import { waHref } from '../lib/phone';
 import type { Page } from '../types';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -64,10 +64,6 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
 
           {/* Right actions */}
           <div className="flex items-center space-x-2 shrink-0">
-            <a href={telHref(siteContent.phone)} className="hidden sm:flex items-center space-x-1.5 bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white px-3 xl:px-4 py-1.5 rounded-xl text-xs xl:text-sm font-bold transition shadow-md">
-              <Phone className="w-4 h-4" />
-              <span>Call Now</span>
-            </a>
             <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 xl:px-4 py-1.5 rounded-xl text-xs xl:text-sm font-bold transition shadow-md shadow-green-500/20">
               <WhatsAppIcon className="w-4 h-4" />
               <span>WhatsApp</span>
@@ -103,11 +99,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
               {link.label}
             </a>
           ))}
-          <div className="pt-3 mt-2 border-t border-white/10 flex space-x-2">
-            <a href={telHref(siteContent.phone)} className="flex-1 flex items-center justify-center space-x-2 bg-slate-800/60 border border-white/10 text-white px-4 py-2.5 rounded-xl text-sm font-bold">
-              <Phone className="w-4 h-4" />
-              <span>Call Now</span>
-            </a>
+          <div className="pt-3 mt-2 border-t border-white/10">
             <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center space-x-2 bg-[#25D366] text-white px-4 py-2.5 rounded-xl text-sm font-bold">
               <WhatsAppIcon className="w-4 h-4" />
               <span>WhatsApp</span>

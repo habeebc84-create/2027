@@ -90,10 +90,6 @@ export default function Splash() {
             </div>
           </div>
           <div className="splash-nav-actions">
-            <button className="splash-nav-btn splash-call" onClick={() => window.location.href = callHref} aria-label="Call Now">
-              <Phone className="w-4 h-4" />
-              <span>Call Now</span>
-            </button>
             <a href={whatsappHref} target="_blank" rel="noreferrer" className="splash-nav-btn splash-whatsapp" aria-label="WhatsApp">
               <WhatsAppIcon className="w-4 h-4" />
               <span>WhatsApp</span>
