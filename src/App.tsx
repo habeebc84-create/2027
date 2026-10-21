@@ -6,6 +6,7 @@ import CartDrawer from './components/CartDrawer';
 import ToastContainer from './components/Toast';
 import NotificationPopup from './components/NotificationPopup';
 import FloatingButtons from './components/FloatingButtons';
+import FloatingBottomNav from './components/FloatingBottomNav';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -142,13 +143,14 @@ function AppContent() {
   const showNav = !hideNavPages.includes(currentPage);
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen ${showNav ? 'pb-32' : ''}`}>
       {showNav && <Navbar onCartClick={() => setCartOpen(true)} />}
       <div className={showNav ? 'pt-[64px]' : ''}>
         {renderPage()}
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
+      {showNav && <FloatingBottomNav />}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />
       {!isAdmin && <NotificationPopup />}

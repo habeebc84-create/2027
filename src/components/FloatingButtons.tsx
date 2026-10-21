@@ -12,7 +12,7 @@ export default function FloatingButtons() {
   const { siteContent } = useApp();
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end space-y-3">
+    <div className="fixed bottom-36 right-4 sm:right-6 z-40 flex flex-col items-end space-y-3">
       <a
         href={waHref(siteContent.whatsapp, 'Hi, I want to inquire about construction materials')}
         target="_blank"
