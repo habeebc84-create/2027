@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2, Camera } from 'lucide-react';
+import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
-import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
+import { bustedImageSrc } from '../lib/images';
 import { telHref } from '../lib/phone';
 
 const pricingTiers = {
@@ -23,8 +22,7 @@ const pricingTiers = {
 
 
 export default function Home() {
-  const { siteContent, products, setPage, categories, updateSiteContent } = useApp();
-  const [showUploadHint, setShowUploadHint] = useState(false);
+  const { siteContent, products, setPage, categories } = useApp();
   const featuredProducts = products.filter(p => p.featured && p.enabled).slice(0, 6);
 
   return (
@@ -238,36 +236,6 @@ export default function Home() {
           </button>
         </div>
       </section>
-
-      {/* Splash Image Upload Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <label className="relative group cursor-pointer">
-          <div className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white p-4 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-amber-500/30">
-            <Camera className="w-6 h-6" />
-          </div>
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              e.target.value = '';
-              if (!file) return;
-              const compressed = await compressImageFile(file);
-              if (!compressed) return;
-              const current = siteContent.frontPageImages || [];
-              updateSiteContent({ frontPageImages: [...current, compressed] });
-              setShowUploadHint(true);
-              setTimeout(() => setShowUploadHint(false), 3000);
-            }}
-          />
-        </label>
-        {showUploadHint && (
-          <div className="absolute bottom-full right-0 mb-3 bg-slate-900/95 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-nowrap shadow-xl border border-amber-500/30 animate-in fade-in slide-in-from-bottom-2">
-            ✓ Splash image synced to all devices!
-          </div>
-        )}
-      </div>
 
     </div>
   );

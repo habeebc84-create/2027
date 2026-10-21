@@ -1,5 +1,4 @@
-import { ShoppingCart, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { ShoppingCart } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
 import { waHref } from '../lib/phone';
@@ -11,19 +10,11 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const navLinks: { label: string; page: Page; path: string }[] = [
-  { label: 'Home', page: 'home', path: '/' },
-  { label: 'Products', page: 'products', path: '/products' },
-  { label: 'Services', page: 'services', path: '/services' },
-  { label: 'Gallery', page: 'gallery', path: '/gallery' },
-  { label: 'About Us', page: 'about', path: '/about' },
-  { label: 'Contact', page: 'contact', path: '/contact' },
-  { label: 'Track Order', page: 'order-tracking', path: '/track-order' },
-];
-
+// Slim top bar: brand, WhatsApp and cart only. The section links
+// (Products, Services, Gallery, About Us, Contact, Track Order) live in
+// the FloatingBottomNav dock, so they are not repeated here.
 export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
-  const { setPage, currentPage, cartCount, siteContent } = useApp();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { setPage, cartCount, siteContent } = useApp();
 
   const handleNav = (e: React.MouseEvent, page: Page) => {
     e.preventDefault();
@@ -31,44 +22,26 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 pt-2.5 px-4 sm:px-6 lg:px-8">
-      {/* Floating rounded bar */}
-      <div className="max-w-[1400px] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-3 sm:px-4 py-1.5">
-        <div className="flex items-center justify-between h-14">
+    <nav className="fixed top-0 left-0 right-0 z-50 pt-2 px-3 sm:px-5">
+      {/* Floating rounded bar — compact height */}
+      <div className="max-w-[1400px] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-2.5 sm:px-3 py-1">
+        <div className="flex items-center justify-between h-11">
           {/* Logo */}
-          <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0">
-            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-10 h-10 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
+          <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-8 h-8 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
-              <span className="text-xs sm:text-sm font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
-              <span className="text-[8px] sm:text-[9px] tracking-[0.1em] font-bold text-slate-400 uppercase hidden sm:block">Premium Building Materials</span>
+              <span className="text-[11px] sm:text-[13px] font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
+              <span className="text-[8px] tracking-[0.1em] font-bold text-slate-400 uppercase hidden sm:block">Premium Building Materials</span>
             </div>
           </a>
 
-          {/* Center nav */}
-          <div className="hidden lg:flex items-center space-x-0">
-            {navLinks.map(link => (
-              <a
-                key={link.page}
-                href={link.path}
-                onClick={e => handleNav(e, link.page)}
-                className={`px-2.5 xl:px-4 py-1.5 rounded-lg text-xs xl:text-sm font-semibold transition ${
-                  currentPage === link.page
-                    ? 'text-white bg-white/10 shadow-inner'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
           {/* Right actions */}
           <div className="flex items-center space-x-2 shrink-0">
-            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 xl:px-4 py-1.5 rounded-xl text-xs xl:text-sm font-bold transition shadow-md shadow-green-500/20">
-              <WhatsAppIcon className="w-4 h-4" />
+            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 py-1 rounded-xl text-[11px] xl:text-xs font-bold transition shadow-md shadow-green-500/20">
+              <WhatsAppIcon className="w-3.5 h-3.5" />
               <span>WhatsApp</span>
             </a>
-            <button onClick={onCartClick} className="relative bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-2 rounded-xl transition shadow-md">
+            <button onClick={onCartClick} className="relative bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-1.5 rounded-xl transition shadow-md" aria-label="Open cart">
               <ShoppingCart className="w-4 h-4" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-lg">
@@ -76,37 +49,9 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
                 </span>
               )}
             </button>
-            {/* Mobile menu */}
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-1.5 text-slate-300 hover:text-white">
-              {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-            </button>
           </div>
         </div>
       </div>
-
-      {/* Mobile dropdown */}
-      {mobileOpen && (
-        <div className="lg:hidden mt-2 max-w-[1400px] mx-auto rounded-2xl bg-slate-950/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] p-3 space-y-1">
-          {navLinks.map(link => (
-            <a
-              key={link.page}
-              href={link.path}
-              onClick={e => { handleNav(e, link.page); setMobileOpen(false); }}
-              className={`block px-4 py-2.5 rounded-xl text-sm font-semibold transition ${
-                currentPage === link.page ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5'
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
-          <div className="pt-3 mt-2 border-t border-white/10">
-            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center space-x-2 bg-[#25D366] text-white px-4 py-2.5 rounded-xl text-sm font-bold">
-              <WhatsAppIcon className="w-4 h-4" />
-              <span>WhatsApp</span>
-            </a>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }
