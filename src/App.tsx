@@ -145,7 +145,7 @@ function AppContent() {
   return (
     <div className={`min-h-screen ${showNav ? 'pb-32' : ''}`}>
       {showNav && <Navbar onCartClick={() => setCartOpen(true)} />}
-      <div className={showNav ? 'pt-[64px]' : ''}>
+      <div className={showNav ? 'pt-[52px]' : ''}>
         {renderPage()}
       </div>
       {showNav && <Footer />}
