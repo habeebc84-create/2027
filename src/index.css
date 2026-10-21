@@ -717,3 +717,191 @@
 .animate-slide-panel {
   animation: slide-panel 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ============================================================
+   FLOATING BOTTOM NAVIGATION — Apple-style Liquid Glass dock
+   ============================================================ */
+
+.floating-bottom-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  width: max-content;
+  max-width: 94vw;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Poppins', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .floating-bottom-nav {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    max-width: min(92vw, 780px);
+  }
+}
+
+.floating-bottom-nav-list {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.28),
+    0 4px 14px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  transition: background 0.35s ease;
+}
+
+/* Graceful fallback when backdrop filters are unavailable */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .floating-bottom-nav-list {
+    background: rgba(255, 255, 255, 0.94);
+  }
+}
+
+.floating-bottom-nav.is-scrolled .floating-bottom-nav-list {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.floating-bottom-nav-indicator {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  border-radius: 999px;
+  background: #111827;
+  box-shadow: 0 6px 16px rgba(17, 24, 39, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: transform 0.55s cubic-bezier(0.22, 1.4, 0.36, 1), width 0.55s cubic-bezier(0.22, 1.4, 0.36, 1);
+  pointer-events: none;
+}
+
+.floating-bottom-nav-item {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+}
+
+.floating-bottom-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 7px 8px 6px;
+  border-radius: 999px;
+  color: #4b5563;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  .floating-bottom-nav-list { gap: 4px; padding: 9px 10px; }
+  .floating-bottom-nav-indicator { top: 9px; bottom: 9px; }
+  .floating-bottom-nav-link { padding: 8px 15px 7px; }
+}
+
+.floating-bottom-nav-link:hover {
+  transform: translateY(-2px);
+  background: rgba(17, 24, 39, 0.06);
+  color: #111827;
+}
+
+.floating-bottom-nav-link:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.floating-bottom-nav-link.is-active {
+  color: #ffffff;
+}
+
+.floating-bottom-nav-link.is-active:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
+.floating-bottom-nav-link:focus-visible {
+  outline: 2px solid #111827;
+  outline-offset: 2px;
+}
+
+.floating-bottom-nav-icon {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
+
+.floating-bottom-nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+
+@media (min-width: 640px) {
+  .floating-bottom-nav-label { font-size: 11.5px; }
+}
+
+/* On very small screens keep all six destinations reachable without
+   clipping: tighten padding before anything is allowed to overflow. */
+@media (max-width: 380px) {
+  .floating-bottom-nav-link { padding: 6px 5px 5px; }
+  .floating-bottom-nav-label { font-size: 9px; }
+  .floating-bottom-nav-icon { width: 19px; height: 19px; }
+}
+
+/* ============================================================
+   SPLASH LOGO — animated reveal on first opening
+   ============================================================ */
+
+@keyframes logoReveal {
+  0% { opacity: 0; transform: scale(0.55) rotate(-8deg); filter: blur(6px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+}
+
+@keyframes logoGlowPulse {
+  0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 0 0 rgba(6, 182, 212, 0.45), inset 0 1px 2px rgba(255,255,255,0.15); }
+  50% { box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 10px rgba(6, 182, 212, 0), inset 0 1px 2px rgba(255,255,255,0.15); }
+}
+
+@keyframes logoImgIn {
+  0% { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.splash-logo {
+  animation:
+    logoReveal 0.9s cubic-bezier(0.22, 1.36, 0.36, 1) both,
+    logoGlowPulse 2.8s ease-in-out 1s infinite;
+}
+
+.splash-logo img {
+  animation: logoImgIn 1s ease-out 0.15s both;
+}
+
+/* Respect reduced motion across the dock and the splash logo */
+@media (prefers-reduced-motion: reduce) {
+  .floating-bottom-nav-indicator,
+  .floating-bottom-nav-link,
+  .floating-bottom-nav-list {
+    transition: none !important;
+  }
+  .floating-bottom-nav-link:hover,
+  .floating-bottom-nav-link:active {
+    transform: none;
+  }
+  .splash-logo,
+  .splash-logo img {
+    animation: none !important;
+  }
+}
