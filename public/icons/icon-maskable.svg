@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#040814"/>
+  <text x="256" y="276" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="118" font-weight="800" fill="#ffffff" letter-spacing="3">HSN</text>
+  <text x="256" y="342" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="600" fill="#06b6d4" letter-spacing="8">CEMENT</text>
+  <text x="256" y="388" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="600" fill="#94a3b8" letter-spacing="8">STEEL</text>
+</svg>
