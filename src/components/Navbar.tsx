@@ -28,7 +28,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
         <div className="flex items-center justify-between h-11">
           {/* Logo */}
           <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
-            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-8 h-8 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-7 h-7 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
               <span className="text-[11px] sm:text-[13px] font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
               <span className="text-[8px] tracking-[0.1em] font-bold text-slate-400 uppercase hidden sm:block">Premium Building Materials</span>
@@ -41,7 +41,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
               <WhatsAppIcon className="w-3.5 h-3.5" />
               <span>WhatsApp</span>
             </a>
-            <button onClick={onCartClick} className="relative bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-1.5 rounded-xl transition shadow-md" aria-label="Open cart">
+            <button onClick={onCartClick} className="relative -rotate-180 bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-1.5 rounded-xl transition shadow-md" aria-label="Open cart">
               <ShoppingCart className="w-4 h-4" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-lg">
