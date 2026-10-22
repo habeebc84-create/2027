@@ -889,7 +889,33 @@
   animation: logoImgIn 1s ease-out 0.15s both;
 }
 
-/* Respect reduced motion across the dock and the splash logo */
+/* ============================================================
+   LIQUID GLASS BEAD — sits just below the bottom nav bar
+   ============================================================ */
+
+@keyframes liquidDrift {
+  0% {
+    opacity: 0.55;
+    transform: translateX(-6%) scale(1);
+  }
+  100% {
+    opacity: 0.95;
+    transform: translateX(6%) scale(1.05);
+  }
+}
+
+@keyframes liquidShine {
+  0% {
+    opacity: 0.4;
+    transform: translate(-1px, -1px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(1px, -1px) scale(1.1);
+  }
+}
+
+/* Respect reduced motion across the dock, the logo, and the liquid bead */
 @media (prefers-reduced-motion: reduce) {
   .floating-bottom-nav-indicator,
   .floating-bottom-nav-link,
@@ -902,6 +928,10 @@
   }
   .splash-logo,
   .splash-logo img {
+    animation: none !important;
+  }
+  .liquid-glass,
+  .liquid-glass * {
     animation: none !important;
   }
 }

@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { Package, Wrench, Images, Info, MessageCircle, PackageCheck } from 'lucide-react';
+import { LiquidGlass } from './LiquidGlass';
 import { useApp } from '../context/AppContext';
 import type { Page } from '../types';
 
@@ -77,6 +78,9 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
             padding: '1px',
           }}
         />
+
+        {/* Liquid glass bead, seated just below the main bar */}
+        <LiquidGlass className="absolute left-0 right-0 bottom-full mb-1 mx-auto w-3/4 sm:w-1/2 pointer-events-none" />
 
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           {navItems.map((item) => {
