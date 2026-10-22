@@ -26,7 +26,7 @@ interface FloatingBottomNavProps {
 export default function FloatingBottomNav({ show = true }: FloatingBottomNavProps) {
   const { currentPage, setPage } = useApp();
   const shouldReduceMotion = useReducedMotion();
-  const animate = shouldReduceMotion ? false : true;
+  const animate = !shouldReduceMotion;
   const duration = shouldReduceMotion ? 0 : 0.28;
 
   return (
@@ -37,24 +37,24 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 60,
-        padding: '12px 16px 20px',
+        padding: '14px 20px 22px',
         maxWidth: 'calc(100% - 32px)',
         width: 'auto',
         margin: '0 auto',
       }}
       initial={false}
       animate={show && { opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+      transition={{ duration: 0.42, ease: 'easeOut' }}
       aria-label="Primary navigation"
     >
       {/* Glass capsule */}
       <motion.div
-        className="relative w-full rounded-full px-2 py-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.35),0_6px_14px_-8px_rgba(0,0,0,0.25)] border border-white/30"
+        className="relative w-full rounded-full px-2 py-2 shadow-[0_20px_55px_-13px_rgba(0,0,0,0.4),0_8px_18px_-10px_rgba(0,0,0,0.3)] border border-white/30"
         style={{
-          background: 'rgba(255, 255, 255, 0.78)',
-          backdropFilter: 'blur(18px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(18px) saturate(180%)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.06)',
+          background: 'rgba(255, 255, 255, 0.82)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(0,0,0,0.06)',
         }}
         layout
         transition={{ duration, ease: 'easeInOut' }}
@@ -67,7 +67,7 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
             inset: '-1px',
             borderRadius: '9999px',
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.02) 100%)',
+              'linear-gradient(175deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 52%, rgba(0,0,0,0.02) 100%)',
             pointerEvents: 'none',
             WebkitMask:
               'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
@@ -78,7 +78,7 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
           }}
         />
 
-        <div className="flex items-center justify-center gap-1 sm:gap-2">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           {navItems.map((item) => {
             const isActive = currentPage === item.page;
 
@@ -94,35 +94,18 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
                   aria-current={isActive ? 'page' : undefined}
                   aria-label={item.label}
                   onClick={() => setPage(item.page)}
-                  className="relative flex flex-col items-center justify-center gap-0.5 rounded-full px-3 py-2 min-w-[64px] sm:min-w-[72px] leading-none group"
+                  className="relative flex flex-col items-center justify-center gap-0.5 rounded-full px-2 py-2 min-w-[62px] sm:min-w-[70px] leading-none group"
                   style={{
-                    height: 48,
+                    height: 50,
                   }}
-                  whileHover={animate ? { y: -3, scale: 1.02 } : undefined}
+                  whileHover={animate ? { y: -2.5, scale: 1.02 } : undefined}
                   whileTap={animate ? { scale: 0.96 } : undefined}
                   transition={{ duration, ease: 'easeOut' }}
                 >
-                  {/* Active overlay icon: sits above the text icon and fades in/out instead of clipping */}
-                  {isActive && (
-                    <motion.span
-                      key="active-icon"
-                      className="absolute inset-0 flex items-center justify-center"
-                      aria-hidden="true"
-                      initial={{ opacity: 0, scale: 0.92, y: 1.5 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.92, y: -1.5 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}
-                    >
-                      <span className="text-neutral-900">
-                        <SvgIcon name={item.label} size={20} />
-                      </span>
-                    </motion.span>
-                  )}
-
                   {/* Active underline pill */}
                   <motion.span
                     layoutId="activeNavPill"
-                    className="absolute inset-x-3 bottom-1 h-1 rounded-full bg-black/60"
+                    className="absolute left-3 right-3 bottom-1 h-1 rounded-full bg-black/60"
                     style={{
                       opacity: isActive ? 1 : 0,
                       transform: isActive ? 'scaleX(1)' : 'scaleX(0.3)',
@@ -132,17 +115,23 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
 
                   {/* Icon */}
                   <span className="relative flex items-center justify-center">
-                    <span className="block w-5 h-5 sm:w-[20px] sm:h-[20px] text-neutral-900">
+                    <span
+                      className={`block w-5 h-5 sm:w-[20px] sm:h-[20px] transition-colors duration-200`}
+                      style={{
+                        color: isActive ? undefined : 'rgba(0,0,0,0.45)',
+                      }}
+                    >
                       <SvgIcon name={item.label} size={20} />
                     </span>
                   </span>
 
                   {/* Label */}
                   <span
-                    className="text-[10px] sm:text-[11px] font-medium tracking-tight text-neutral-900 select-none overflow-hidden whitespace-nowrap"
+                    className="text-[10px] sm:text-[11px] font-medium tracking-tight text-neutral-900 select-none whitespace-nowrap"
                     style={{
                       opacity: isActive ? 1 : 0.45,
                       transition: 'opacity 0.2s ease',
+                      transform: 'translateY(0)',
                     }}
                   >
                     {item.label}
