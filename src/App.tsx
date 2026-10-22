@@ -7,6 +7,7 @@ import ToastContainer from './components/Toast';
 import NotificationPopup from './components/NotificationPopup';
 import FloatingButtons from './components/FloatingButtons';
 import FloatingBottomNav from './components/FloatingBottomNav';
+import DeviceToggle from './components/DeviceToggle';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -52,6 +53,13 @@ function AppContent() {
   const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
   const [successOrderId, setSuccessOrderId] = useState<string | null>(null);
+  const [deviceMode, setDeviceMode] = useState<'auto' | 'mobile' | 'desktop'>('auto');
+
+  const isMobile = deviceMode === 'mobile';
+  const isDesktop = deviceMode === 'desktop';
+  const mediaMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const useMobile = isMobile || (deviceMode === 'auto' && mediaMobile);
+  const useDesktop = isDesktop || (deviceMode === 'auto' && !mediaMobile);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -143,14 +151,19 @@ function AppContent() {
   const showNav = !hideNavPages.includes(currentPage);
 
   return (
-    <div className={`min-h-screen ${showNav ? 'pb-32' : ''}`}>
+    <div className="min-h-screen">
       {showNav && <Navbar onCartClick={() => setCartOpen(true)} />}
-      <div className={showNav ? 'pt-[52px]' : ''}>
+      <div className={showNav ? 'pt-[64px]' : ''}>
         {renderPage()}
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
-      {showNav && <FloatingBottomNav />}
+      {showNav && useMobile && <FloatingBottomNav />}
+      {showNav && useDesktop && (
+        <div className="flex justify-end pt-3 pb-1 px-4 sm:px-6 lg:px-8">
+          <DeviceToggle mode={deviceMode} onToggle={setDeviceMode} />
+        </div>
+      )}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />
       {!isAdmin && <NotificationPopup />}

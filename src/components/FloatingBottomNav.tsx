@@ -1,106 +1,171 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Package, Wrench, Images, Info, MessageCircle, PackageCheck } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import type { Page } from '../types';
 
-type NavItem = {
+interface NavItem {
   label: string;
   page: Page;
-  path: string;
-  Icon: typeof Package;
-};
+}
 
-// Exactly the six destinations requested — do not rename or replace.
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Products', page: 'products', path: '/products', Icon: Package },
-  { label: 'Services', page: 'services', path: '/services', Icon: Wrench },
-  { label: 'Gallery', page: 'gallery', path: '/gallery', Icon: Images },
-  { label: 'About Us', page: 'about', path: '/about', Icon: Info },
-  { label: 'Contact', page: 'contact', path: '/contact', Icon: MessageCircle },
-  { label: 'Track Order', page: 'order-tracking', path: '/track-order', Icon: PackageCheck },
+const navItems: NavItem[] = [
+  { label: 'Products', page: 'products' },
+  { label: 'Services', page: 'services' },
+  { label: 'Gallery', page: 'gallery' },
+  { label: 'About Us', page: 'about' },
+  { label: 'Contact', page: 'contact' },
+  { label: 'Track Order', page: 'order-tracking' },
 ];
 
-export default function FloatingBottomNav() {
+const MotionNavItem = motion.button;
+
+interface FloatingBottomNavProps {
+  show?: boolean;
+}
+
+export default function FloatingBottomNav({ show = true }: FloatingBottomNavProps) {
   const { currentPage, setPage } = useApp();
-  const listRef = useRef<HTMLUListElement>(null);
-  const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
-  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-
-  const activeIndex = NAV_ITEMS.findIndex((item) => item.page === currentPage);
-
-  // Measure the active item so the pill can glide between items.
-  const measure = () => {
-    const el = activeIndex >= 0 ? itemRefs.current[activeIndex] : null;
-    if (!el) {
-      setIndicator(null);
-      return;
-    }
-    setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
-  };
-
-  useLayoutEffect(measure, [activeIndex, currentPage]);
-
-  useEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(list);
-    window.addEventListener('resize', measure);
-    // Fonts can settle after first paint and nudge label widths.
-    const t = setTimeout(measure, 300);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', measure);
-      clearTimeout(t);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeIndex]);
-
-  // Subtle background-opacity adjustment while scrolling.
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const handleNav = (e: React.MouseEvent, page: Page) => {
-    e.preventDefault();
-    setPage(page);
-  };
+  const shouldReduceMotion = useReducedMotion();
+  const animate = shouldReduceMotion ? false : true;
+  const duration = shouldReduceMotion ? 0 : 0.28;
 
   return (
-    <nav aria-label="Primary" className={`floating-bottom-nav ${scrolled ? 'is-scrolled' : ''}`}>
-      <ul ref={listRef} className="floating-bottom-nav-list">
-        {indicator && (
-          <span
-            aria-hidden="true"
-            className="floating-bottom-nav-indicator"
-            style={{ transform: `translateX(${indicator.left}px)`, width: indicator.width }}
-          />
-        )}
-        {NAV_ITEMS.map((item, i) => {
-          const isActive = i === activeIndex;
-          return (
-            <li key={item.page} className="floating-bottom-nav-item">
-              <a
-                ref={(el) => {
-                  itemRefs.current[i] = el;
-                }}
-                href={item.path}
-                onClick={(e) => handleNav(e, item.page)}
-                aria-current={isActive ? 'page' : undefined}
-                aria-label={item.label}
-                className={`floating-bottom-nav-link ${isActive ? 'is-active' : ''}`}
+    <motion.nav
+      style={{
+        position: 'fixed',
+        bottom: 'env(safe-area-inset-bottom, 20px)',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 60,
+        padding: '12px 16px 20px',
+        maxWidth: 'calc(100% - 32px)',
+        width: 'auto',
+        margin: '0 auto',
+      }}
+      initial={false}
+      animate={show && { opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      aria-label="Primary navigation"
+    >
+      {/* Glass capsule */}
+      <motion.div
+        className="relative w-full rounded-full px-2 py-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.35),0_6px_14px_-8px_rgba(0,0,0,0.25)] border border-white/30"
+        style={{
+          background: 'rgba(255, 255, 255, 0.78)',
+          backdropFilter: 'blur(18px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(18px) saturate(180%)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.06)',
+        }}
+        layout
+        transition={{ duration, ease: 'easeInOut' }}
+      >
+        {/* Subtle reflection */}
+        <span
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: '-1px',
+            borderRadius: '9999px',
+            background:
+              'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.02) 100%)',
+            pointerEvents: 'none',
+            WebkitMask:
+              'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+            mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+            WebkitMaskComposite: 'xor',
+            maskComposite: 'exclude',
+            padding: '1px',
+          }}
+        />
+
+        <div className="flex items-center justify-center gap-1 sm:gap-2">
+          {navItems.map((item) => {
+            const isActive = currentPage === item.page;
+
+            return (
+              <motion.div
+                key={item.page}
+                className="flex items-center justify-center shrink-0"
+                layout
+                transition={{ duration, ease: 'easeInOut' }}
               >
-                <item.Icon className="floating-bottom-nav-icon" strokeWidth={1.75} aria-hidden="true" />
-                <span className="floating-bottom-nav-label">{item.label}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+                <MotionNavItem
+                  type="button"
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={item.label}
+                  onClick={() => setPage(item.page)}
+                  className="relative flex flex-col items-center justify-center gap-0.5 rounded-full px-3 py-2 min-w-[64px] sm:min-w-[72px] leading-none group"
+                  style={{
+                    height: 48,
+                  }}
+                  whileHover={animate ? { y: -3, scale: 1.02 } : undefined}
+                  whileTap={animate ? { scale: 0.96 } : undefined}
+                  transition={{ duration, ease: 'easeOut' }}
+                >
+                  {/* Active overlay icon: sits above the text icon and fades in/out instead of clipping */}
+                  {isActive && (
+                    <motion.span
+                      key="active-icon"
+                      className="absolute inset-0 flex items-center justify-center"
+                      aria-hidden="true"
+                      initial={{ opacity: 0, scale: 0.92, y: 1.5 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.92, y: -1.5 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                    >
+                      <span className="text-neutral-900">
+                        <SvgIcon name={item.label} size={20} />
+                      </span>
+                    </motion.span>
+                  )}
+
+                  {/* Active underline pill */}
+                  <motion.span
+                    layoutId="activeNavPill"
+                    className="absolute inset-x-3 bottom-1 h-1 rounded-full bg-black/60"
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                      transform: isActive ? 'scaleX(1)' : 'scaleX(0.3)',
+                    }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                  />
+
+                  {/* Icon */}
+                  <span className="relative flex items-center justify-center">
+                    <span className="block w-5 h-5 sm:w-[20px] sm:h-[20px] text-neutral-900">
+                      <SvgIcon name={item.label} size={20} />
+                    </span>
+                  </span>
+
+                  {/* Label */}
+                  <span
+                    className="text-[10px] sm:text-[11px] font-medium tracking-tight text-neutral-900 select-none overflow-hidden whitespace-nowrap"
+                    style={{
+                      opacity: isActive ? 1 : 0.45,
+                      transition: 'opacity 0.2s ease',
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </MotionNavItem>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
+    </motion.nav>
   );
+}
+
+function SvgIcon({ name, size = 20, strokeWidth = 1.75 }: { name: string; size?: number; strokeWidth?: number }) {
+  const map: Record<string, React.ReactNode> = {
+    Products: <Package size={size} strokeWidth={strokeWidth} />,
+    Services: <Wrench size={size} strokeWidth={strokeWidth} />,
+    Gallery: <Images size={size} strokeWidth={strokeWidth} />,
+    'About Us': <Info size={size} strokeWidth={strokeWidth} />,
+    Contact: <MessageCircle size={size} strokeWidth={strokeWidth} />,
+    'Track Order': <PackageCheck size={size} strokeWidth={strokeWidth} />,
+  };
+
+  return <>{map[name]}</>;
 }
