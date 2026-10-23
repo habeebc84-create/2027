@@ -461,18 +461,16 @@
   margin-top: 39px;
   display: flex;
   gap: 14px;
-}
-
-.splash-info-pill {
+}  .splash-info-pill {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 10px 17px;
-  border-radius: 14px;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 13px;
   background: rgba(20,20,30,0.85);
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 7px 18px rgba(0,0,0,0.20);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: white;
 }
@@ -597,37 +595,35 @@
     top: auto;
     left: auto;
     right: auto;
-    margin: 18px;
+    margin: 12px;
     height: auto;
-    min-height: 82px;
-    padding: 14px 18px;
+    min-height: 64px;
+    padding: 12px 16px;
   }
   .splash-brand-title {
-    font-size: 16px;
-  }
-  .splash-brand-subtitle {
-    font-size: 10px;
+    font-size: 15px;
   }
   .splash-logo {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
   }
   .splash-nav-actions {
-    gap: 7px;
+    gap: 6px;
   }
   .splash-nav-btn {
-    padding: 0 12px;
-    font-size: 12px;
+    padding: 0 10px;
+    font-size: 11px;
+    height: 34px;
   }
   .splash-hero {
     position: relative;
     left: auto;
     top: auto;
     width: auto;
-    margin: 65px 7% 0;
+    margin: 48px 7% 0;
   }
   .splash-heading {
-    font-size: 65px;
+    font-size: 60px;
   }
   .splash-cta-row {
     flex-direction: column;
@@ -642,7 +638,7 @@
     left: auto;
     right: auto;
     bottom: auto;
-    margin: 60px 5% 0;
+    margin: 44px 5% 0;
     padding-top: 0;
     grid-template-columns: repeat(2, 1fr);
   }
@@ -662,21 +658,21 @@
     justify-content: center;
   }
   .splash-hero {
-    margin-top: 45px;
+    margin-top: 34px;
   }
   .splash-badges {
     flex-wrap: wrap;
   }
   .splash-heading {
-    font-size: 55px;
-    margin-bottom: 30px;
+    font-size: 50px;
+    margin-bottom: 24px;
   }
   .splash-primary-btn {
-    height: 72px;
-    font-size: 15px;
+    height: 64px;
+    font-size: 14px;
   }
   .splash-secondary-btn {
-    height: 65px;
+    height: 58px;
   }
   .splash-info-row {
     flex-wrap: wrap;

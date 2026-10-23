@@ -84,14 +84,11 @@ export default function Splash() {
             </div>
             <div>
               <div className="splash-brand-title">HSN CEMENT &amp; STEEL</div>
-              <div className="splash-brand-subtitle">
-                PREMIUM BUILDING MATERIALS &nbsp;•&nbsp; Kalikiri, AP
-              </div>
             </div>
           </div>
           <div className="splash-nav-actions">
             <a href={whatsappHref} target="_blank" rel="noreferrer" className="splash-nav-btn splash-whatsapp" aria-label="WhatsApp">
-              <WhatsAppIcon className="w-4 h-4" />
+              <WhatsAppIcon className="w-3.5 h-3.5" />
               <span>WhatsApp</span>
             </a>
           </div>

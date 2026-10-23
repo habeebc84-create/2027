@@ -195,17 +195,13 @@ function ScrollAwareBottomNav({
 
       if (scrollTimer) clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
-        if (Math.abs(window.scrollY - lastY) < 1) {
-          // Effectively stopped scrolling.
-          if (window.scrollY <= 2) {
-            setVisible(true);
-          }
-        }
-      }, 180);
+        // Scrolling has effectively stopped.
+        setVisible(true);
+      }, 150);
 
-      // Hide while moving downward; keep hidden if already downward and
-      // the user keeps moving downward.
-      if (y > 6 && y > lastY) {
+      // Hide while moving downward; keep hidden if already hidden and the
+      // user keeps moving downward.
+      if (y > 4 && y > lastY) {
         setVisible(false);
       }
     };
