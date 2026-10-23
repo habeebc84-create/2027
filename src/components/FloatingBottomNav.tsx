@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
-import { Package, Wrench, Images, Info, MessageCircle, PackageCheck } from 'lucide-react';
+import { Home as HomeIcon, Package, Wrench, Images, MessageCircle, PackageCheck } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import type { Page } from '../types';
 
@@ -9,10 +9,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+  { label: 'Home', page: 'home' },
   { label: 'Products', page: 'products' },
   { label: 'Services', page: 'services' },
   { label: 'Gallery', page: 'gallery' },
-  { label: 'About Us', page: 'about' },
   { label: 'Contact', page: 'contact' },
   { label: 'Track Order', page: 'order-tracking' },
 ];
@@ -161,7 +161,7 @@ function SvgIcon({ name, size = 20, strokeWidth = 1.75 }: { name: string; size?:
     Products: <Package size={size} strokeWidth={strokeWidth} />,
     Services: <Wrench size={size} strokeWidth={strokeWidth} />,
     Gallery: <Images size={size} strokeWidth={strokeWidth} />,
-    'About Us': <Info size={size} strokeWidth={strokeWidth} />,
+    Home: <HomeIcon size={size} strokeWidth={strokeWidth} />,
     Contact: <MessageCircle size={size} strokeWidth={strokeWidth} />,
     'Track Order': <PackageCheck size={size} strokeWidth={strokeWidth} />,
   };
