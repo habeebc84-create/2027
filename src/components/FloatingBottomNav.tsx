@@ -53,32 +53,37 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
     >
       {/* Glass capsule, slightly tighter so text/boxes read clearly */}
       <motion.div
-        className="relative w-full rounded-full px-2 py-1.5 border border-white/18"
+        className="relative w-full rounded-full px-2 py-1.5 border border-white/20 shadow-[0_22px_50px_-22px_rgba(0,0,0,0.75),0_8px_20px_-10px_rgba(0,0,0,0.5)]"
         style={{
-          background: 'rgba(255, 255, 255, 0.18)',
-          backdropFilter: 'blur(16px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.25), 0 18px 36px -22px rgba(0,0,0,0.7)',
+          background:
+            'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 42%, rgba(255,255,255,0.05) 100%)',
+          backdropFilter: 'blur(26px) saturate(200%) brightness(1.06)',
+          WebkitBackdropFilter: 'blur(26px) saturate(200%) brightness(1.06)',
+          boxShadow:
+            'inset 0 1px 0 rgba(255,255,255,0.65),
+             inset 0 -1px 0 rgba(255,255,255,0.15),
+             inset 0 2px 6px rgba(255,255,255,0.15),
+             0 22px 40px -22px rgba(0,0,0,0.75),
+             0 8px 18px -10px rgba(0,0,0,0.5)',
         }}
         layout
         transition={{ duration, ease: 'easeInOut' }}
-      >
-        {/* Cleaner top highlight instead of heavy reflection */}
+      >        {/* Top liquid-glass highlight */}
         <span
           aria-hidden="true"
           style={{
             position: 'absolute',
-            inset: '-1px',
+            inset: '-1.5px',
             borderRadius: '9999px',
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.25) 35%, rgba(255,255,255,0) 70%)',
+              'linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.55) 26%, rgba(255,255,255,0) 72%)',
             pointerEvents: 'none',
             WebkitMask:
               'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
             mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
             WebkitMaskComposite: 'xor',
             maskComposite: 'exclude',
-            padding: '1px',
+            padding: '1.4px',
           }}
         />
 
@@ -104,18 +109,28 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                   className="relative flex flex-col items-center justify-center gap-0.5 rounded-full px-1.5 py-1.5 min-w-[56px] sm:min-w-[64px] leading-none group"
                   style={{
                     height: 42,
+                    background:
+                      isActive
+                        ? 'linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0.15) 100%)'
+                        : 'rgba(255,255,255,0.08)',
+                    backdropFilter: isActive ? 'blur(12px) saturate(180%)' : 'blur(6px) saturate(150%)',
+                    WebkitBackdropFilter: isActive ? 'blur(12px) saturate(180%)' : 'blur(6px) saturate(150%)',
+                    boxShadow:
+                      isActive
+                        ? 'inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -2px 0 rgba(255,255,255,0.3), 0 10px 22px -10px rgba(120,60,255,0.5), 0 0 0 1px rgba(255,255,255,0.28)'
+                        : 'inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.2), 0 6px 14px -10px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08)',
                   }}
                   whileHover={animate ? { y: -2, scale: 1.01 } : undefined}
                   whileTap={animate ? { scale: 0.96 } : undefined}
                   transition={{ duration, ease: 'easeOut' }}
                 >
-                  {/* Active underline pill */}
+                  {/* Active underline pill — liquid glass highlight */}
                   <motion.span
                     layoutId="activeNavPill"
-                    className="absolute left-2.5 right-2.5 bottom-1 h-1 rounded-full bg-white/50"
+                    className="absolute left-3 right-3 bottom-1 h-1 rounded-full bg-white/70 shadow-[0_0_12px_rgba(255,255,255,0.7)]"
                     style={{
                       opacity: isActive ? 1 : 0,
-                      transform: isActive ? 'scaleX(1)' : 'scaleX(0.3)',
+                      transform: isActive ? 'scaleX(1)' : 'scaleX(0.32)',
                     }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                   />
@@ -125,7 +140,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                     <span
                       className="block w-4 h-4 sm:w-[18px] sm:h-[18px] transition-colors duration-200"
                       style={{
-                        color: isActive ? undefined : 'rgba(255,255,255,0.55)',
+                        color: isActive ? undefined : 'rgba(255,255,255,0.85)',
                       }}
                     >
                       <SvgIcon name={item.label} size={18} />
@@ -136,9 +151,8 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                   <span
                     className="text-[9px] sm:text-[10px] font-medium tracking-tight text-white select-none whitespace-nowrap leading-none"
                     style={{
-                      opacity: isActive ? 1 : 0.6,
+                      opacity: isActive ? 1 : 0.78,
                       transition: 'opacity 0.2s ease',
-                      transform: 'translateY(0)',
                     }}
                   >
                     {item.label}
