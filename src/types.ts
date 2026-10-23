@@ -173,6 +173,22 @@ export interface TransportZone {
   enabled: boolean;
 }
 
+export interface PriceTier {
+  range: string;
+  label: string;
+  price: string;
+  unit: string;
+}
+
+// Daily Market Price Index shown on the Home page ("WHOLESALE TIERED
+// PRICING TABLE"). Edited from the admin portal; updatedAt is stamped on
+// every admin save and drives the "Rates Updated" label on the Home page.
+export interface MarketPrices {
+  cement: PriceTier[];
+  steel: PriceTier[];
+  updatedAt: string;
+}
+
 export interface ContentBlock {
   id: string;
   title: string;
@@ -204,7 +220,7 @@ export interface SiteSettings {
   logo: string;
 }
 
-export type AdminPage = 'overview' | 'analytics' | 'products' | 'categories' | 'orders' | 'customers' | 'content' | 'transport' | 'notifications' | 'terms' | 'security';
+export type AdminPage = 'overview' | 'analytics' | 'products' | 'categories' | 'orders' | 'customers' | 'content' | 'transport' | 'prices' | 'notifications' | 'terms' | 'security';
 
 export type Page = 'home' | 'splash' | 'welcome-gate' | 'products' | 'product-detail' | 'services' | 'gallery' | 'about' | 'contact' | 'checkout' | 'order-success' | 'order-tracking' | 'admin-login' | 'admin' | 'terms';
 

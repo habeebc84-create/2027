@@ -1,4 +1,4 @@
-import type { Product, Category, Brand, Notification, Banner, SiteContent, TransportZone, Customer, TermsContent } from './types';
+import type { Product, Category, Brand, Notification, Banner, SiteContent, TransportZone, Customer, TermsContent, MarketPrices } from './types';
 
 export const categories: Category[] = [
   { id: 'cat-cement', name: 'Cement', image: '/cement_banner_new.png', description: 'Premium Portland & Composite Cements', enabled: true, order: 1 },
@@ -145,6 +145,25 @@ export const defaultTransportZones: TransportZone[] = [
   { id: 'tz-6', name: 'Gurramkonda', mandal: 'Gurramkonda', charge: 1800, estimatedTime: '1-2 days', enabled: true },
   { id: 'tz-7', name: 'Madanapalle', mandal: 'Madanapalle', charge: 2000, estimatedTime: '1-2 days', enabled: true },
 ];
+
+// Daily Market Price Index defaults — the same rates previously hardcoded
+// in Home.tsx. Admin edits replace these via the admin portal and sync to
+// every device; updatedAt starts empty (never admin-updated yet).
+export const defaultMarketPrices: MarketPrices = {
+  cement: [
+    { range: '1 - 49 Bags', label: 'Standard Retail', price: '₹380', unit: '/ bag' },
+    { range: '50 - 199 Bags', label: 'Contractor Tier', price: '₹370', unit: '/ bag' },
+    { range: '200 - 499 Bags', label: 'Wholesale Bulk', price: '₹360', unit: '/ bag' },
+    { range: '500+ Bags', label: 'Project Direct', price: '₹355', unit: '/ bag' },
+  ],
+  steel: [
+    { range: '100 kg - 499 kg', label: 'Retail Cut Lengths', price: '₹68', unit: '/ kg' },
+    { range: '500 kg - 1999 kg', label: 'Contractor Tier', price: '₹65', unit: '/ kg' },
+    { range: '2000 kg - 4999 kg', label: 'Wholesale Bulk', price: '₹63', unit: '/ kg' },
+    { range: '5000+ kg', label: 'Project Direct', price: '₹61', unit: '/ kg' },
+  ],
+  updatedAt: '',
+};
 
 export const defaultNotifications: Notification[] = [
   { id: 'notif-1', title: "Today's Cement & Steel Prices Updated!", content: 'JSW, ACC & Dalmia Cement @ ₹355-390/bag. Tata Tiscon @ ₹64/kg.', type: 'scrolling', active: true, dateBadge: 'Daily Update', read: false },
