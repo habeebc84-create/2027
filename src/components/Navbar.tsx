@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
 import { waHref } from '../lib/phone';
@@ -15,6 +17,44 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 // the FloatingBottomNav dock, so they are not repeated here.
 export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   const { setPage, cartCount, siteContent } = useApp();
+  const reduceMotion = useReducedMotion();
+  // Hide the bar while scrolling down so page content stays unobstructed;
+  // it slides back as soon as scrolling stops — same behaviour as the
+  // bottom dock (ScrollAwareBottomNav in App.tsx).
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    let rafId: number | null = null;
+    let lastY = window.scrollY;
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const handleScroll = () => {
+      const y = window.scrollY;
+
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        lastY = window.scrollY;
+      });
+
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        // Scrolling has effectively stopped.
+        setVisible(true);
+      }, 150);
+
+      if (y > 4 && y > lastY) {
+        setVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimer) clearTimeout(scrollTimer);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   const handleNav = (e: React.MouseEvent, page: Page) => {
     e.preventDefault();
@@ -22,12 +62,18 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 pt-1.5 px-3 sm:px-5">
+    <motion.nav
+      initial={false}
+      animate={visible || reduceMotion ? { y: 0, opacity: 1 } : { y: '-140%', opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+      style={{ pointerEvents: visible ? 'auto' : 'none' }}
+      className="fixed top-0 left-0 right-0 z-50 pt-1.5 px-3 sm:px-5"
+    >
       {/* Floating rounded bar — compact height */}
-      <div className="w-fit max-w-[calc(100vw-1.5rem)] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-2.5 sm:px-3 py-0.5">
-        <div className="flex items-center gap-2 sm:gap-2.5 h-9">
+      <div className="w-full sm:w-fit sm:max-w-[calc(100vw-2.5rem)] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-2.5 sm:px-3.5 py-0.5">
+        <div className="flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3.5 h-9">
           {/* Logo */}
-          <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-1 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
+          <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-1.5 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
             <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-7 h-7 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
               <span className="text-[10px] sm:text-[12px] font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
@@ -36,7 +82,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
           </a>
 
           {/* Right actions */}
-          <div className="flex items-center space-x-1 shrink-0">
+          <div className="flex items-center space-x-1.5 shrink-0">
             <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1 bg-[#25D366] hover:bg-[#20bd5a] text-white px-2 py-0.5 rounded-lg text-[10px] xl:text-[11px] font-bold transition shadow-md shadow-green-500/20">
               <WhatsAppIcon className="w-3 h-3" />
               <span>WhatsApp</span>
@@ -52,6 +98,6 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
           </div>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
