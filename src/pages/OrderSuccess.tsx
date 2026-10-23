@@ -14,8 +14,8 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 
 type SiteSettingsInfo = { businessName: string; address: string; gstNumber: string; phone: string };
 
-const NAVY: [number, number, number] = [26, 26, 46];
-const PURPLE: [number, number, number] = [124, 58, 237];
+const NAVY: [number, number, number] = [10, 22, 40];
+const BLUE: [number, number, number] = [59, 130, 246];
 const GRAY: [number, number, number] = [90, 90, 105];
 const LIGHT: [number, number, number] = [235, 236, 242];
 const GREEN: [number, number, number] = [16, 185, 129];
@@ -27,6 +27,17 @@ const HSN_BY_CATEGORY: Record<string, string> = {
   Cement: '2523', 'TMT Steel': '7214', Steel: '7214', Bricks: '6904', Blocks: '6810',
   Sand: '2505', Aggregates: '2517', Jelly: '2517', Paints: '3209', Tiles: '6907',
   Plumbing: '3917', Electrical: '8544', Hardware: '7318', Plywood: '4412',
+};
+
+// GST rates (%) by category — current slabs after the GST 2.0 revision
+// (effective 22 Sep 2025): cement (HSN 2523) is 18%, down from 28%; TMT
+// steel (7214) stays 18%; paints are 18%; sand/aggregates 5%; bricks and
+// blocks 12% (with ITC). Store prices are GST-inclusive (see Payment
+// Policy), so the invoice shows the tax contained in the prices.
+const GST_RATE_BY_CATEGORY: Record<string, number> = {
+  Cement: 18, 'TMT Steel': 18, Steel: 18, Bricks: 12, Blocks: 12,
+  Sand: 5, Aggregates: 5, Jelly: 5, Paints: 18, Tiles: 18,
+  Plumbing: 18, Electrical: 18, Hardware: 18, Plywood: 18,
 };
 
 const ONES = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -58,7 +69,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     let price = item.product.price;
     if (item.selectedSize && item.product.sizes) { const s = item.product.sizes.find(sz => sz.size === item.selectedSize); if (s) price = s.price; }
     const hsn = HSN_BY_CATEGORY[item.product.category] || '-';
-    return { name: item.product.name, brand: item.product.brand, size: item.selectedSize || '-', qty: item.quantity, unit: item.product.unit || '', hsn, price, total: price * item.quantity };
+    return { name: item.product.name, brand: item.product.brand, size: item.selectedSize || '-', qty: item.quantity, unit: item.product.unit || '', hsn, gstRate: GST_RATE_BY_CATEGORY[item.product.category] ?? 18, price, total: price * item.quantity };
   });
   const subtotal = items.reduce((a, i) => a + i.total, 0);
   const delivery = order.finalDeliveryCharge ?? order.deliveryCharge;
@@ -67,6 +78,20 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   const inr = (n: number) => `Rs. ${n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const dateStr = new Date(order.date).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
   const trackingUrl = orderTrackingUrl(order.orderId);
+  // GST breakup of the GST-inclusive goods prices. Rule 46 of the CGST
+  // Rules requires the tax rate and tax amount on a tax invoice; supplier
+  // and customers are both in Andhra Pradesh, so each group's tax splits
+  // equally into CGST + SGST. (Delivery/handling are pass-through charges
+  // as billed in the summary.)
+  const taxGroups = new Map<number, { taxable: number; tax: number }>();
+  items.forEach(i => {
+    const taxable = i.total / (1 + i.gstRate / 100);
+    const g = taxGroups.get(i.gstRate) || { taxable: 0, tax: 0 };
+    g.taxable += taxable;
+    g.tax += i.total - taxable;
+    taxGroups.set(i.gstRate, g);
+  });
+  const totalGst = [...taxGroups.values()].reduce((a, g) => a + g.tax, 0);
 
   const doc = new (await import('jspdf')).jsPDF({ unit: 'mm', format: 'a4' });
   const W = 210;
@@ -86,7 +111,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   // ===== Header band with logo on BOTH sides =====
   doc.setFillColor(...NAVY);
   doc.rect(0, 0, W, 36, 'F');
-  doc.setFillColor(...PURPLE);
+  doc.setFillColor(...BLUE);
   doc.rect(0, 36, W, 1.2, 'F');
 
   const drawLogo = (x: number) => {
@@ -106,7 +131,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text(siteSettings.businessName.toUpperCase(), lx, 13.5, { align: 'left' });
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
-  doc.setTextColor(196, 181, 253);
+  doc.setTextColor(147, 197, 253);
   doc.text('P R E M I U M   B U I L D I N G   M A T E R I A L S', lx, 18.5, { align: 'left' });
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(8);
@@ -116,16 +141,16 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
 
   // ===== Title =====
   let y = 46;
-  doc.setTextColor(...PURPLE);
+  doc.setTextColor(...BLUE);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.text('TAX INVOICE', W / 2, y, { align: 'center' });
-  doc.setDrawColor(...PURPLE);
+  doc.setDrawColor(...BLUE);
   doc.setLineWidth(0.5);
   doc.line(80, y + 2, 130, y + 2);
   // Order status badge on the right of the title
   const statusLabel = (ORDER_STATUSES.find(s => s.key === order.status)?.label || order.status).toUpperCase();
-  const badgeFill = order.status === 'delivered' ? GREEN : order.status === 'cancelled' ? ROSE : PURPLE;
+  const badgeFill = order.status === 'delivered' ? GREEN : order.status === 'cancelled' ? ROSE : BLUE;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
   const badgeW = doc.getTextWidth(statusLabel) + 7;
@@ -146,7 +171,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setFillColor(...LIGHT);
   doc.roundedRect(12, metaTop, 88, 32, 2, 2, 'F');
   doc.roundedRect(104, metaTop, 94, 32, 2, 2, 'F');
-  doc.setFillColor(...PURPLE);
+  doc.setFillColor(...BLUE);
   doc.roundedRect(12, metaTop, 2, 32, 1, 1, 'F');
 
   const metaLine = (label: string, value: string, ly: number) => {
@@ -158,11 +183,11 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.setTextColor(...NAVY);
     doc.text(value, 40, ly);
   };
-  metaLine('Invoice No', `INV-${order.orderId}`, metaTop + 6);
+  metaLine('Invoice No', order.orderId, metaTop + 6);
   metaLine('Date', dateStr, metaTop + 11.5);
   metaLine('Payment', order.paymentMode, metaTop + 17);
   metaLine('Deliver To', order.deliveryLocation || 'Site Delivery', metaTop + 22.5);
-  metaLine('Place of Supply', 'Andhra Pradesh', metaTop + 28);
+  metaLine('Place of Supply', 'Andhra Pradesh (37)', metaTop + 28);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
@@ -185,7 +210,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   // ===== Items table =====
   const cols = { no: 13, hsn: 24, product: 30, brand: 88, variant: 113, qty: 134, rate: 148, amount: 196 };
   const drawTableHeader = (ty: number) => {
-    doc.setFillColor(...PURPLE);
+    doc.setFillColor(...BLUE);
     doc.rect(12, ty, 186, 8, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
@@ -241,7 +266,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setDrawColor(226, 224, 240);
   doc.setLineWidth(0.25);
   doc.roundedRect(108, sumTop, 90, sumCardH, 2, 2, 'S');
-  doc.setFillColor(...PURPLE);
+  doc.setFillColor(...BLUE);
   doc.roundedRect(108, sumTop, 1.2, sumCardH, 0.6, 0.6, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
@@ -249,7 +274,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text('SUMMARY', 112, sumTop + 6);
   const ty0 = sumTop + 14;
   const totalRow = (label: string, value: string, rowY: number, bold = false, fill = false) => {
-    if (fill) { doc.setFillColor(...PURPLE); doc.roundedRect(111, rowY - 4.2, 84, 8, 1.5, 1.5, 'F'); }
+    if (fill) { doc.setFillColor(...BLUE); doc.roundedRect(111, rowY - 4.2, 84, 8, 1.5, 1.5, 'F'); }
     doc.setFont('helvetica', bold ? 'bold' : 'normal');
     doc.setFontSize(bold ? 10.5 : 8.5);
     doc.setTextColor(...(fill ? WHITE : bold ? NAVY : GRAY));
@@ -266,18 +291,40 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
 
   // Amount in words (statutory on Indian tax invoices) — full width strip
   const wordsY = sumTop + sumCardH + 5;
-  doc.setDrawColor(...PURPLE);
+  doc.setDrawColor(...BLUE);
   doc.setLineWidth(0.3);
   doc.roundedRect(12, wordsY, 186, 9, 1.5, 1.5, 'S');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.setTextColor(...PURPLE);
+  doc.setTextColor(...BLUE);
   doc.text('Amount in Words:', 15, wordsY + 5.8);
   const wordsX = 15 + doc.getTextWidth('Amount in Words:') + 1.5;
   doc.setFont('helvetica', 'bolditalic');
   doc.setTextColor(...NAVY);
   doc.text(amountInWords(order.total), wordsX, wordsY + 5.8);
   y = wordsY + 9;
+
+  // ===== GST breakup strip (Rule 46: tax rate + amount, CGST/SGST split) =====
+  const gstGroups = [...taxGroups.entries()].sort((a, b) => a[0] - b[0]);
+  const gstStripH = 14 + gstGroups.length * 5;
+  doc.setDrawColor(...BLUE);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(12, y + 4, 186, gstStripH, 1.5, 1.5, 'S');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(...BLUE);
+  doc.text('GST BREAKUP (PRICES INCLUDE GST):', 15, y + 9.5);
+  let gy = y + 15;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(...NAVY);
+  gstGroups.forEach(([rate, g]) => {
+    doc.text(`GST @${rate}%  |  Taxable Value: ${inr(g.taxable)}  |  CGST @${rate / 2}%: ${inr(g.tax / 2)}  |  SGST @${rate / 2}%: ${inr(g.tax / 2)}`, 15, gy);
+    gy += 5;
+  });
+  doc.setFont('helvetica', 'bold');
+  doc.text(`Total GST included: ${inr(totalGst)}        Reverse Charge: Not Applicable`, 15, gy + 0.5);
+  y = y + 4 + gstStripH;
 
   // ===== QR tracking block + terms + signature =====
   const blockTop = Math.max(y + 6, 185);
@@ -305,7 +352,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.addImage(qrDataUrl, 'PNG', qx + 6, qy + 4, 28, 28);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6.5);
-    doc.setTextColor(...PURPLE);
+    doc.setTextColor(...BLUE);
     doc.text('SCAN TO TRACK ORDER', qx + 20, qy + 37, { align: 'center' });
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
@@ -332,7 +379,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text(`Track online: ${trackingUrl}`, W / 2, footerY - 4, { align: 'center' });
   doc.setFillColor(...NAVY);
   doc.rect(0, footerY, W, 12, 'F');
-  doc.setFillColor(...PURPLE);
+  doc.setFillColor(...BLUE);
   doc.rect(0, footerY - 0.8, W, 0.8, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'normal');
@@ -444,7 +491,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
       {/* Background glow effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[150px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/8 rounded-full blur-[120px]" />
       </div>
 
@@ -453,18 +500,18 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
         <div className="text-center mb-8">
           <div className={`w-24 h-24 mx-auto mb-6 relative transition-all duration-700 ${animPhase >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
             {/* Glowing ring */}
-            <div className="absolute inset-0 rounded-full border-4 border-purple-500/50 animate-[spin_3s_linear_infinite]" style={{ borderTopColor: '#a855f7', borderRightColor: '#ec4899', borderBottomColor: '#3b82f6' }} />
-            <div className="absolute inset-1 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm" />
+            <div className="absolute inset-0 rounded-full border-4 border-blue-500/50 animate-[spin_3s_linear_infinite]" style={{ borderTopColor: '#3b82f6', borderRightColor: '#38bdf8', borderBottomColor: '#3b82f6' }} />
+            <div className="absolute inset-1 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/20 backdrop-blur-sm" />
             {/* Checkmark */}
             <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${animPhase >= 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}>
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.4)]">
                 <Check className="w-8 h-8 text-white" strokeWidth={3} />
               </div>
             </div>
             {/* Particles */}
             {[...Array(6)].map((_, i) => (
               <div key={i} className={`absolute w-1.5 h-1.5 rounded-full transition-all duration-700 ${animPhase >= 3 ? 'opacity-100' : 'opacity-0'}`}
-                style={{ background: ['#a855f7', '#ec4899', '#3b82f6', '#f59e0b', '#10b981', '#8b5cf6'][i], top: '50%', left: '50%', transform: `translate(${Math.cos(i * 60 * Math.PI / 180) * 45}px, ${Math.sin(i * 60 * Math.PI / 180) * 45}px)` }} />
+                style={{ background: ['#3b82f6', '#38bdf8', '#3b82f6', '#f59e0b', '#10b981', '#8b5cf6'][i], top: '50%', left: '50%', transform: `translate(${Math.cos(i * 60 * Math.PI / 180) * 45}px, ${Math.sin(i * 60 * Math.PI / 180) * 45}px)` }} />
             ))}
           </div>
 
@@ -479,7 +526,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
         </div>
 
         {/* Order Reference ID */}
-        <div className={`bg-white/5 border border-purple-500/20 rounded-2xl p-5 text-center mb-6 transition-all duration-500 ${animPhase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={`bg-white/5 border border-blue-500/20 rounded-2xl p-5 text-center mb-6 transition-all duration-500 ${animPhase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Order Reference ID</div>
           <div className="text-xl sm:text-2xl font-black text-white font-industrial">#{order.orderId}</div>
           <button onClick={copyOrderId} className="mt-3 inline-flex items-center space-x-1.5 bg-white/10 border border-white/10 px-4 py-2 rounded-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/15 transition">
@@ -502,15 +549,15 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
             <Phone className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />
             <span className="text-[10px] font-bold text-slate-300">Call Store</span>
           </a>
-          <button onClick={() => setPage('products')} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-purple-500/30 transition group">
-            <ShoppingCart className="w-5 h-5 text-purple-400 group-hover:scale-110 transition" />
+          <button onClick={() => setPage('products')} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-500/30 transition group">
+            <ShoppingCart className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />
             <span className="text-[10px] font-bold text-slate-300">Continue Shopping</span>
           </button>
         </div>
 
         {/* Track Order Button */}
         <button onClick={() => setPage('order-tracking', order.orderId)}
-          className={`w-full bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 text-white font-black py-4 rounded-2xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:from-blue-400 hover:via-indigo-500 hover:to-purple-500 transition mb-8 ${animPhase >= 6 ? 'opacity-100' : 'opacity-0'}`}>
+          className={`w-full bg-gradient-to-r from-blue-500 via-indigo-600 to-indigo-600 text-white font-black py-4 rounded-2xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:from-blue-400 hover:via-indigo-500 hover:to-blue-500 transition mb-8 ${animPhase >= 6 ? 'opacity-100' : 'opacity-0'}`}>
           <MapPin className="w-5 h-5" /><span>TRACK MY ORDER</span>
         </button>
 
@@ -527,14 +574,14 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
                   const description = ['Order Placed', 'Store will confirm your order', 'Products are being prepared', 'Order is ready for delivery', 'Driver is on the way', 'Order successfully delivered'][idx] || '';
                   return (
                     <div key={status.key} className="flex items-start space-x-4 relative">
-                      {idx < 5 && <div className={`absolute left-4 top-8 w-0.5 h-8 transition-all duration-500 ${isCompleted ? 'bg-gradient-to-b from-purple-500 to-blue-500' : 'bg-white/10'}`} />}
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 transition-all duration-500 ${isCurrent ? 'bg-gradient-to-br from-purple-500 to-blue-600 shadow-[0_0_15px_rgba(168,85,247,0.4)]' : isCompleted ? 'bg-purple-500/20 border border-purple-500/50' : 'bg-white/5 border border-white/10'}`}>
+                      {idx < 5 && <div className={`absolute left-4 top-8 w-0.5 h-8 transition-all duration-500 ${isCompleted ? 'bg-gradient-to-b from-blue-500 to-blue-500' : 'bg-white/10'}`} />}
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 transition-all duration-500 ${isCurrent ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.4)]' : isCompleted ? 'bg-blue-500/20 border border-blue-500/50' : 'bg-white/5 border border-white/10'}`}>
                         {isCompleted ? <Check className="w-3.5 h-3.5 text-white" /> : <div className="w-2 h-2 rounded-full bg-white/20" />}
                       </div>
                       <div className="pb-6">
                         <div className={`text-xs font-bold ${isCurrent ? 'text-white' : isCompleted ? 'text-slate-300' : 'text-slate-600'}`}>{status.label}</div>
-                        <div className={`text-[10px] mt-0.5 ${isCurrent ? 'text-purple-400' : isCompleted ? 'text-slate-500' : 'text-slate-700'}`}>{description}</div>
-                        {isCurrent && <div className="text-[9px] text-purple-400 font-bold mt-0.5 uppercase tracking-wider">Current</div>}
+                        <div className={`text-[10px] mt-0.5 ${isCurrent ? 'text-blue-400' : isCompleted ? 'text-slate-500' : 'text-slate-700'}`}>{description}</div>
+                        {isCurrent && <div className="text-[9px] text-blue-400 font-bold mt-0.5 uppercase tracking-wider">Current</div>}
                       </div>
                     </div>
                   );
@@ -584,7 +631,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
           <div className="lg:col-span-5 space-y-6">
             {/* Delivery Ticket */}
             <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500" />
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">HSN CEMENT &amp; STEEL</div>

@@ -4,7 +4,7 @@ import ProductCard from '../components/ProductCard';
 import { telHref } from '../lib/phone';
 
 export default function Home() {
-  const { siteContent, products, setPage, categories, marketPrices } = useApp();
+  const { siteContent, products, setPage, categories, marketPrices, siteSettings } = useApp();
   const featuredProducts = products.filter(p => p.featured && p.enabled).slice(0, 6);
   // "Rates Updated" stamp for the price index: the date the admin last
   // saved prices in the portal (defaults to today before the first save).
@@ -38,7 +38,7 @@ export default function Home() {
                 'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
             }}>
               <Shield className="w-4 h-4 text-emerald-400" />
-              <span>GSTIN: 37AAAAA0000A1Z5</span>
+              <span>GSTIN: {siteSettings.gstNumber}</span>
             </span>
             <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{
               background:
