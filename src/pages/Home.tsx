@@ -1,7 +1,6 @@
 import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
-import { bustedImageSrc } from '../lib/images';
 import { telHref } from '../lib/phone';
 
 export default function Home() {
@@ -16,12 +15,15 @@ export default function Home() {
   return (
     <div className="relative z-10">
       {/* Hero Section */}
-      <section className="relative min-h-[80vh] flex items-center overflow-hidden">
-        {/* Background image */}
+      <section className="relative min-h-[72vh] flex items-center overflow-hidden">
+        {/* Colour-only background (hero image removed on request): deep
+            slate-blue gradient with soft blue/indigo glows, fading into
+            the page at the bottom so the price-index card below blends. */}
         <div className="absolute inset-0 z-0">
-          <img src={bustedImageSrc(siteContent.heroImage) || bustedImageSrc('/hero_bg_ultra_8k.png')} alt="" className="w-full h-full object-cover object-top" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/30" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, #0d1b31 0%, #081120 45%, #040814 100%)' }} />
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/15 blur-[120px] rounded-full" />
+          <div className="absolute top-1/3 -right-24 w-96 h-96 bg-indigo-500/10 blur-[120px] rounded-full" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
