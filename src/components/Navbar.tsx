@@ -24,10 +24,10 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 pt-1.5 px-3 sm:px-5">
       {/* Floating rounded bar — compact height */}
-      <div className="max-w-[1400px] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-2 sm:px-2.5 py-0.5">
-        <div className="flex items-center justify-between h-9">
+      <div className="w-fit max-w-[calc(100vw-1.5rem)] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-2.5 sm:px-3 py-0.5">
+        <div className="flex items-center gap-2 sm:gap-2.5 h-9">
           {/* Logo */}
-          <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-1.5 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
+          <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-1 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
             <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-7 h-7 rounded-lg object-contain border border-white/10 bg-slate-950/40 p-0.5 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
               <span className="text-[10px] sm:text-[12px] font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
@@ -36,12 +36,12 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
           </a>
 
           {/* Right actions */}
-          <div className="flex items-center space-x-1.5 shrink-0">
+          <div className="flex items-center space-x-1 shrink-0">
             <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1 bg-[#25D366] hover:bg-[#20bd5a] text-white px-2 py-0.5 rounded-lg text-[10px] xl:text-[11px] font-bold transition shadow-md shadow-green-500/20">
               <WhatsAppIcon className="w-3 h-3" />
               <span>WhatsApp</span>
             </a>
-            <button onClick={onCartClick} className="relative -rotate-180 bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-1.5 rounded-lg transition shadow-md" aria-label="Open cart">
+            <button onClick={onCartClick} className="relative bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-1.5 rounded-lg transition shadow-md" aria-label="Open cart">
               <ShoppingCart className="w-[18px] h-[18px]" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[7px] font-bold w-3 h-3 rounded-full flex items-center justify-center shadow-lg">
