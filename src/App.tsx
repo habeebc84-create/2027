@@ -52,12 +52,6 @@ function AppContent() {
   const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
   const [successOrderId, setSuccessOrderId] = useState<string | null>(null);
-  // Mobile-first app: the bottom dock is always visible on small
-  // screens and hides itself while the user scrolls down the page.
-  const isMobile =
-    typeof window !== 'undefined' && window.innerWidth < 768;
-  const isDesktop = false;
-  const useMobile = isMobile;
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const path = window.location.pathname;
@@ -155,11 +149,7 @@ function AppContent() {
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
-      {showNav && (
-        <ScrollAwareBottomNav
-          isMobile={isMobile}
-        />
-      )}
+      {showNav && <ScrollAwareBottomNav />}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />
       {!isAdmin && <NotificationPopup />}
@@ -167,19 +157,14 @@ function AppContent() {
   );
 }
 
-function ScrollAwareBottomNav({
-  isMobile,
-}: {
-  isMobile: boolean;
-}) {
-  // Hide the mobile dock while scrolling down so page content stays
-  // unobstructed. It comes back only once the page is scrolled back to
-  // the very top, which matches how native mobile app bars behave.
+function ScrollAwareBottomNav() {
+  // Apple-style bottom bar, shown on every screen size (phone, tablet
+  // and desktop). It hides while scrolling down so page content stays
+  // unobstructed, and comes back once scrolling stops — like a native
+  // app bar.
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    if (!isMobile) return;
-
     let rafId: number | null = null;
     let lastY = window.scrollY;
     let scrollTimer: ReturnType<typeof setTimeout> | null = null;
@@ -212,9 +197,7 @@ function ScrollAwareBottomNav({
       if (scrollTimer) clearTimeout(scrollTimer);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [isMobile]);
-
-  if (!isMobile) return null;
+  }, []);
 
   return (
     <FloatingBottomNav visible={visible} />
