@@ -53,12 +53,12 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
     >
       {/* Glass capsule, slightly tighter so text/boxes read clearly */}
       <motion.div
-        className="relative w-full rounded-full px-2 py-1.5 shadow-[0_24px_62px_-15px_rgba(0,0,0,0.55),0_10px_22px_-12px_rgba(0,0,0,0.35)] border border-white/30"
+        className="relative w-full rounded-full px-2 py-1.5 border border-white/18"
         style={{
-          background: 'rgba(255, 255, 255, 0.86)',
-          backdropFilter: 'blur(22px) saturate(190%)',
-          WebkitBackdropFilter: 'blur(22px) saturate(190%)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(0,0,0,0.05)',
+          background: 'rgba(255, 255, 255, 0.18)',
+          backdropFilter: 'blur(16px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.25), 0 18px 36px -22px rgba(0,0,0,0.7)',
         }}
         layout
         transition={{ duration, ease: 'easeInOut' }}
@@ -112,7 +112,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                   {/* Active underline pill */}
                   <motion.span
                     layoutId="activeNavPill"
-                    className="absolute left-2.5 right-2.5 bottom-1 h-1 rounded-full bg-black/60"
+                    className="absolute left-2.5 right-2.5 bottom-1 h-1 rounded-full bg-white/50"
                     style={{
                       opacity: isActive ? 1 : 0,
                       transform: isActive ? 'scaleX(1)' : 'scaleX(0.3)',
@@ -125,7 +125,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                     <span
                       className="block w-4 h-4 sm:w-[18px] sm:h-[18px] transition-colors duration-200"
                       style={{
-                        color: isActive ? undefined : 'rgba(0,0,0,0.45)',
+                        color: isActive ? undefined : 'rgba(255,255,255,0.55)',
                       }}
                     >
                       <SvgIcon name={item.label} size={18} />
@@ -134,9 +134,9 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
 
                   {/* Label */}
                   <span
-                    className="text-[9px] sm:text-[10px] font-medium tracking-tight text-neutral-900 select-none whitespace-nowrap leading-none"
+                    className="text-[9px] sm:text-[10px] font-medium tracking-tight text-white select-none whitespace-nowrap leading-none"
                     style={{
-                      opacity: isActive ? 1 : 0.45,
+                      opacity: isActive ? 1 : 0.6,
                       transition: 'opacity 0.2s ease',
                       transform: 'translateY(0)',
                     }}

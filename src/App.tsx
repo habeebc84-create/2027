@@ -58,8 +58,6 @@ function AppContent() {
     typeof window !== 'undefined' && window.innerWidth < 768;
   const isDesktop = false;
   const useMobile = isMobile;
-  const [scrolled, setScrolled] = useState(false);
-
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const path = window.location.pathname;
@@ -159,10 +157,7 @@ function AppContent() {
       {showNav && <FloatingButtons />}
       {showNav && (
         <ScrollAwareBottomNav
-          visible={!scrolled}
           isMobile={isMobile}
-          onScroll={() => setScrolled(true)}
-          onScrollEnd={() => setScrolled(false)}
         />
       )}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
@@ -173,41 +168,55 @@ function AppContent() {
 }
 
 function ScrollAwareBottomNav({
-  visible,
   isMobile,
-  onScroll,
-  onScrollEnd,
 }: {
-  visible: boolean;
   isMobile: boolean;
-  onScroll: () => void;
-  onScrollEnd: () => void;
 }) {
-  // Hide the mobile dock while scrolling down so the page content
-  // stays unobstructed; it comes back once the user stops scrolling.
+  // Hide the mobile dock while scrolling down so page content stays
+  // unobstructed. It comes back only once the page is scrolled back to
+  // the very top, which matches how native mobile app bars behave.
+  const [visible, setVisible] = useState(true);
+
   useEffect(() => {
     if (!isMobile) return;
 
     let rafId: number | null = null;
-    let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
+    let lastY = window.scrollY;
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
 
     const handleScroll = () => {
-      onScroll();
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(onScrollEnd, 220);
+      const y = window.scrollY;
+
       if (rafId !== null) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         rafId = null;
+        lastY = window.scrollY;
       });
+
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        if (Math.abs(window.scrollY - lastY) < 1) {
+          // Effectively stopped scrolling.
+          if (window.scrollY <= 2) {
+            setVisible(true);
+          }
+        }
+      }, 180);
+
+      // Hide while moving downward; keep hidden if already downward and
+      // the user keeps moving downward.
+      if (y > 6 && y > lastY) {
+        setVisible(false);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
+      if (scrollTimer) clearTimeout(scrollTimer);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [isMobile, onScroll, onScrollEnd]);
+  }, [isMobile]);
 
   if (!isMobile) return null;
 
