@@ -4,26 +4,14 @@ import ProductCard from '../components/ProductCard';
 import { bustedImageSrc } from '../lib/images';
 import { telHref } from '../lib/phone';
 
-const pricingTiers = {
-  cement: [
-    { range: '1 - 49 Bags', label: 'Standard Retail', price: '₹380', unit: '/ bag' },
-    { range: '50 - 199 Bags', label: 'Contractor Tier', price: '₹370', unit: '/ bag' },
-    { range: '200 - 499 Bags', label: 'Wholesale Bulk', price: '₹360', unit: '/ bag' },
-    { range: '500+ Bags', label: 'Project Direct', price: '₹355', unit: '/ bag' },
-  ],
-  steel: [
-    { range: '100 kg - 499 kg', label: 'Retail Cut Lengths', price: '₹68', unit: '/ kg' },
-    { range: '500 kg - 1999 kg', label: 'Contractor Tier', price: '₹65', unit: '/ kg' },
-    { range: '2000 kg - 4999 kg', label: 'Wholesale Bulk', price: '₹63', unit: '/ kg' },
-    { range: '5000+ kg', label: 'Project Direct', price: '₹61', unit: '/ kg' },
-  ],
-};
-
-
-
 export default function Home() {
-  const { siteContent, products, setPage, categories } = useApp();
+  const { siteContent, products, setPage, categories, marketPrices } = useApp();
   const featuredProducts = products.filter(p => p.featured && p.enabled).slice(0, 6);
+  // "Rates Updated" stamp for the price index: the date the admin last
+  // saved prices in the portal (defaults to today before the first save).
+  const pricesDate = marketPrices.updatedAt ? new Date(marketPrices.updatedAt) : new Date();
+  const pricesDateLabel = pricesDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const pricesUpdatedText = pricesDate.toDateString() === new Date().toDateString() ? `Rates Updated: Today (${pricesDateLabel})` : `Rates Updated: ${pricesDateLabel}`;
 
   return (
     <div className="relative z-10">
@@ -112,7 +100,7 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-2 bg-blue-500/15 border border-blue-500/30 px-4 py-2 rounded-full">
               <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-blue-400">Rates Updated: Today (28 Aug 2026)</span>
+              <span className="text-xs font-bold text-blue-400">{pricesUpdatedText}</span>
             </div>
           </div>
 
@@ -144,7 +132,7 @@ export default function Home() {
                 }}>JSW / ACC / Dalmia</span>
               </div>
               <div className="divide-y divide-white/10">
-                {pricingTiers.cement.map((tier, i) => (
+                {marketPrices.cement.map((tier, i) => (
                   <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
                     background:
                       'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
@@ -188,7 +176,7 @@ export default function Home() {
                 }}>Tata Tiscon / Vizag</span>
               </div>
               <div className="divide-y divide-white/10">
-                {pricingTiers.steel.map((tier, i) => (
+                {marketPrices.steel.map((tier, i) => (
                   <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
                     background:
                       'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
-import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage, Achievement } from '../types';
-import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms } from '../data';
+import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage, Achievement, MarketPrices } from '../types';
+import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms, defaultMarketPrices } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
 import { verifyAdminPassword, changeAdminPassword } from '../lib/password';
@@ -43,6 +43,8 @@ interface AppContextType {
   addTransportZone: (z: TransportZone) => void;
   updateTransportZone: (id: string, updates: Partial<TransportZone>) => void;
   deleteTransportZone: (id: string) => void;
+  marketPrices: MarketPrices;
+  updateMarketPrices: (prices: Omit<MarketPrices, 'updatedAt'>) => void;
   achievements: Achievement[];
   addAchievement: (a: Achievement) => void;
   deleteAchievement: (id: string) => void;
@@ -122,6 +124,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deletedOrderIdsRef = useRef<Set<string>>(new Set());
   const [banners] = useState<Banner[]>(() => load('hsn_banners', defaultBanners));
   const [transportZones, setTransportZones] = useState<TransportZone[]>(() => load('hsn_transportZones', defaultTransportZones));
+  const [marketPrices, setMarketPrices] = useState<MarketPrices>(() => ({ ...defaultMarketPrices, ...load('hsn_marketPrices', {}) }));
   const [achievements, setAchievements] = useState<Achievement[]>(() => load('hsn_achievements', []));
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(() => load('hsn_contentBlocks', []));
   const [termsContent, setTermsContent] = useState<TermsContent[]>(() => load('hsn_terms', defaultTerms));
@@ -167,6 +170,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       products,
       categories,
       transportZones,
+      marketPrices,
       contentBlocks,
       terms: termsContent,
       achievements,
@@ -181,7 +185,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         showToast('Cloud sync failed — change stays on this device only', 'error');
       }
     });
-  }, [siteContent, siteSettings, products, categories, transportZones, contentBlocks, termsContent, achievements, orders, showToast]);
+  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, showToast]);
 
   const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
@@ -197,6 +201,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (Array.isArray(json.products)) setProducts(json.products as Product[]);
       if (Array.isArray(json.categories)) setCategories(json.categories as Category[]);
       if (Array.isArray(json.transportZones)) setTransportZones(json.transportZones as TransportZone[]);
+      if (json.marketPrices && typeof json.marketPrices === 'object') setMarketPrices(prev => ({ ...prev, ...(json.marketPrices as Partial<MarketPrices>) }));
       if (Array.isArray(json.contentBlocks)) setContentBlocks(json.contentBlocks as ContentBlock[]);
       if (Array.isArray(json.terms)) setTermsContent(json.terms as TermsContent[]);
       if (Array.isArray(json.achievements)) setAchievements(json.achievements as Achievement[]);
@@ -270,6 +275,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [applyCloudSnapshot]);
   useEffect(() => { save('hsn_transportZones', transportZones); }, [transportZones]);
+  useEffect(() => { save('hsn_marketPrices', marketPrices); }, [marketPrices]);
   useEffect(() => { save('hsn_achievements', achievements); }, [achievements]);
   useEffect(() => { save('hsn_contentBlocks', contentBlocks); }, [contentBlocks]);
   useEffect(() => { save('hsn_terms', termsContent); }, [termsContent]);
@@ -434,6 +440,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateTransportZone = useCallback((id: string, updates: Partial<TransportZone>) => { localEditRef.current = true; setTransportZones(prev => prev.map(z => z.id === id ? { ...z, ...updates } : z)); showToast('Zone updated'); }, [showToast]);
   const deleteTransportZone = useCallback((id: string) => { localEditRef.current = true; setTransportZones(prev => prev.filter(z => z.id !== id)); showToast('Zone deleted'); }, [showToast]);
 
+  const updateMarketPrices = useCallback((prices: Omit<MarketPrices, 'updatedAt'>) => { localEditRef.current = true; setMarketPrices({ cement: prices.cement, steel: prices.steel, updatedAt: new Date().toISOString() }); showToast('Market prices updated'); }, [showToast]);
+
   const addContentBlock = useCallback((b: ContentBlock) => { localEditRef.current = true; setContentBlocks(prev => [...prev, b]); showToast('Content added'); }, [showToast]);
   const updateContentBlock = useCallback((id: string, updates: Partial<ContentBlock>) => { localEditRef.current = true; setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b)); showToast('Content updated'); }, [showToast]);
   const deleteContentBlock = useCallback((id: string) => { localEditRef.current = true; setContentBlocks(prev => prev.filter(b => b.id !== id)); showToast('Content deleted'); }, [showToast]);
@@ -515,6 +523,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cart, addToCart, removeFromCart, updateCartQuantity, cartTotal, cartCount, clearCart,
       orders, placeOrder, setOrderFinalDeliveryCharge, updateOrderStatus, deleteOrder, getOrderById, refreshFromCloud,
       customers, deleteCustomer, transportZones, addTransportZone, updateTransportZone, deleteTransportZone,
+      marketPrices, updateMarketPrices,
       achievements, addAchievement, deleteAchievement,
       contentBlocks, addContentBlock, updateContentBlock, deleteContentBlock, toggleContentBlock,
       notifications, addNotification, updateNotification, deleteNotification, markNotificationRead, clearNotifications, banners,
