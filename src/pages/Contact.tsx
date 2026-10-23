@@ -37,25 +37,25 @@ export default function Contact() {
 
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Store Details */}
-          <div className="lg:col-span-5 rounded-3xl border border-white/16 space-y-6" style={{
+          <div className="lg:col-span-5 rounded-3xl border border-white/16 space-y-6 p-6 sm:p-8" style={{
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
-            backdropFilter: 'blur(14px) saturate(160%)',
-            WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+              'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+            backdropFilter: 'blur(16px) saturate(140%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(140%)',
             boxShadow:
               'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 18px 44px -22px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.5)',
           }}>
             <h3 className="text-xl font-bold text-slate-100 border-b border-slate-800 pb-3">Store Details</h3>
             <div className="space-y-4 text-sm">
               <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-white shrink-0 mt-1" />
+                <MapPin className="w-5 h-5 text-blue-400 shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">Address</div>
                   <div className="text-slate-200 font-semibold">{siteContent.address}</div>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <PhoneIcon className="w-5 h-5 text-white shrink-0 mt-1" />
+                <PhoneIcon className="w-5 h-5 text-blue-400 shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">Phone Number</div>
                   <a href={telHref(siteContent.phone)} className="text-white font-bold hover:underline">{siteContent.phone}</a>
@@ -69,29 +69,25 @@ export default function Contact() {
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <Clock className="w-5 h-5 text-white shrink-0 mt-1" />
+                <Clock className="w-5 h-5 text-blue-400 shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">Business Hours</div>
                   <div className="text-slate-200 font-semibold">{siteContent.businessHours}</div>
                 </div>
               </div>
             </div>
-            <div className="pt-4 flex space-x-3" style={{
-              borderTop: '1px solid rgba(255,255,255,0.14)',
-              background:
-                'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 100%)',
-            }}>
-              <a href={telHref(siteContent.phone)} className="flex-1 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold py-3 rounded-xl text-xs text-center transition">Call Store</a>
+            <div className="pt-4 flex space-x-3 border-t border-white/10">
+              <a href={telHref(siteContent.phone)} className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold py-3 rounded-xl text-xs text-center transition">Call Store</a>
               <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
             </div>
           </div>
 
           {/* Inquiry Form */}
-          <div className="lg:col-span-7 rounded-3xl border border-white/16" style={{
+          <div className="lg:col-span-7 rounded-3xl border border-white/16 p-6 sm:p-8" style={{
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
-            backdropFilter: 'blur(14px) saturate(160%)',
-            WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+              'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+            backdropFilter: 'blur(16px) saturate(140%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(140%)',
             boxShadow:
               'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 18px 44px -22px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.5)',
           }}>
@@ -105,10 +101,10 @@ export default function Contact() {
                 boxShadow:
                   'inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 26px -16px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
               }}>
-                <CheckCircle className="w-12 h-12 text-pink-400 mx-auto" />
+                <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto" />
                 <h4 className="text-lg font-bold">Thank You! Your Inquiry Has Been Received.</h4>
                 <p className="text-xs text-slate-300">Our store manager will contact you on <strong>{form.mobile}</strong> shortly with pricing and delivery terms.</p>
-                <button onClick={() => { setSubmitted(false); setForm({ name: '', mobile: '', materialNeeded: 'Cement & Steel', message: '' }); }} className="bg-pink-600 text-white font-bold text-xs px-4 py-2 rounded-xl">Send Another Inquiry</button>
+                <button onClick={() => { setSubmitted(false); setForm({ name: '', mobile: '', materialNeeded: 'Cement & Steel', message: '' }); }} className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition">Send Another Inquiry</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -136,7 +132,7 @@ export default function Contact() {
                   <label className="text-xs font-bold text-slate-300 block mb-1">Site Location & Quantity Notes</label>
                   <textarea rows={4} placeholder="Enter site location in Kalikiri / nearby mandals and estimated quantities..." value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 resize-none" />
                 </div>
-                <button type="submit" className="w-full bg-blue-500 hover:bg-blue-400 text-slate-950 font-black py-3.5 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center space-x-2 text-sm transition">
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-black py-3.5 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center space-x-2 text-sm transition">
                   <Send className="w-4 h-4" />
                   <span>Submit Inquiry</span>
                 </button>
