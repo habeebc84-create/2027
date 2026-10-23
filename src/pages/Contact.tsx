@@ -43,10 +43,7 @@ export default function Contact() {
             backdropFilter: 'blur(14px) saturate(160%)',
             WebkitBackdropFilter: 'blur(14px) saturate(160%)',
             boxShadow:
-              'inset 0 1px 0 rgba(255,255,255,0.25),
-               inset 0 -1px 0 rgba(0,0,0,0.3),
-               0 18px 44px -22px rgba(0,0,0,0.7),
-               0 8px 22px -12px rgba(0,0,0,0.5)',
+              'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 18px 44px -22px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.5)',
           }}>
             <h3 className="text-xl font-bold text-slate-100 border-b border-slate-800 pb-3">Store Details</h3>
             <div className="space-y-4 text-sm">
@@ -96,10 +93,7 @@ export default function Contact() {
             backdropFilter: 'blur(14px) saturate(160%)',
             WebkitBackdropFilter: 'blur(14px) saturate(160%)',
             boxShadow:
-              'inset 0 1px 0 rgba(255,255,255,0.25),
-               inset 0 -1px 0 rgba(0,0,0,0.3),
-               0 18px 44px -22px rgba(0,0,0,0.7),
-               0 8px 22px -12px rgba(0,0,0,0.5)',
+              'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 18px 44px -22px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.5)',
           }}>
             <h3 className="text-xl font-bold text-slate-100 mb-6">Send Price Inquiry / Site Quote Request</h3>
             {submitted ? (

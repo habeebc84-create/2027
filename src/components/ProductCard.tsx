@@ -28,10 +28,7 @@ export default function ProductCard({ product }: { product: Product }) {
       backdropFilter: 'blur(14px) saturate(160%)',
       WebkitBackdropFilter: 'blur(14px) saturate(160%)',
       boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.25),
-         inset 0 -1px 0 rgba(0,0,0,0.35),
-         0 18px 44px -22px rgba(0,0,0,0.7),
-         0 8px 22px -12px rgba(0,0,0,0.5)',
+        'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.35), 0 18px 44px -22px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.5)',
     }}>
       {/* Image */}
       <div className="relative overflow-hidden cursor-pointer" onClick={handleViewDetail}>

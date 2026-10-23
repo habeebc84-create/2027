@@ -97,10 +97,7 @@ export default function Home() {
           backdropFilter: 'blur(16px) saturate(170%)',
           WebkitBackdropFilter: 'blur(16px) saturate(170%)',
           boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.3),
-             inset 0 -1px 0 rgba(0,0,0,0.3),
-             0 22px 52px -26px rgba(0,0,0,0.75),
-             0 10px 24px -14px rgba(0,0,0,0.55)',
+            'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3), 0 22px 52px -26px rgba(0,0,0,0.75), 0 10px 24px -14px rgba(0,0,0,0.55)',
         }}>
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
@@ -236,10 +233,7 @@ export default function Home() {
               backdropFilter: 'blur(14px) saturate(160%)',
               WebkitBackdropFilter: 'blur(14px) saturate(160%)',
               boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.25),
-                 inset 0 -1px 0 rgba(0,0,0,0.3),
-                 0 14px 34px -18px rgba(0,0,0,0.7),
-                 0 6px 16px -10px rgba(0,0,0,0.45)',
+                'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 14px 34px -18px rgba(0,0,0,0.7), 0 6px 16px -10px rgba(0,0,0,0.45)',
             }}>
               <img src={cat.image} alt={cat.name} className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl group-hover:scale-110 transition" />
               <span className="text-[10px] sm:text-xs font-bold text-slate-300 text-center leading-tight">{cat.name}</span>
@@ -292,10 +286,7 @@ export default function Home() {
                 backdropFilter: 'blur(14px) saturate(160%)',
                 WebkitBackdropFilter: 'blur(14px) saturate(160%)',
                 boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.25),
-                   inset 0 -1px 0 rgba(0,0,0,0.3),
-                   0 14px 34px -18px rgba(0,0,0,0.7),
-                   0 6px 16px -10px rgba(0,0,0,0.45)',
+                  'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 14px 34px -18px rgba(0,0,0,0.7), 0 6px 16px -10px rgba(0,0,0,0.45)',
               }}>
                 <div className="w-12 h-12 rounded-xl border border-white/16 flex items-center justify-center mx-auto" style={{
                   background:
