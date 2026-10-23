@@ -33,15 +33,23 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
   const animate = !shouldReduceMotion;
 
   return (
+    // Centring: the nav stretches across the full width and centres the
+    // bar with flexbox, so the bar always sits exactly in the middle of
+    // the website. It deliberately does NOT use left:50% + translateX:
+    // framer-motion rebuilds the transform for the hide/show y animation
+    // and drops a hand-written translateX(-50%), which left the bar
+    // off-centre. pointerEvents are disabled on the wrapper and enabled
+    // on the bar itself, so the page stays clickable around the bar.
     <motion.nav
       style={{
         position: 'fixed',
         bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'center',
         zIndex: 60,
-        maxWidth: 'calc(100% - 24px)',
-        width: 'auto',
+        pointerEvents: 'none',
       }}
       animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
       transition={{ duration: 0.32, ease: 'easeOut' }}
@@ -50,6 +58,8 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
       <div
         className="relative rounded-full p-1.5 border border-white/10"
         style={{
+          pointerEvents: 'auto',
+          maxWidth: 'calc(100vw - 24px)',
           background:
             'linear-gradient(180deg, rgba(16,21,33,0.44) 0%, rgba(16,21,33,0.34) 55%, rgba(16,21,33,0.28) 100%)',
           backdropFilter: 'blur(28px) saturate(135%)',
