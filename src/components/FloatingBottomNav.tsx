@@ -24,43 +24,46 @@ interface FloatingBottomNavProps {
   show?: boolean;
 }
 
-export default function FloatingBottomNav({ show = true }: FloatingBottomNavProps) {
+interface FloatingBottomNavProps {
+  visible: boolean;
+}
+
+export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
   const { currentPage, setPage } = useApp();
   const shouldReduceMotion = useReducedMotion();
   const animate = !shouldReduceMotion;
-  const duration = shouldReduceMotion ? 0 : 0.28;
+  const duration = shouldReduceMotion ? 0 : 0.24;
 
   return (
     <motion.nav
       style={{
         position: 'fixed',
-        bottom: 'env(safe-area-inset-bottom, 20px)',
+        bottom: 'env(safe-area-inset-bottom, 24px)',
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 60,
-        padding: '14px 20px 22px',
-        maxWidth: 'calc(100% - 32px)',
+        padding: '12px 16px 18px',
+        maxWidth: 'calc(100% - 24px)',
         width: 'auto',
         margin: '0 auto',
       }}
-      initial={false}
-      animate={show && { opacity: 1, y: 0 }}
-      transition={{ duration: 0.42, ease: 'easeOut' }}
+      animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+      transition={{ duration: 0.32, ease: 'easeOut' }}
       aria-label="Primary navigation"
     >
-      {/* Glass capsule */}
+      {/* Glass capsule, slightly tighter so text/boxes read clearly */}
       <motion.div
-        className="relative w-full rounded-full px-2 py-2 shadow-[0_20px_55px_-13px_rgba(0,0,0,0.4),0_8px_18px_-10px_rgba(0,0,0,0.3)] border border-white/30"
+        className="relative w-full rounded-full px-2 py-1.5 shadow-[0_24px_62px_-15px_rgba(0,0,0,0.55),0_10px_22px_-12px_rgba(0,0,0,0.35)] border border-white/30"
         style={{
-          background: 'rgba(255, 255, 255, 0.82)',
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(0,0,0,0.06)',
+          background: 'rgba(255, 255, 255, 0.86)',
+          backdropFilter: 'blur(22px) saturate(190%)',
+          WebkitBackdropFilter: 'blur(22px) saturate(190%)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(0,0,0,0.05)',
         }}
         layout
         transition={{ duration, ease: 'easeInOut' }}
       >
-        {/* Subtle reflection */}
+        {/* Cleaner top highlight instead of heavy reflection */}
         <span
           aria-hidden="true"
           style={{
@@ -68,7 +71,7 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
             inset: '-1px',
             borderRadius: '9999px',
             background:
-              'linear-gradient(175deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 52%, rgba(0,0,0,0.02) 100%)',
+              'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.25) 35%, rgba(255,255,255,0) 70%)',
             pointerEvents: 'none',
             WebkitMask:
               'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
@@ -79,10 +82,10 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
           }}
         />
 
-        {/* Liquid glass bead, seated just below the main bar */}
-        <LiquidGlass className="absolute left-0 right-0 bottom-full mb-1 mx-auto w-3/4 sm:w-1/2 pointer-events-none" />
+        {/* Liquid glass bead, sitting right on the bottom edge */}
+        <LiquidGlass className="absolute left-0 right-0 bottom-full mb-1.5 mx-auto w-5/6 sm:w-2/3 pointer-events-none" />
 
-        <div className="flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-center justify-between gap-1 sm:gap-3">
           {navItems.map((item) => {
             const isActive = currentPage === item.page;
 
@@ -98,40 +101,40 @@ export default function FloatingBottomNav({ show = true }: FloatingBottomNavProp
                   aria-current={isActive ? 'page' : undefined}
                   aria-label={item.label}
                   onClick={() => setPage(item.page)}
-                  className="relative flex flex-col items-center justify-center gap-0.5 rounded-full px-2 py-2 min-w-[62px] sm:min-w-[70px] leading-none group"
+                  className="relative flex flex-col items-center justify-center gap-0.5 rounded-full px-1.5 py-1.5 min-w-[56px] sm:min-w-[64px] leading-none group"
                   style={{
-                    height: 50,
+                    height: 42,
                   }}
-                  whileHover={animate ? { y: -2.5, scale: 1.02 } : undefined}
+                  whileHover={animate ? { y: -2, scale: 1.01 } : undefined}
                   whileTap={animate ? { scale: 0.96 } : undefined}
                   transition={{ duration, ease: 'easeOut' }}
                 >
                   {/* Active underline pill */}
                   <motion.span
                     layoutId="activeNavPill"
-                    className="absolute left-3 right-3 bottom-1 h-1 rounded-full bg-black/60"
+                    className="absolute left-2.5 right-2.5 bottom-1 h-1 rounded-full bg-black/60"
                     style={{
                       opacity: isActive ? 1 : 0,
                       transform: isActive ? 'scaleX(1)' : 'scaleX(0.3)',
                     }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
                   />
 
                   {/* Icon */}
                   <span className="relative flex items-center justify-center">
                     <span
-                      className={`block w-5 h-5 sm:w-[20px] sm:h-[20px] transition-colors duration-200`}
+                      className="block w-4 h-4 sm:w-[18px] sm:h-[18px] transition-colors duration-200"
                       style={{
                         color: isActive ? undefined : 'rgba(0,0,0,0.45)',
                       }}
                     >
-                      <SvgIcon name={item.label} size={20} />
+                      <SvgIcon name={item.label} size={18} />
                     </span>
                   </span>
 
                   {/* Label */}
                   <span
-                    className="text-[10px] sm:text-[11px] font-medium tracking-tight text-neutral-900 select-none whitespace-nowrap"
+                    className="text-[9px] sm:text-[10px] font-medium tracking-tight text-neutral-900 select-none whitespace-nowrap leading-none"
                     style={{
                       opacity: isActive ? 1 : 0.45,
                       transition: 'opacity 0.2s ease',

@@ -890,29 +890,71 @@
 }
 
 /* ============================================================
-   LIQUID GLASS BEAD — sits just below the bottom nav bar
+   LIQUID GLASS BEAD — sits on the bottom edge of the nav bar
    ============================================================ */
 
 @keyframes liquidDrift {
   0% {
-    opacity: 0.55;
-    transform: translateX(-6%) scale(1);
+    opacity: 0.6;
+    transform: translateX(-5%) scale(1);
   }
   100% {
-    opacity: 0.95;
-    transform: translateX(6%) scale(1.05);
+    opacity: 0.98;
+    transform: translateX(5%) scale(1.04);
   }
 }
 
 @keyframes liquidShine {
   0% {
-    opacity: 0.4;
-    transform: translate(-1px, -1px) scale(0.8);
+    opacity: 0.45;
+    transform: translate(-1px, -1px) scale(0.85);
   }
   100% {
     opacity: 1;
     transform: translate(1px, -1px) scale(1.1);
   }
+}
+
+/* ============================================================
+   GLOBAL TEXT / BOX CLARITY — keeps text and cards sharp
+   ============================================================ */
+
+* {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  line-height: 1.5;
+}
+
+img,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mobile app chrome: the bottom dock hides while scrolling and
+   comes back once the user stops scrolling. */
+.floating-bottom-nav {
+  opacity: 1;
+  transform: translateX(-50%) translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.floating-bottom-nav.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
 }
 
 /* Respect reduced motion across the dock, the logo, and the liquid bead */
@@ -933,5 +975,8 @@
   .liquid-glass,
   .liquid-glass * {
     animation: none !important;
+  }
+  .floating-bottom-nav {
+    transition: none !important;
   }
 }

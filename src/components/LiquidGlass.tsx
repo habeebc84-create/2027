@@ -8,13 +8,12 @@ interface LiquidGlassProps {
 export function LiquidGlass({ className = '' }: LiquidGlassProps) {
   const shouldReduceMotion = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
-  const [visible, setVisible] = useState(!shouldReduceMotion);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!shouldReduceMotion) {
-      const timer = setTimeout(() => setVisible(true), 60);
-      return () => clearTimeout(timer);
-    }
+    if (shouldReduceMotion) return;
+    const timer = setTimeout(() => setVisible(true), 80);
+    return () => clearTimeout(timer);
   }, [shouldReduceMotion]);
 
   if (!visible) return null;
@@ -30,21 +29,18 @@ export function LiquidGlass({ className = '' }: LiquidGlassProps) {
         overflow: 'hidden',
         borderRadius: '9999px',
         background:
-          'linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 55%, rgba(255,255,255,0) 100%)',
-        backdropFilter: 'blur(14px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(14px) saturate(180%)',
-        boxShadow:
-          'inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 30px -16px rgba(0,0,0,0.45)',
+          'linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.1) 52%, rgba(255,255,255,0) 100%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(220%)',
         WebkitMask:
           'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
         mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
         WebkitMaskComposite: 'xor',
         maskComposite: 'exclude',
         padding: '1px',
-        opacity: 0.95,
+        opacity: 0.98,
       }}
     >
-      {/* Shifting refraction highlight */}
+      {/* Soft liquid body */}
       <span
         aria-hidden="true"
         style={{
@@ -52,28 +48,28 @@ export function LiquidGlass({ className = '' }: LiquidGlassProps) {
           inset: 0,
           borderRadius: '9999px',
           background:
-            'radial-gradient(90% 60% at 35% 40%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 60%)',
-          opacity: 0.85,
+            'radial-gradient(95% 75% at 42% 45%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0) 70%)',
+          opacity: 0.92,
           animation: shouldReduceMotion
             ? ''
-            : 'liquidDrift 7s ease-in-out infinite alternate',
+            : 'liquidDrift 5.5s ease-in-out infinite alternate',
         }}
       />
-      {/* Tiny specular hotspot */}
+      {/* Sharp specular highlight */}
       <span
         aria-hidden="true"
         style={{
           position: 'absolute',
-          left: '18%',
-          top: '14%',
+          left: '24%',
+          top: '16%',
           width: 6,
-          height: 3,
+          height: 2.5,
           borderRadius: '9999px',
-          background: 'rgba(255,255,255,0.95)',
-          boxShadow: '0 0 8px 2px rgba(255,255,255,0.9)',
+          background: 'rgba(255,255,255,0.98)',
+          boxShadow: '0 0 12px 4px rgba(255,255,255,0.98)',
           animation: shouldReduceMotion
             ? ''
-            : 'liquidShine 5s ease-in-out infinite alternate',
+            : 'liquidShine 4s ease-in-out infinite alternate',
         }}
       />
     </span>

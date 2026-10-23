@@ -7,7 +7,6 @@ import ToastContainer from './components/Toast';
 import NotificationPopup from './components/NotificationPopup';
 import FloatingButtons from './components/FloatingButtons';
 import FloatingBottomNav from './components/FloatingBottomNav';
-import DeviceToggle from './components/DeviceToggle';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -53,13 +52,13 @@ function AppContent() {
   const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
   const [successOrderId, setSuccessOrderId] = useState<string | null>(null);
-  const [deviceMode, setDeviceMode] = useState<'auto' | 'mobile' | 'desktop'>('auto');
-
-  const isMobile = deviceMode === 'mobile';
-  const isDesktop = deviceMode === 'desktop';
-  const mediaMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const useMobile = isMobile || (deviceMode === 'auto' && mediaMobile);
-  const useDesktop = isDesktop || (deviceMode === 'auto' && !mediaMobile);
+  // Mobile-first app: the bottom dock is always visible on small
+  // screens and hides itself while the user scrolls down the page.
+  const isMobile =
+    typeof window !== 'undefined' && window.innerWidth < 768;
+  const isDesktop = false;
+  const useMobile = isMobile;
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -158,16 +157,62 @@ function AppContent() {
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
-      {showNav && useMobile && <FloatingBottomNav />}
-      {showNav && useDesktop && (
-        <div className="flex justify-end pt-3 pb-1 px-4 sm:px-6 lg:px-8">
-          <DeviceToggle mode={deviceMode} onToggle={setDeviceMode} />
-        </div>
+      {showNav && (
+        <ScrollAwareBottomNav
+          visible={!scrolled}
+          isMobile={isMobile}
+          onScroll={() => setScrolled(true)}
+          onScrollEnd={() => setScrolled(false)}
+        />
       )}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />
       {!isAdmin && <NotificationPopup />}
     </div>
+  );
+}
+
+function ScrollAwareBottomNav({
+  visible,
+  isMobile,
+  onScroll,
+  onScrollEnd,
+}: {
+  visible: boolean;
+  isMobile: boolean;
+  onScroll: () => void;
+  onScrollEnd: () => void;
+}) {
+  // Hide the mobile dock while scrolling down so the page content
+  // stays unobstructed; it comes back once the user stops scrolling.
+  useEffect(() => {
+    if (!isMobile) return;
+
+    let rafId: number | null = null;
+    let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const handleScroll = () => {
+      onScroll();
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(onScrollEnd, 220);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [isMobile, onScroll, onScrollEnd]);
+
+  if (!isMobile) return null;
+
+  return (
+    <FloatingBottomNav visible={visible} />
   );
 }
 
