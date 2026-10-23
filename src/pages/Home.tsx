@@ -39,11 +39,25 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
           {/* Badges */}
           <div className="flex flex-wrap items-center gap-3 mb-6">
-            <span className="bg-white/10 text-white border border-white/15 px-4 py-2 rounded-full flex items-center space-x-2 backdrop-blur-md text-xs font-bold">
+            <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)',
+              backdropFilter: 'blur(14px) saturate(160%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
+            }}>
               <Shield className="w-4 h-4 text-emerald-400" />
               <span>GSTIN: 37AAAAA0000A1Z5</span>
             </span>
-            <span className="bg-white/10 text-white border border-white/15 px-4 py-2 rounded-full flex items-center space-x-2 backdrop-blur-md text-xs font-bold">
+            <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)',
+              backdropFilter: 'blur(14px) saturate(160%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
+            }}>
               <MapPin className="w-4 h-4 text-blue-400" />
               <span>Serving Kalikiri & Annamayya District, AP</span>
             </span>
@@ -77,7 +91,17 @@ export default function Home() {
 
       {/* Daily Market Price Index */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 mb-12">
-        <div className="bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl">
+        <div className="rounded-3xl border border-white/16 p-6 sm:p-8 lg:p-10" style={{
+          background:
+            'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+          backdropFilter: 'blur(16px) saturate(170%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(170%)',
+          boxShadow:
+            'inset 0 1px 0 rgba(255,255,255,0.3),
+             inset 0 -1px 0 rgba(0,0,0,0.3),
+             0 22px 52px -26px rgba(0,0,0,0.75),
+             0 10px 24px -14px rgba(0,0,0,0.55)',
+        }}>
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
             <div>
@@ -101,16 +125,33 @@ export default function Home() {
             <div className="bg-slate-800/50 border border-white/5 rounded-2xl overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/16" style={{
+                  background:
+                    'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%)',
+                  backdropFilter: 'blur(12px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+                  boxShadow:
+                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
+                }}>
                     <Package className="w-4 h-4 text-blue-400" />
                   </div>
                   <h3 className="text-sm font-bold text-white font-industrial">Cement Bags (OPC 53 / PPC 50kg)</h3>
                 </div>
-                <span className="text-[10px] font-bold text-blue-400 bg-blue-500/15 border border-blue-500/30 px-2.5 py-1 rounded-full">JSW / ACC / Dalmia</span>
+                <span className="text-[10px] font-bold text-blue-400 rounded-full border border-white/16 px-2.5 py-1" style={{
+                  background:
+                    'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%)',
+                  backdropFilter: 'blur(12px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+                  boxShadow:
+                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 18px -12px rgba(0,0,0,0.6)',
+                }}>JSW / ACC / Dalmia</span>
               </div>
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-white/10">
                 {pricingTiers.cement.map((tier, i) => (
-                  <div key={i} className="flex items-center justify-between px-5 py-3.5 hover:bg-white/5 transition">
+                  <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
+                    background:
+                      'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
+                  }}>
                     <div>
                       <div className="text-sm font-bold text-slate-100">{tier.range}</div>
                       <div className="text-[10px] text-slate-500">{tier.label}</div>
@@ -128,16 +169,33 @@ export default function Home() {
             <div className="bg-slate-800/50 border border-white/5 rounded-2xl overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/16" style={{
+                  background:
+                    'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%)',
+                  backdropFilter: 'blur(12px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+                  boxShadow:
+                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
+                }}>
                     <TrendingUp className="w-4 h-4 text-rose-400" />
                   </div>
                   <h3 className="text-sm font-bold text-white font-industrial">TMT Steel Bars (6mm - 32mm Fe 550D)</h3>
                 </div>
-                <span className="text-[10px] font-bold text-rose-400 bg-rose-500/15 border border-rose-500/30 px-2.5 py-1 rounded-full">Tata Tiscon / Vizag</span>
+                <span className="text-[10px] font-bold text-rose-400 rounded-full border border-white/16 px-2.5 py-1" style={{
+                  background:
+                    'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%)',
+                  backdropFilter: 'blur(12px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+                  boxShadow:
+                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 18px -12px rgba(0,0,0,0.6)',
+                }}>Tata Tiscon / Vizag</span>
               </div>
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-white/10">
                 {pricingTiers.steel.map((tier, i) => (
-                  <div key={i} className="flex items-center justify-between px-5 py-3.5 hover:bg-white/5 transition">
+                  <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
+                    background:
+                      'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
+                  }}>
                     <div>
                       <div className="text-sm font-bold text-slate-100">{tier.range}</div>
                       <div className="text-[10px] text-slate-500">{tier.label}</div>
@@ -170,10 +228,19 @@ export default function Home() {
             Browse Our <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Product Categories</span>
           </h2>
           <p className="text-slate-400 text-sm mt-2">Premium construction materials from top brands</p>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
+        </div>            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
           {categories.map(cat => (
-            <button key={cat.id} onClick={() => setPage('products')} className="bg-white/5 border border-white/10 rounded-2xl p-3 flex flex-col items-center space-y-2 hover:border-blue-500/40 hover:bg-blue-500/10 transition group">
+            <button key={cat.id} onClick={() => setPage('products')} className="rounded-2xl border border-white/14 p-3 flex flex-col items-center space-y-2 transition group hover:border-white/3 hover:bg-white/[0.02]" style={{
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+              backdropFilter: 'blur(14px) saturate(160%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.25),
+                 inset 0 -1px 0 rgba(0,0,0,0.3),
+                 0 14px 34px -18px rgba(0,0,0,0.7),
+                 0 6px 16px -10px rgba(0,0,0,0.45)',
+            }}>
               <img src={cat.image} alt={cat.name} className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl group-hover:scale-110 transition" />
               <span className="text-[10px] sm:text-xs font-bold text-slate-300 text-center leading-tight">{cat.name}</span>
             </button>
@@ -219,8 +286,25 @@ export default function Home() {
           ].map((svc, i) => {
             const Icon = svc.icon;
             return (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center space-y-3 hover:border-blue-500/30 hover:bg-blue-500/5 transition">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto">
+              <div key={i} className="rounded-2xl border border-white/14 p-5 text-center space-y-3 transition hover:border-white/25 hover:bg-white/[0.02]" style={{
+                background:
+                  'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+                backdropFilter: 'blur(14px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+                boxShadow:
+                  'inset 0 1px 0 rgba(255,255,255,0.25),
+                   inset 0 -1px 0 rgba(0,0,0,0.3),
+                   0 14px 34px -18px rgba(0,0,0,0.7),
+                   0 6px 16px -10px rgba(0,0,0,0.45)',
+              }}>
+                <div className="w-12 h-12 rounded-xl border border-white/16 flex items-center justify-center mx-auto" style={{
+                  background:
+                    'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%)',
+                  backdropFilter: 'blur(12px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+                  boxShadow:
+                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
+                }}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-sm font-bold text-white">{svc.title}</h4>

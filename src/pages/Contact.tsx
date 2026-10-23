@@ -37,7 +37,17 @@ export default function Contact() {
 
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Store Details */}
-          <div className="lg:col-span-5 bg-white/5 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+          <div className="lg:col-span-5 rounded-3xl border border-white/16 space-y-6" style={{
+            background:
+              'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+            backdropFilter: 'blur(14px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+            boxShadow:
+              'inset 0 1px 0 rgba(255,255,255,0.25),
+               inset 0 -1px 0 rgba(0,0,0,0.3),
+               0 18px 44px -22px rgba(0,0,0,0.7),
+               0 8px 22px -12px rgba(0,0,0,0.5)',
+          }}>
             <h3 className="text-xl font-bold text-slate-100 border-b border-slate-800 pb-3">Store Details</h3>
             <div className="space-y-4 text-sm">
               <div className="flex items-start space-x-3">
@@ -69,17 +79,38 @@ export default function Contact() {
                 </div>
               </div>
             </div>
-            <div className="pt-4 border-t border-slate-800 flex space-x-3">
+            <div className="pt-4 flex space-x-3" style={{
+              borderTop: '1px solid rgba(255,255,255,0.14)',
+              background:
+                'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 100%)',
+            }}>
               <a href={telHref(siteContent.phone)} className="flex-1 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold py-3 rounded-xl text-xs text-center transition">Call Store</a>
               <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
             </div>
           </div>
 
           {/* Inquiry Form */}
-          <div className="lg:col-span-7 bg-white/5 p-6 sm:p-8 rounded-3xl border border-slate-800">
+          <div className="lg:col-span-7 rounded-3xl border border-white/16" style={{
+            background:
+              'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+            backdropFilter: 'blur(14px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+            boxShadow:
+              'inset 0 1px 0 rgba(255,255,255,0.25),
+               inset 0 -1px 0 rgba(0,0,0,0.3),
+               0 18px 44px -22px rgba(0,0,0,0.7),
+               0 8px 22px -12px rgba(0,0,0,0.5)',
+          }}>
             <h3 className="text-xl font-bold text-slate-100 mb-6">Send Price Inquiry / Site Quote Request</h3>
             {submitted ? (
-              <div className="bg-pink-500/10 border border-pink-500/30 text-fuchsia-300 p-6 rounded-2xl text-center space-y-3">
+              <div className="rounded-2xl text-center space-y-3 border border-white/18 p-6" style={{
+                background:
+                  'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                backdropFilter: 'blur(12px) saturate(150%)',
+                WebkitBackdropFilter: 'blur(12px) saturate(150%)',
+                boxShadow:
+                  'inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 26px -16px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
+              }}>
                 <CheckCircle className="w-12 h-12 text-pink-400 mx-auto" />
                 <h4 className="text-lg font-bold">Thank You! Your Inquiry Has Been Received.</h4>
                 <p className="text-xs text-slate-300">Our store manager will contact you on <strong>{form.mobile}</strong> shortly with pricing and delivery terms.</p>
