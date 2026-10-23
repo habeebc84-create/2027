@@ -26,6 +26,7 @@ export default function AdminDashboard() {
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'content', label: 'Content & Ads', icon: Edit },
     { id: 'transport', label: 'Transport Fares', icon: Truck },
+    { id: 'prices', label: 'Market Prices', icon: TrendingUp },
     { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadNotifs },
     { id: 'terms', label: 'Terms & Conditions', icon: FileText },
     { id: 'security', label: 'Security & Settings', icon: Settings },
@@ -91,6 +92,7 @@ export default function AdminDashboard() {
       case 'customers': return <CustomersSection />;
       case 'content': return <ContentSection />;
       case 'transport': return <TransportSection />;
+      case 'prices': return <PricesSection />;
       case 'notifications': return <NotificationsSection />;
       case 'terms': return <TermsSection />;
       case 'security': return <SecuritySection />;
@@ -776,6 +778,60 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         </div>
+      </div>
+    );
+  };
+
+  // MARKET PRICES (Daily Market Price Index on the Home page)
+  const PricesSection = () => {
+    const [draft, setDraft] = useState(() => ({
+      cement: ctx.marketPrices.cement.map(t => ({ ...t })),
+      steel: ctx.marketPrices.steel.map(t => ({ ...t })),
+    }));
+    const inputCls = "bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500 w-full";
+    const setTier = (group: 'cement' | 'steel', idx: number, field: string, value: string) =>
+      setDraft(d => ({ ...d, [group]: d[group].map((t, i) => i === idx ? { ...t, [field]: value } : t) }));
+    const addTier = (group: 'cement' | 'steel') =>
+      setDraft(d => ({ ...d, [group]: [...d[group], { range: '', label: '', price: '₹', unit: group === 'cement' ? '/ bag' : '/ kg' }] }));
+    const removeTier = (group: 'cement' | 'steel', idx: number) =>
+      setDraft(d => ({ ...d, [group]: d[group].filter((_, i) => i !== idx) }));
+    const handleSave = () => {
+      const clean = (rows: typeof draft.cement) => rows.filter(t => t.range.trim() || t.label.trim() || t.price.replace('₹', '').trim());
+      ctx.updateMarketPrices({ cement: clean(draft.cement), steel: clean(draft.steel) });
+    };
+    const lastUpdated = ctx.marketPrices.updatedAt
+      ? new Date(ctx.marketPrices.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+      : 'Never (showing default rates)';
+    const renderGroup = (group: 'cement' | 'steel', title: string, unitHint: string) => (
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-black text-white font-industrial">{title}</h4>
+          <button onClick={() => addTier(group)} className="flex items-center space-x-1.5 bg-white/5 border border-white/10 text-slate-200 px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-white/10 transition"><Plus className="w-3 h-3" /><span>Add Price</span></button>
+        </div>
+        <div className="hidden sm:grid grid-cols-[1.2fr_1.2fr_0.8fr_0.7fr_auto] gap-2 text-[10px] font-bold text-slate-500 uppercase px-1">
+          <span>Quantity Range</span><span>Tier Label</span><span>Price</span><span>Unit</span><span></span>
+        </div>
+        {draft[group].map((tier, i) => (
+          <div key={i} className="grid grid-cols-2 sm:grid-cols-[1.2fr_1.2fr_0.8fr_0.7fr_auto] gap-2 items-center">
+            <input type="text" placeholder="e.g. 1 - 49 Bags" value={tier.range} onChange={e => setTier(group, i, 'range', e.target.value)} className={inputCls} />
+            <input type="text" placeholder="e.g. Standard Retail" value={tier.label} onChange={e => setTier(group, i, 'label', e.target.value)} className={inputCls} />
+            <input type="text" placeholder="₹380" value={tier.price} onChange={e => setTier(group, i, 'price', e.target.value)} className={inputCls} />
+            <input type="text" placeholder={unitHint} value={tier.unit} onChange={e => setTier(group, i, 'unit', e.target.value)} className={inputCls} />
+            <button onClick={() => removeTier(group, i)} className="text-slate-400 hover:text-rose-400 justify-self-end" aria-label="Delete price row"><Trash2 className="w-4 h-4" /></button>
+          </div>
+        ))}
+        {draft[group].length === 0 && <p className="text-xs text-slate-500 text-center py-4">No prices — tap "Add Price" to add one</p>}
+      </div>
+    );
+    return (
+      <div className="space-y-6">
+        <TopHeader title="Market Prices" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <p className="text-xs text-slate-400">These prices appear on the Home page in the <span className="text-slate-200 font-bold">Daily Market Price Index — Wholesale Tiered Pricing Table</span>. Saving stamps the "Rates Updated" date as today and syncs to all devices. Last updated: <span className="text-slate-200 font-bold">{lastUpdated}</span></p>
+          <button onClick={handleSave} className="shrink-0 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold">Save Prices</button>
+        </div>
+        {renderGroup('cement', 'Cement Bags (OPC 53 / PPC 50kg)', '/ bag')}
+        {renderGroup('steel', 'TMT Steel Bars (6mm - 32mm Fe 550D)', '/ kg')}
       </div>
     );
   };

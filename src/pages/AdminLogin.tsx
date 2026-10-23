@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Lock, Mail, Eye, EyeOff, Shield, Timer } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Timer } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { bustedImageSrc } from '../lib/images';
 
 const LOCK_KEY = 'hsn_admin_login_lock';
 
@@ -26,7 +27,7 @@ function readLock(): LockState {
 }
 
 export default function AdminLogin() {
-  const { loginAdmin, setPage } = useApp();
+  const { loginAdmin, setPage, siteSettings } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -98,10 +99,9 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center px-4 relative z-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto mb-4">
-            <Shield className="w-8 h-8 text-white" />
-          </div>
+          <img src={bustedImageSrc(siteSettings.logo || '/windows-h-logo.png')} alt="HSN Logo" className="w-16 h-16 rounded-2xl object-contain border border-white/10 bg-slate-950/40 p-1.5 shadow-md mx-auto mb-4" />
           <h1 className="text-2xl font-black text-white font-industrial">Admin Portal</h1>
+          <p className="text-slate-300 text-[11px] font-bold tracking-[0.18em] mt-1.5">HSN CEMENT & STEEL</p>
           <p className="text-slate-400 text-xs mt-1">Authorized personnel only</p>
         </div>
 
