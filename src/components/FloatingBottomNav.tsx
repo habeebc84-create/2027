@@ -51,20 +51,16 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
       transition={{ duration: 0.32, ease: 'easeOut' }}
       aria-label="Primary navigation"
     >
-      {/* Apple-style liquid glass bar */}
+      {/* Clear liquid glass bar — transparent neutral glass, no white fill, no warm/brown tint */}
       <motion.div
-        className="relative w-full rounded-full px-2 py-1.5 border border-white/22 shadow-[0_26px_60px_-28px_rgba(0,0,0,0.7),0_12px_26px_-14px_rgba(0,0,0,0.5)]"
+        className="relative w-full rounded-full px-2 py-1.5 border border-white/10 shadow-[0_26px_60px_-28px_rgba(0,0,0,0.7),0_12px_26px_-14px_rgba(0,0,0,0.5)]"
         style={{
           background:
-            'linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.22) 45%, rgba(255,255,255,0.06) 100%)',
-          backdropFilter: 'blur(32px) saturate(200%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+            'linear-gradient(180deg, rgba(13,18,30,0.30) 0%, rgba(13,18,30,0.20) 45%, rgba(13,18,30,0.12) 100%)',
+          backdropFilter: 'blur(30px) saturate(140%)',
+          WebkitBackdropFilter: 'blur(30px) saturate(140%)',
           boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.8),
-             inset 0 -1px 0 rgba(0,0,0,0.22),
-             inset 0 3px 10px rgba(255,255,255,0.22),
-             0 26px 60px -28px rgba(0,0,0,0.7),
-             0 12px 26px -14px rgba(0,0,0,0.5)',
+            'inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.28), inset 0 3px 10px rgba(255,255,255,0.05), 0 26px 60px -28px rgba(0,0,0,0.7), 0 12px 26px -14px rgba(0,0,0,0.5)',
         }}
         layout
         transition={{ duration, ease: 'easeInOut' }}
@@ -76,7 +72,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
             inset: '-1.6px',
             borderRadius: '9999px',
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.55) 22%, rgba(255,255,255,0) 72%)',
+              'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.10) 22%, rgba(255,255,255,0) 72%)',
             pointerEvents: 'none',
             WebkitMask:
               'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
@@ -111,14 +107,14 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                     height: 42,
                     background:
                       isActive
-                        ? 'linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0.15) 100%)'
-                        : 'rgba(255,255,255,0.08)',
-                    backdropFilter: isActive ? 'blur(14px) saturate(190%)' : 'blur(8px) saturate(160%)',
-                    WebkitBackdropFilter: isActive ? 'blur(14px) saturate(190%)' : 'blur(8px) saturate(160%)',
+                        ? 'linear-gradient(165deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.07) 55%, rgba(0,0,0,0.06) 100%)'
+                        : 'rgba(255,255,255,0.04)',
+                    backdropFilter: isActive ? 'blur(14px) saturate(150%)' : 'blur(8px) saturate(140%)',
+                    WebkitBackdropFilter: isActive ? 'blur(14px) saturate(150%)' : 'blur(8px) saturate(140%)',
                     boxShadow:
                       isActive
-                        ? 'inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -2px 0 rgba(255,255,255,0.35), 0 10px 22px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.3)'
-                        : 'inset 0 1px 0 rgba(255,255,255,0.24), inset 0 -1px 0 rgba(0,0,0,0.22), 0 6px 14px -10px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08)',
+                        ? 'inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 0 rgba(255,255,255,0.10), 0 10px 22px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.22)'
+                        : 'inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.22), 0 6px 14px -10px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06)',
                   }}
                   whileHover={animate ? { y: -2, scale: 1.01 } : undefined}
                   whileTap={animate ? { scale: 0.96 } : undefined}
@@ -127,7 +123,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                   {/* Active underline pill — liquid glass highlight */}
                   <motion.span
                     layoutId="activeNavPill"
-                    className="absolute left-3 right-3 bottom-1 h-1 rounded-full bg-white/70 shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+                    className="absolute left-3 right-3 bottom-1 h-1 rounded-full bg-white/50"
                     style={{
                       opacity: isActive ? 1 : 0,
                       transform: isActive ? 'scaleX(1)' : 'scaleX(0.32)',

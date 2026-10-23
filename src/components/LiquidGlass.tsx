@@ -29,8 +29,8 @@ export function LiquidGlass({ className = '' }: LiquidGlassProps) {
         overflow: 'hidden',
         borderRadius: '9999px',
         background:
-          'linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.1) 52%, rgba(255,255,255,0) 100%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(220%)',
+          'linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.04) 52%, rgba(255,255,255,0) 100%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(150%)',
         WebkitMask:
           'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
         mask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
@@ -48,8 +48,8 @@ export function LiquidGlass({ className = '' }: LiquidGlassProps) {
           inset: 0,
           borderRadius: '9999px',
           background:
-            'radial-gradient(95% 75% at 42% 45%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0) 70%)',
-          opacity: 0.92,
+            'radial-gradient(95% 75% at 42% 45%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 70%)',
+          opacity: 0.55,
           animation: shouldReduceMotion
             ? ''
             : 'liquidDrift 5.5s ease-in-out infinite alternate',
@@ -65,8 +65,8 @@ export function LiquidGlass({ className = '' }: LiquidGlassProps) {
           width: 6,
           height: 2.5,
           borderRadius: '9999px',
-          background: 'rgba(255,255,255,0.98)',
-          boxShadow: '0 0 12px 4px rgba(255,255,255,0.98)',
+          background: 'rgba(255,255,255,0.55)',
+          boxShadow: '0 0 8px 2px rgba(255,255,255,0.35)',
           animation: shouldReduceMotion
             ? ''
             : 'liquidShine 4s ease-in-out infinite alternate',
