@@ -46,6 +46,11 @@ export default function Footer() {
                   </button>
                 </li>
               ))}
+              <li>
+                <button onClick={() => setPage('terms')} className="hover:text-white transition text-xs">
+                  Terms & Conditions
+                </button>
+              </li>
             </ul>
           </div>
 
