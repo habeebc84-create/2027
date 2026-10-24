@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
 import { waHref } from '../lib/phone';
@@ -15,46 +13,10 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 // Slim top bar: brand, WhatsApp and cart only. The section links
 // (Products, Services, Gallery, About Us, Contact, Track Order) live in
 // the FloatingBottomNav dock, so they are not repeated here.
+// The bar is always pinned to the top — it never slides away or moves
+// while scrolling, on the home page or anywhere else.
 export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   const { setPage, cartCount, siteContent } = useApp();
-  const reduceMotion = useReducedMotion();
-  // Hide the bar while scrolling down so page content stays unobstructed;
-  // it slides back as soon as scrolling stops — same behaviour as the
-  // bottom dock (ScrollAwareBottomNav in App.tsx).
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    let rafId: number | null = null;
-    let lastY = window.scrollY;
-    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const handleScroll = () => {
-      const y = window.scrollY;
-
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        lastY = window.scrollY;
-      });
-
-      if (scrollTimer) clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        // Scrolling has effectively stopped.
-        setVisible(true);
-      }, 150);
-
-      if (y > 4 && y > lastY) {
-        setVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimer) clearTimeout(scrollTimer);
-      if (rafId !== null) cancelAnimationFrame(rafId);
-    };
-  }, []);
 
   const handleNav = (e: React.MouseEvent, page: Page) => {
     e.preventDefault();
@@ -62,13 +24,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   };
 
   return (
-    <motion.nav
-      initial={false}
-      animate={visible || reduceMotion ? { y: 0, opacity: 1 } : { y: '-140%', opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-      style={{ pointerEvents: visible ? 'auto' : 'none' }}
-      className="fixed top-0 left-0 right-0 z-50 pt-2 px-3 sm:px-5"
-    >
+    <nav className="fixed top-0 left-0 right-0 z-50 pt-2 px-3 sm:px-5">
       {/* Floating rounded bar — compact height */}
       <div className="w-full sm:w-fit sm:max-w-[calc(100vw-2.5rem)] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-2.5 sm:px-3.5 py-1">
         <div className="flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3.5 h-12">
@@ -98,6 +54,6 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
           </div>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

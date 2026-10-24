@@ -149,7 +149,7 @@ function AppContent() {
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
-      {showNav && <ScrollAwareBottomNav />}
+      {showNav && !cartOpen && <ScrollAwareBottomNav />}  {/* dock stays out of the cart drawer */}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />
       {!isAdmin && <NotificationPopup />}
