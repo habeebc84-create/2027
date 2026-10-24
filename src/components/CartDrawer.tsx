@@ -8,7 +8,7 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: CartDrawerProps) {
-  const { cart, removeFromCart, updateCartQuantity, cartTotal, siteContent } = useApp();
+  const { cart, removeFromCart, updateCartQuantity, cartTotal, siteContent, setPage } = useApp();
 
   if (!isOpen) return null;
 
@@ -35,6 +35,7 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                 <ShoppingCart className="w-12 h-12 text-slate-400" />
                 <p className="text-sm font-medium">Your cart is empty.</p>
                 <p className="text-xs text-slate-500 max-w-xs">Explore our catalog for cement, steel rebar, cutting blades, and hardware tools.</p>
+                <button onClick={() => { onClose(); setPage('home'); }} className="bg-blue-500 hover:bg-blue-400 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">Return to Shop</button>
               </div>
             ) : (
               cart.map((item, idx) => {

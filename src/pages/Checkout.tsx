@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
 
 export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCart: () => void; onOrderSuccess: (orderId: string) => void }) {
-  const { cart, cartTotal, cartCount, placeOrder, showToast, transportZones } = useApp();
+  const { cart, cartTotal, cartCount, placeOrder, showToast, transportZones, setPage } = useApp();
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [email, setEmail] = useState('');
@@ -34,7 +34,7 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
     return (
       <div className="py-20 text-center space-y-4">
         <h2 className="text-xl font-bold text-slate-200">Your Cart is Empty</h2>
-        <button onClick={onBackToCart} className="bg-blue-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs">Return to Shop</button>
+        <button onClick={() => setPage('home')} className="bg-blue-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs">Return to Shop</button>
       </div>
     );
   }
