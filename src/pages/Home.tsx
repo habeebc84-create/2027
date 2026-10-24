@@ -48,7 +48,7 @@ export default function Home() {
               boxShadow:
                 'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
             }}>
-              <MapPin className="w-4 h-4 text-blue-400" />
+              <MapPin className="w-4 h-4 text-slate-300" />
               <span>Serving Kalikiri & Annamayya District, AP</span>
             </span>
           </div>
@@ -62,7 +62,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={() => setPage('products')}
-              className="px-8 py-4 rounded-2xl shadow-[0_8px_32px_rgba(59,130,246,0.3)] flex items-center justify-center space-x-3 text-base transition transform group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white hover:scale-105 active:scale-95 font-bold"
+              className="px-8 py-4 rounded-2xl shadow-xl flex items-center justify-center space-x-3 text-base transition transform group bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white hover:scale-105 active:scale-95 font-bold"
             >
               <Eye className="w-5 h-5 group-hover:text-white transition" />
               <span className="tracking-wide">Explore Materials Catalogue</span>
@@ -92,7 +92,7 @@ export default function Home() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
             <div>
-              <div className="inline-flex items-center space-x-2 bg-blue-500/15 text-blue-400 text-[10px] font-bold px-3 py-1.5 rounded-full border border-blue-500/30 mb-3 uppercase tracking-wider">
+              <div className="inline-flex items-center space-x-2 bg-white/5 text-slate-200 text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/10 mb-3 uppercase tracking-wider">
                 <Clock className="w-3 h-3" />
                 <span>Daily Market Price Index</span>
               </div>
@@ -100,9 +100,9 @@ export default function Home() {
                 WHOLESALE TIERED PRICING TABLE
               </h2>
             </div>
-            <div className="flex items-center space-x-2 bg-blue-500/15 border border-blue-500/30 px-4 py-2 rounded-full">
-              <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-blue-400">{pricesUpdatedText}</span>
+            <div className="flex items-center space-x-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+              <span className="w-2 h-2 bg-slate-200 rounded-full animate-pulse" />
+              <span className="text-xs font-bold text-slate-200">{pricesUpdatedText}</span>
             </div>
           </div>
 
@@ -120,11 +120,11 @@ export default function Home() {
                   boxShadow:
                     'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
                 }}>
-                    <Package className="w-4 h-4 text-blue-400" />
+                    <Package className="w-4 h-4 text-slate-300" />
                   </div>
                   <h3 className="text-sm font-bold text-white font-industrial">Cement Bags (OPC 53 / PPC 50kg)</h3>
                 </div>
-                <span className="text-[10px] font-bold text-blue-400 rounded-full border border-white/16 px-2.5 py-1" style={{
+                <span className="text-[10px] font-bold text-slate-200 rounded-full border border-white/16 px-2.5 py-1" style={{
                   background:
                     'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%)',
                   backdropFilter: 'blur(12px) saturate(150%)',
@@ -164,11 +164,11 @@ export default function Home() {
                   boxShadow:
                     'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
                 }}>
-                    <TrendingUp className="w-4 h-4 text-rose-400" />
+                    <TrendingUp className="w-4 h-4 text-slate-300" />
                   </div>
                   <h3 className="text-sm font-bold text-white font-industrial">TMT Steel Bars (6mm - 32mm Fe 550D)</h3>
                 </div>
-                <span className="text-[10px] font-bold text-rose-400 rounded-full border border-white/16 px-2.5 py-1" style={{
+                <span className="text-[10px] font-bold text-slate-200 rounded-full border border-white/16 px-2.5 py-1" style={{
                   background:
                     'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%)',
                   backdropFilter: 'blur(12px) saturate(150%)',
@@ -200,7 +200,7 @@ export default function Home() {
           {/* CTA */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-400">Prices are indicative and may vary. Call for today's confirmed rates.</p>
-            <button onClick={() => setPage('products')} className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-xl text-sm flex items-center space-x-2 transition shadow-lg">
+            <button onClick={() => setPage('products')} className="bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white font-bold px-6 py-3 rounded-xl text-sm flex items-center space-x-2 transition shadow-lg">
               <span>View Full Product Catalog</span>
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -212,7 +212,7 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
-            Browse Our <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Product Categories</span>
+            Browse Our Product Categories
           </h2>
           <p className="text-slate-400 text-sm mt-2">Premium construction materials from top brands</p>
         </div>            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
@@ -237,11 +237,11 @@ export default function Home() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
-              Featured <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Products</span>
+              Featured Products
             </h2>
             <p className="text-slate-400 text-xs mt-1">Top-rated materials at wholesale direct rates</p>
           </div>
-          <button onClick={() => setPage('products')} className="flex items-center space-x-1 text-xs font-bold text-blue-400 hover:text-blue-300 transition">
+          <button onClick={() => setPage('products')} className="flex items-center space-x-1 text-xs font-bold text-slate-200 hover:text-white transition">
             <span>View All</span>
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -257,7 +257,7 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
-            Our <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Services</span>
+            Our Services
           </h2>
           <p className="text-slate-400 text-sm mt-2">Comprehensive supply and logistics for all project sizes</p>
         </div>
@@ -295,7 +295,7 @@ export default function Home() {
           })}
         </div>
         <div className="text-center mt-8">
-          <button onClick={() => setPage('services')} className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center space-x-2 mx-auto">
+          <button onClick={() => setPage('services')} className="bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center space-x-2 mx-auto">
             <span>View All Services</span>
             <ChevronRight className="w-4 h-4" />
           </button>
