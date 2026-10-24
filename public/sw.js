@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hsn-pwa-v1';
+const CACHE_NAME = 'hsn-pwa-v2';
 const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-maskable.svg', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
