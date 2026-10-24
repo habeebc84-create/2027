@@ -140,11 +140,14 @@ function AppContent() {
 
   const hideNavPages: Page[] = ['checkout', 'admin-login', 'admin', 'product-detail', 'order-success', 'welcome-gate', 'splash'];
   const showNav = !hideNavPages.includes(currentPage);
+  // The top bar lives on the home page only, pinned at the top; the bottom
+  // dock, footer and floating buttons still use showNav below.
+  const showTopBar = currentPage === 'home';
 
   return (
     <div className="min-h-screen">
-      {showNav && <Navbar onCartClick={() => setCartOpen(true)} />}
-      <div className={showNav ? 'pt-[92px]' : ''}>
+      {showTopBar && <Navbar onCartClick={() => setCartOpen(true)} />}
+      <div className={showTopBar ? 'pt-[92px]' : ''}>
         {renderPage()}
       </div>
       {showNav && <Footer />}
