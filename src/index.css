@@ -233,10 +233,13 @@
 
 /* ====== TOP NAVBAR ====== */
 .splash-navbar {
-  position: absolute;
+  /* Fixed in one spot: the landing page scrolls, so an absolute bar used
+     to slide away and come back down when scrolling stopped. */
+  position: fixed;
   top: 30px;
   left: 6.7%;
   right: 6.7%;
+  z-index: 20;
   height: 100px;
   display: flex;
   align-items: center;
@@ -599,11 +602,11 @@
     position: fixed;
   }
   .splash-navbar {
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    margin: 12px;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    margin: 0;
     height: auto;
     min-height: 64px;
     padding: 12px 16px;
@@ -666,7 +669,7 @@
     justify-content: center;
   }
   .splash-hero {
-    margin-top: 34px;
+    margin-top: 170px;
   }
   .splash-badges {
     flex-wrap: wrap;
