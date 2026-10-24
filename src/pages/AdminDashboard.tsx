@@ -4,7 +4,7 @@ import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, 
 import { useApp } from '../context/AppContext';
 import type { AdminPage, Product, Category, ContentBlock, OrderStatus, Notification, Achievement } from '../types';
 import { ORDER_STATUSES } from '../types';
-import { bustedImageSrc, compressImageFile, markImageUpdated } from '../lib/images';
+import { bustedImageSrc, compressImageFile } from '../lib/images';
 import { changeAdminPassword } from '../lib/password';
 
 export default function AdminDashboard() {
@@ -615,27 +615,13 @@ export default function AdminDashboard() {
             }} />
           </label>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
-            <h4 className="text-xs font-bold text-white">Homepage Hero Image</h4>
-            <p className="text-[10px] text-slate-400">Shown behind the "HSN CEMENT AND STEEL" heading on the home page. Changes appear on every browser after upload.</p>
-            <div className="flex items-center gap-3">
-              <div className="w-32 h-20 rounded-xl overflow-hidden border border-white/10 bg-slate-900 shrink-0">
-                <img src={bustedImageSrc(siteContent.heroImage) || '/hero_bg_ultra_8k.png'} alt="Hero preview" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="block cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold text-center transition">
-                  <span className="flex items-center justify-center space-x-2"><ImageIcon className="w-3.5 h-3.5" /><span>Upload Hero Image</span></span>
-                  <input type="file" accept="image/*" className="hidden" onChange={async e => {
-                    const file = e.target.files?.[0];
-                    e.target.value = '';
-                    if (!file) return;
-                    const compressed = await compressImageFile(file);
-                    if (!compressed) return;
-                    updateSiteContent({ heroImage: compressed });
-                    markImageUpdated('/hero_bg_ultra_8k.png');
-                  }} />
-                </label>
-                <button onClick={() => updateSiteContent({ heroImage: '/hero_bg_ultra_8k.png' })} className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition">Reset to Default</button>
-              </div>
+            <h4 className="text-xs font-bold text-white">Homepage Hero Colour</h4>
+            <p className="text-[10px] text-slate-400">The home hero behind the "HSN CEMENT AND STEEL" heading now uses the website colour instead of a photo — no image upload.</p>
+            <div className="relative w-32 h-20 rounded-xl overflow-hidden border border-white/10 shrink-0">
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, #0d1b31 0%, #081120 45%, #040814 100%)' }} />
+              <div className="absolute -top-6 -left-6 w-20 h-20 bg-blue-500/15 blur-[30px] rounded-full" />
+              <div className="absolute top-1/3 -right-6 w-20 h-20 bg-indigo-500/10 blur-[30px] rounded-full" />
+              <span className="absolute bottom-1.5 left-2 text-[8px] font-bold text-white/80">Website colour</span>
             </div>
           </div>
         </div>
