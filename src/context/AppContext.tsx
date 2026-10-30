@@ -102,8 +102,8 @@ function generateOrderId(): string {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(() => load('hsn_cart', []));
-  const [orders, setOrders] = useState<Order[]>(() => load('hsn_orders', []));
+  const [cart, setCart] = useState<CartItem[]>(() => { const v = load<CartItem[]>('hsn_cart', []); return Array.isArray(v) ? v : []; });
+  const [orders, setOrders] = useState<Order[]>(() => { const v = load<Order[]>('hsn_orders', []); return Array.isArray(v) ? v : []; });
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('hsn_admin') === 'true');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -130,18 +130,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Orders intentionally deleted by the admin. Sent with every cloud snapshot
   // so other devices drop them too instead of re-merging them from stale cloud data.
   const deletedOrderIdsRef = useRef<Set<string>>(new Set());
-  const [banners] = useState<Banner[]>(() => load('hsn_banners', defaultBanners));
-  const [transportZones, setTransportZones] = useState<TransportZone[]>(() => load('hsn_transportZones', defaultTransportZones));
+  const [banners] = useState<Banner[]>(() => { const v = load<Banner[]>('hsn_banners', defaultBanners); return Array.isArray(v) ? v : defaultBanners; });
+  const [transportZones, setTransportZones] = useState<TransportZone[]>(() => { const v = load<TransportZone[]>('hsn_transportZones', defaultTransportZones); return Array.isArray(v) ? v : defaultTransportZones; });
   const [marketPrices, setMarketPrices] = useState<MarketPrices>(() => ({ ...defaultMarketPrices, ...load('hsn_marketPrices', {}) }));
-  const [achievements, setAchievements] = useState<Achievement[]>(() => load('hsn_achievements', []));
-  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(() => load('hsn_contentBlocks', []));
-  const [termsContent, setTermsContent] = useState<TermsContent[]>(() => load('hsn_terms', defaultTerms));
+  const [achievements, setAchievements] = useState<Achievement[]>(() => { const v = load<Achievement[]>('hsn_achievements', []); return Array.isArray(v) ? v : []; });
+  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>(() => { const v = load<ContentBlock[]>('hsn_contentBlocks', []); return Array.isArray(v) ? v : []; });
+  const [termsContent, setTermsContent] = useState<TermsContent[]>(() => { const v = load<TermsContent[]>('hsn_terms', defaultTerms); return Array.isArray(v) ? v : defaultTerms; });
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => load('hsn_settings', {
     businessName: 'HSN CEMENT AND STEEL', phone: '7989494779', whatsapp: '+91 9179173040',
     email: 'habeebc84@gmail.com', address: 'Kalikiri, AP - 517234', businessHours: '7 AM - 7 PM Daily',
     gstNumber: '37AAAAA0000A1Z5', logo: '/windows-h-logo.png',
   }));
-  const [customers, setCustomers] = useState<Customer[]>(() => load('hsn_customers', []));
+  const [customers, setCustomers] = useState<Customer[]>(() => { const v = load<Customer[]>('hsn_customers', []); return Array.isArray(v) ? v : []; });
 
   const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
     const id = `t-${Date.now()}-${Math.random()}`;
