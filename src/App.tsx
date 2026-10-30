@@ -160,7 +160,7 @@ function AppContent() {
   // First paint on a QR deep link skips the splash gate; the mount effect
   // persists the dismissal so navigating away never re-shows it either.
   const deepLink = !isLoginPage && isOrderDeepLink();
-  if (!splashDismissed && !isLoginPage && !deepLink) return <Splash />;
+  if (!splashDismissed && !isLoginPage && !deepLink) return (<PageErrorBoundary><Splash /></PageErrorBoundary>);
 
   const renderPage = () => {
     switch (currentPage) {
