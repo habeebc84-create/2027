@@ -49,24 +49,35 @@ function isOrderDeepLink(): boolean {
 }
 
 
-// If one page component throws, React would otherwise unmount the whole
-// app and leave a blank screen. Catch it here so the user sees a recovery
-// screen (and can go home) instead of nothing.
+// If anything in the app content throws, React would otherwise unmount
+// the whole app and leave only the page background (a blank gradient)
+// with no text and no way forward. Catch it here, show what went wrong
+// and a way back, instead of a blank screen.
 class PageErrorBoundary extends React.Component<
   { children: React.ReactNode },
-  { failed: boolean }
+  { failed: boolean; message: string }
 > {
-  state = { failed: false };
-  static getDerivedStateFromError() { return { failed: true }; }
+  state = { failed: false, message: '' };
+  static getDerivedStateFromError(error: unknown) {
+    return { failed: true, message: error instanceof Error ? error.message : String(error) };
+  }
   render() {
     if (this.state.failed) {
       return (
         <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
           <h1 style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>Something went wrong on this page</h1>
-          <p style={{ color: '#94a3b8', maxWidth: 420 }}>The page could not be shown. Your cart and orders are safe — go back to the home page or reload.</p>
-          <button type="button" onClick={() => { this.setState({ failed: false }); window.location.href = '/'; }} style={{ background: '#f59e0b', color: '#000', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
-            Go to Home
-          </button>
+          {this.state.message && (
+            <p style={{ color: '#fbbf24', maxWidth: 520, fontSize: 13, wordBreak: 'break-word' }}>{this.state.message}</p>
+          )}
+          <p style={{ color: '#94a3b8', maxWidth: 420 }}>Your cart and orders are safe — go back to the home page or reload.</p>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button type="button" onClick={() => { this.setState({ failed: false, message: '' }); window.location.href = '/'; }} style={{ background: '#f59e0b', color: '#000', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
+              Go to Home
+            </button>
+            <button type="button" onClick={() => window.location.reload()} style={{ background: '#334155', color: '#fff', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
+              Reload
+            </button>
+          </div>
         </div>
       );
     }
@@ -77,6 +88,14 @@ class PageErrorBoundary extends React.Component<
 function AppContent() {
   const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
+  const [globalError, setGlobalError] = useState<string | null>(null);
+  useEffect(() => {
+    const onError = (e: ErrorEvent) => setGlobalError(e.message || 'Unknown error');
+    const onReject = (e: PromiseRejectionEvent) => setGlobalError(e.reason instanceof Error ? e.reason.message : String(e.reason));
+    window.addEventListener('error', onError);
+    window.addEventListener('unhandledrejection', onReject);
+    return () => { window.removeEventListener('error', onError); window.removeEventListener('unhandledrejection', onReject); };
+  }, []);
   const [successOrderId, setSuccessOrderId] = useState<string | null>(null);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -179,10 +198,20 @@ function AppContent() {
   const showTopBar = currentPage === 'home' || (isLaptop && showNav);
 
   return (
+    <PageErrorBoundary>
     <div className="min-h-screen">
+      {globalError && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, background: '#7f1d1d', color: '#fff', padding: '10px 16px', fontSize: 13, display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ wordBreak: 'break-word' }}>Site error: {globalError}</span>
+          <span style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+            <button type="button" onClick={() => window.location.reload()} style={{ background: '#fff', color: '#7f1d1d', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer' }}>Reload</button>
+            <button type="button" onClick={() => setGlobalError(null)} style={{ background: 'transparent', color: '#fff', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: '1px solid #fff', cursor: 'pointer' }}>Dismiss</button>
+          </span>
+        </div>
+      )}
       {showTopBar && <Navbar onCartClick={() => setCartOpen(true)} />}
       <div className={showTopBar ? 'pt-[92px]' : ''}>
-        <PageErrorBoundary key={currentPage}>{renderPage()}</PageErrorBoundary>
+        {renderPage()}
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
@@ -191,6 +220,7 @@ function AppContent() {
       <ToastContainer />
       {!isAdmin && <NotificationPopup />}
     </div>
+    </PageErrorBoundary>
   );
 }
 
