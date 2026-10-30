@@ -100,7 +100,7 @@ export default function Services() {
           <h2 className="text-xl font-black text-white font-industrial mb-6 text-center">
             Delivery <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Zones & Rates</span>
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
               { zone: 'Kalikiri Yard (Self Pick-up)', charge: 'FREE' },
               { zone: 'Kalikiri (Within Town)', charge: '₹500' },

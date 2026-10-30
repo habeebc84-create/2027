@@ -13,18 +13,21 @@ const typeConfig: Record<string, { icon: LucideIcon; color: string; bg: string; 
 export default function NotificationPopup() {
   const { notifications, markNotificationRead } = useApp();
   const [showPanel, setShowPanel] = useState(false);
+  const [autoShown, setAutoShown] = useState(false);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
 
   const activeNotifications = notifications.filter(n => n.active !== false && n.type !== 'order');
 
-  // Auto-show panel once after 3 seconds if there are unread notifications
+  // Auto-show panel once after 3 seconds if there are unread notifications.
+  // It must not re-open after the user closes it: closing is not a
+  // dismissal, so without this flag the effect would re-arm every time.
   useEffect(() => {
     const unread = activeNotifications.find(n => !n.read && !dismissedIds.has(n.id));
-    if (unread && !showPanel) {
-      const timer = setTimeout(() => setShowPanel(true), 3000);
+    if (unread && !showPanel && !autoShown) {
+      const timer = setTimeout(() => { setShowPanel(true); setAutoShown(true); }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [activeNotifications, dismissedIds, showPanel]);
+  }, [activeNotifications, dismissedIds, showPanel, autoShown]);
 
   const dismissNotification = (notifId: string) => {
     setDismissedIds(prev => new Set(prev).add(notifId));

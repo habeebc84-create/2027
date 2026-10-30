@@ -28,7 +28,7 @@ export default function Gallery() {
               </h2>
               <p className="text-slate-400 text-xs mt-1">Milestones, completed contracts, and certifications from 15+ years of service</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-14">
               {achievements.map(a => (
                 <div
                   key={a.id}
@@ -51,7 +51,7 @@ export default function Gallery() {
           </>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {siteContent.galleryImages.map(img => (
             <div
               key={img.id}
