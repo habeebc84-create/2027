@@ -30,7 +30,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
         <div className="flex items-center justify-between sm:justify-start gap-3 sm:gap-4 h-16">
           {/* Logo */}
           <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
-            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-14 h-14 rounded-xl object-contain border border-white/10 bg-slate-950/40 p-1 shadow-md group-hover:border-white/30 transition duration-300" />
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-contain border border-white/10 bg-slate-950/40 p-1 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
               <span className="text-sm sm:text-lg font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
               <span className="text-[11px] tracking-[0.08em] font-bold text-slate-400 uppercase hidden sm:block leading-tight">Premium Building Materials</span>

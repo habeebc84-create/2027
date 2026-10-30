@@ -26,7 +26,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 w-full">
           {/* Badges */}
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{
@@ -54,7 +54,7 @@ export default function Home() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-none drop-shadow-2xl font-industrial mb-8">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-none drop-shadow-2xl font-industrial mb-8">
             HSN CEMENT AND STEEL
           </h1>
 
@@ -107,7 +107,7 @@ export default function Home() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Cement */}
             <div className="bg-slate-800/50 border border-white/5 rounded-2xl overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
@@ -215,7 +215,7 @@ export default function Home() {
             Browse Our Product Categories
           </h2>
           <p className="text-slate-400 text-sm mt-2">Premium construction materials from top brands</p>
-        </div>            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
+        </div>            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
           {categories.map(cat => (
             <button key={cat.id} onClick={() => setPage('products')} className="rounded-2xl border border-white/14 p-3 flex flex-col items-center space-y-2 transition group hover:border-white/3 hover:bg-white/[0.02]" style={{
               background:
@@ -261,7 +261,7 @@ export default function Home() {
           </h2>
           <p className="text-slate-400 text-sm mt-2">Comprehensive supply and logistics for all project sizes</p>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
             { icon: Building2, title: 'Bulk Supply', desc: 'Direct factory dispatch for projects' },
             { icon: Truck, title: 'Fleet Delivery', desc: 'Same-day local dispatch to site' },

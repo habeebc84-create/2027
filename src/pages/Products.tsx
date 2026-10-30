@@ -100,7 +100,7 @@ export default function Products() {
             <p className="text-sm mt-1">Try adjusting your search or filter criteria</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filtered.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -112,7 +112,7 @@ export default function Products() {
           <h2 className="text-xl font-black text-white font-industrial mb-6 text-center">
             Shop by <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Category</span>
           </h2>
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
             {categories.map(cat => {
               const count = enabledProducts.filter(p => p.category === cat.name).length;
               return (

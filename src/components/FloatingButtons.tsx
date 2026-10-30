@@ -12,22 +12,22 @@ export default function FloatingButtons() {
   const { siteContent } = useApp();
 
   return (
-    <div className="fixed bottom-36 right-4 sm:right-6 z-40 flex flex-col items-end space-y-3">
+    <div className="fixed bottom-32 md:bottom-36 right-3 sm:right-6 z-40 flex flex-col items-end space-y-3">
       <a
         href={waHref(siteContent.whatsapp, 'Hi, I want to inquire about construction materials')}
         target="_blank"
         rel="noreferrer"
-        className="w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:scale-110 transition-all duration-300"
+        className="w-11 h-11 md:w-14 md:h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:scale-110 transition-all duration-300"
         title="Chat on WhatsApp"
       >
-        <WhatsAppIcon className="w-7 h-7 text-white" />
+        <WhatsAppIcon className="w-6 h-6 md:w-7 md:h-7 text-white" />
       </a>
       <a
         href={telHref(siteContent.phone)}
-        className="w-14 h-14 bg-blue-500 hover:bg-blue-400 rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:scale-110 transition-all duration-300"
+        className="w-11 h-11 md:w-14 md:h-14 bg-blue-500 hover:bg-blue-400 rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:scale-110 transition-all duration-300"
         title="Call Store"
       >
-        <Phone className="w-6 h-6 text-white" />
+        <Phone className="w-5 h-5 md:w-6 md:h-6 text-white" />
       </a>
     </div>
   );
