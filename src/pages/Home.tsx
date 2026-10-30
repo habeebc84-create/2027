@@ -8,7 +8,7 @@ export default function Home() {
   const featuredProducts = products.filter(p => p.featured && p.enabled).slice(0, 6);
   // "Rates Updated" stamp for the price index: the date the admin last
   // saved prices in the portal (defaults to today before the first save).
-  const pricesDate = marketPrices.updatedAt ? new Date(marketPrices.updatedAt) : new Date();
+  const pricesDate = marketPrices?.updatedAt ? new Date(marketPrices.updatedAt) : new Date();
   const pricesDateLabel = pricesDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const pricesUpdatedText = pricesDate.toDateString() === new Date().toDateString() ? `Rates Updated: Today (${pricesDateLabel})` : `Rates Updated: ${pricesDateLabel}`;
 

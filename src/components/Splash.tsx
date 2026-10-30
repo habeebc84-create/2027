@@ -39,16 +39,12 @@ export default function Splash() {
   }, []);
 
   const handleEnter = () => {
-    setExiting(true);
-    setTimeout(() => {
-      try { dismissSplash(); } catch { /* entering must not be blocked by storage */ }
-      // QR scans / shared links land on deep-link pages (/order-success/<id>,
-      // /track-order/<id>) even before the splash is dismissed. Keep the
-      // parsed route instead of overriding it with the home page.
-      const path = window.location.pathname;
-      const isDeepLink = path.startsWith('/order-success/') || path.startsWith('/track-order/');
-      if (!isDeepLink) setPage('welcome-gate');
-    }, 800);
+    // Dismiss immediately, not after a timer: if the 800ms timer stalls
+    // (background tab throttling, frozen page), the splash stays faded
+    // out at opacity 0 forever and every page behind it is unreachable.
+    // The fade is sacrificed so entering can never get stuck.
+    try { dismissSplash(); } catch { /* entering must not be blocked by storage */ }
+    setPage('welcome-gate');
   };
 
   const callHref = telHref(siteContent.phone);
