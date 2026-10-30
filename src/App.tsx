@@ -156,6 +156,20 @@ function AppContent() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isAdmin, setPage, setSelectedProductId]);
 
+  // Hooks must ALL run before the early Splash return below. The laptop
+  // check used to live after that return, so the first render (splash)
+  // ran fewer hooks than the render after dismissing — React then threw
+  // 'Rendered more hooks than during the previous render' and unmounted
+  // the whole app, leaving only the page background (blank gradient).
+  // That is why deep links (no splash return) worked but Enter / ?entered=1
+  // (splash first, then main content) always blanked.
+  const [isLaptop, setIsLaptop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const update = () => setIsLaptop(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
   const isLoginPage = window.location.pathname === '/manage-portal-9f3a';
   // First paint on a QR deep link skips the splash gate; the mount effect
   // persists the dismissal so navigating away never re-shows it either.
@@ -185,16 +199,6 @@ function AppContent() {
 
   const hideNavPages: Page[] = ['checkout', 'admin-login', 'admin', 'product-detail', 'order-success', 'welcome-gate', 'splash'];
   const showNav = !hideNavPages.includes(currentPage);
-  // Laptop (>=1024px): the top bar carries the navigation on every nav
-  // page, so the bottom dock is not needed there. Phone/tablet: the top
-  // bar stays home-only and the dock carries the navigation, as before.
-  const [isLaptop, setIsLaptop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const update = () => setIsLaptop(mq.matches);
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
   const showTopBar = currentPage === 'home' || (isLaptop && showNav);
 
   return (
