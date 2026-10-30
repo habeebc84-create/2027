@@ -16,9 +16,15 @@ export default function Splash() {
   const [loaded, setLoaded] = useState(false);
   const [currentImg, setCurrentImg] = useState(0);
 
+  // Legacy swap: the shared cloud copy still carries '/splash_bg_clear.png'
+  // (a generic construction site). Show the HSN shop photo instead, unless
+  // the admin has picked a different splash image or front-page images.
+  const legacySplash = siteContent.splashImage === '/splash_bg_clear.png'
+    ? '/hsn_hero_new.png'
+    : siteContent.splashImage;
   const frontImages = siteContent.frontPageImages && siteContent.frontPageImages.length > 0
     ? siteContent.frontPageImages
-    : [bustedImageSrc(siteContent.splashImage) || bustedImageSrc('/hero_bg_ultra_8k.png')];
+    : [bustedImageSrc(legacySplash) || bustedImageSrc('/hero_bg_ultra_8k.png')];
 
   // Auto-rotate images if more than one
   useEffect(() => {

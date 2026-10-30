@@ -181,7 +181,7 @@ export const defaultSiteContent: SiteContent = {
   tagline: 'Premium Cement, Steel, Cutting Blades & Construction Supplies in Kalikiri',
   heroHeading: 'Premium Cement, Steel & Cutting Blades in Kalikiri',
   heroSubheading: 'Trusted supplier of genuine construction materials for home builders & engineering contractors.',
-  splashImage: '/splash_bg_clear.png',
+  splashImage: '/hsn_hero_new.png',
   heroImage: '/hero_bg_ultra_8k.png',
   address: 'Kalikiri, Annamayya District, Andhra Pradesh – 517234',
   locationDetails: 'Near Main Highway, Kalikiri Landmark Hub',
