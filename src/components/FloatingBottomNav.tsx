@@ -5,6 +5,7 @@ import type { Page } from '../types';
 
 interface NavItem {
   label: string;
+  short?: string;
   page: Page;
 }
 
@@ -14,7 +15,7 @@ const navItems: NavItem[] = [
   { label: 'Services', page: 'services' },
   { label: 'Gallery', page: 'gallery' },
   { label: 'Contact', page: 'contact' },
-  { label: 'Track Order', page: 'order-tracking' },
+  { label: 'Track Order', short: 'Track', page: 'order-tracking' },
 ];
 
 interface FloatingBottomNavProps {
@@ -56,7 +57,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
       aria-label="Primary navigation"
     >
       <div
-        className="relative rounded-full p-1 sm:p-1.5 border border-white/10"
+        className="relative rounded-full p-1.5 border border-white/10"
         style={{
           pointerEvents: 'auto',
           maxWidth: 'calc(100vw - 16px)',
@@ -100,7 +101,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                 aria-current={isActive ? 'page' : undefined}
                 aria-label={item.label}
                 onClick={() => setPage(item.page)}
-                className="relative flex-1 sm:flex-none flex flex-col items-center justify-center gap-0.5 rounded-full px-1 sm:px-2.5 py-1.5 min-w-0 sm:min-w-[64px] h-[46px] leading-none"
+                className="relative flex-1 sm:flex-none flex flex-col items-center justify-center gap-1 rounded-full px-1 sm:px-2.5 py-2 min-w-0 sm:min-w-[64px] h-[56px] leading-none"
                 whileHover={animate ? { y: -1.5 } : undefined}
                 whileTap={animate ? { scale: 0.94 } : undefined}
                 transition={{ duration: 0.18, ease: 'easeOut' }}
@@ -137,15 +138,16 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                     opacity: isActive ? 1 : 0.62,
                   }}
                 >
-                  <SvgIcon name={item.label} size={18} />
+                  <SvgIcon name={item.label} size={22} />
                 </span>
 
                 {/* Label */}
                 <span
-                  className="relative text-[8px] sm:text-[10px] font-medium tracking-tight text-white select-none whitespace-nowrap leading-none transition-opacity duration-200"
+                  className="relative text-[10px] font-medium tracking-tight text-white select-none whitespace-nowrap leading-none transition-opacity duration-200"
                   style={{ opacity: isActive ? 1 : 0.62 }}
                 >
-                  {item.label}
+                  <span className="sm:hidden">{item.short ?? item.label}</span>
+                  <span className="hidden sm:inline">{item.label}</span>
                 </span>
               </motion.button>
             );
