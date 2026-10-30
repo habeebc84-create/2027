@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { ArrowRight, Phone, ShoppingBag, Star, Truck, Shield, MapPin, Package, ChevronRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
@@ -17,18 +17,11 @@ interface WelcomeGateProps {
 
 export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateProps) {
   const { categories, products, siteContent, brands } = useApp();
-  const [phase, setPhase] = useState(0);
-
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setPhase(1), 150),
-      setTimeout(() => setPhase(2), 400),
-      setTimeout(() => setPhase(3), 650),
-      setTimeout(() => setPhase(4), 900),
-      setTimeout(() => setPhase(5), 1150),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, []);
+  // Content is visible by default. It used to start hidden (opacity-0)
+  // and only appear as JS timers fired phases 1..5 — if those timers
+  // stalled, the screen stayed a blank gradient forever and every page
+  // behind it was unreachable. Visibility must never depend on timers.
+  const [phase] = useState(5);
 
   const activeCategories = useMemo(() => categories.filter(c => c.enabled !== false).slice(0, 10), [categories]);
   const featuredProducts = useMemo(() => products.filter(p => p.featured && p.enabled).slice(0, 6), [products]);

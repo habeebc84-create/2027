@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -46,6 +46,32 @@ function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?
 function isOrderDeepLink(): boolean {
   if (new URLSearchParams(window.location.search).has('track')) return true;
   return /^\/(track-order|order-success)\/.+/.test(window.location.pathname);
+}
+
+
+// If one page component throws, React would otherwise unmount the whole
+// app and leave a blank screen. Catch it here so the user sees a recovery
+// screen (and can go home) instead of nothing.
+class PageErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() {
+    if (this.state.failed) {
+      return (
+        <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
+          <h1 style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>Something went wrong on this page</h1>
+          <p style={{ color: '#94a3b8', maxWidth: 420 }}>The page could not be shown. Your cart and orders are safe — go back to the home page or reload.</p>
+          <button type="button" onClick={() => { this.setState({ failed: false }); window.location.href = '/'; }} style={{ background: '#f59e0b', color: '#000', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
+            Go to Home
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function AppContent() {
@@ -156,7 +182,7 @@ function AppContent() {
     <div className="min-h-screen">
       {showTopBar && <Navbar onCartClick={() => setCartOpen(true)} />}
       <div className={showTopBar ? 'pt-[92px]' : ''}>
-        {renderPage()}
+        <PageErrorBoundary key={currentPage}>{renderPage()}</PageErrorBoundary>
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
