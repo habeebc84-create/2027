@@ -32,7 +32,7 @@ export default function ProductCard({ product }: { product: Product }) {
     }}>
       {/* Image */}
       <div className="relative overflow-hidden cursor-pointer" onClick={handleViewDetail}>
-        <img src={product.image} alt={product.name} className="w-full h-48 object-cover group-hover:scale-105 transition duration-500" />
+        <img src={product.image} alt={product.name} className="w-full h-32 sm:h-48 object-cover group-hover:scale-105 transition duration-500" />
         {product.featured && (
           <div className="absolute top-3 left-3 bg-amber-500/90 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center space-x-1">
             <Star className="w-3 h-3" /><span>FEATURED</span>
@@ -44,7 +44,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 14px -10px rgba(0,0,0,0.5)',
             }}>{product.grade}</div>
       </div>
-      {/* Content */}        <div className="p-4 flex-1 flex flex-col" style={{
+      {/* Content */}        <div className="p-3 sm:p-4 flex-1 flex flex-col" style={{
           background:
             'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
         }}>
@@ -62,7 +62,7 @@ export default function ProductCard({ product }: { product: Product }) {
               {product.sizes.map(s => <option key={s.size} value={s.size}>{s.size} - Rs.{s.price}</option>)}
             </select>
           </div>
-        )}          <div className="flex items-center justify-between mt-auto pt-2" style={{
+        )}          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mt-auto pt-2" style={{
             borderTop: '1px solid rgba(255,255,255,0.12)',
             background:
               'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 100%)',

@@ -13,7 +13,7 @@ export default function Footer() {
   const { setPage, siteContent, logoutAdmin } = useApp();
 
   return (
-    <footer className="bg-gradient-to-b from-slate-950/80 to-slate-950 border-t border-blue-500/30 text-slate-400 text-xs pt-16 pb-28 relative z-10 overflow-hidden">
+    <footer className="bg-gradient-to-b from-slate-950/80 to-slate-950 border-t border-blue-500/30 text-slate-400 text-xs pt-16 pb-28 lg:pb-8 relative z-10 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-pink-500 to-indigo-500 shadow-[0_0_20px_rgba(6,182,212,0.8)]" />
       <div className="absolute top-10 right-10 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 left-10 w-96 h-96 bg-pink-500/10 blur-[120px] rounded-full pointer-events-none" />

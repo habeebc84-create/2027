@@ -15,8 +15,17 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 // the FloatingBottomNav dock, so they are not repeated here.
 // The bar is always pinned to the top — it never slides away or moves
 // while scrolling, on the home page or anywhere else.
+const navItems: { label: string; page: Page }[] = [
+  { label: 'Home', page: 'home' },
+  { label: 'Products', page: 'products' },
+  { label: 'Services', page: 'services' },
+  { label: 'Gallery', page: 'gallery' },
+  { label: 'Contact', page: 'contact' },
+  { label: 'Track Order', page: 'order-tracking' },
+];
+
 export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
-  const { setPage, cartCount, siteContent } = useApp();
+  const { setPage, cartCount, siteContent, currentPage } = useApp();
 
   const handleNav = (e: React.MouseEvent, page: Page) => {
     e.preventDefault();
@@ -26,8 +35,8 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 pt-2 px-3 sm:px-5">
       {/* Floating rounded bar — compact height */}
-      <div className="w-full sm:w-fit sm:max-w-[calc(100vw-2.5rem)] mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-3 sm:px-4 py-1.5">
-        <div className="flex items-center justify-between sm:justify-start gap-3 sm:gap-4 h-16">
+      <div className="w-full max-w-7xl mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-3 sm:px-4 py-1.5">
+        <div className="flex items-center justify-between gap-3 sm:gap-4 h-16">
           {/* Logo */}
           <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
             <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-contain border border-white/10 bg-slate-950/40 p-1 shadow-md group-hover:border-white/30 transition duration-300" />
@@ -36,6 +45,25 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
               <span className="text-[11px] tracking-[0.08em] font-bold text-slate-400 uppercase hidden sm:block leading-tight">Premium Building Materials</span>
             </div>
           </a>
+
+          {/* Merged dock navigation: laptop only. On phone/tablet this
+              is hidden and the bottom dock carries these links instead. */}
+          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center px-2">
+            {navItems.map(item => {
+              const isActive = currentPage === item.page;
+              return (
+                <button
+                  key={item.page}
+                  type="button"
+                  aria-current={isActive ? 'page' : undefined}
+                  onClick={e => handleNav(e, item.page)}
+                  className={`whitespace-nowrap px-3 py-2 rounded-full text-xs font-bold transition ${isActive ? 'bg-white/10 text-white' : 'text-slate-300 hover:text-white hover:bg-white/5'}`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
 
           {/* Right actions */}
           <div className="flex items-center space-x-2 shrink-0">
