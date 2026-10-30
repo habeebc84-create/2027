@@ -23,8 +23,8 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
   // behind it was unreachable. Visibility must never depend on timers.
   const [phase] = useState(5);
 
-  const activeCategories = useMemo(() => categories.filter(c => c.enabled !== false).slice(0, 10), [categories]);
-  const featuredProducts = useMemo(() => products.filter(p => p.featured && p.enabled).slice(0, 6), [products]);
+  const activeCategories = useMemo(() => (Array.isArray(categories) ? categories : []).filter(c => c && c.enabled !== false).slice(0, 10), [categories]);
+  const featuredProducts = useMemo(() => (Array.isArray(products) ? products : []).filter(p => p && p.featured && p.enabled).slice(0, 6), [products]);
 
   const categoryIcons: Record<string, string> = {
     'Cement': '🏗️',

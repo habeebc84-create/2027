@@ -5,7 +5,7 @@ import { telHref } from '../lib/phone';
 
 export default function Home() {
   const { siteContent, products, setPage, categories, marketPrices, siteSettings } = useApp();
-  const featuredProducts = products.filter(p => p.featured && p.enabled).slice(0, 6);
+  const featuredProducts = (Array.isArray(products) ? products : []).filter(p => p && p.featured && p.enabled).slice(0, 6);
   // "Rates Updated" stamp for the price index: the date the admin last
   // saved prices in the portal (defaults to today before the first save).
   const pricesDate = marketPrices?.updatedAt ? new Date(marketPrices.updatedAt) : new Date();
