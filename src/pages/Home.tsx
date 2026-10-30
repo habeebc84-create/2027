@@ -38,7 +38,7 @@ export default function Home() {
                 'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
             }}>
               <Shield className="w-4 h-4 text-emerald-400" />
-              <span>GSTIN: {siteSettings.gstNumber}</span>
+              <span>GSTIN: {siteSettings?.gstNumber || "37AAAAA0000A1Z5"}</span>
             </span>
             <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{
               background:
@@ -69,11 +69,11 @@ export default function Home() {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition" />
             </button>
             <a
-              href={telHref(siteContent.phone)}
+              href={telHref(siteContent?.phone || "7989494779")}
               className="bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white font-bold px-8 py-4 rounded-2xl text-center transition flex items-center justify-center space-x-2 text-base backdrop-blur-md shadow-xl"
             >
               <Phone className="w-5 h-5" />
-              <span>Call ({siteContent.phone})</span>
+              <span>Call ({siteContent?.phone || "7989494779"})</span>
             </a>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function Home() {
                 }}>JSW / ACC / Dalmia</span>
               </div>
               <div className="divide-y divide-white/10">
-                {marketPrices.cement.map((tier, i) => (
+                {(Array.isArray(marketPrices?.cement) ? marketPrices.cement : []).map((tier, i) => (
                   <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
                     background:
                       'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
@@ -178,7 +178,7 @@ export default function Home() {
                 }}>Tata Tiscon / Vizag</span>
               </div>
               <div className="divide-y divide-white/10">
-                {marketPrices.steel.map((tier, i) => (
+                {(Array.isArray(marketPrices?.steel) ? marketPrices.steel : []).map((tier, i) => (
                   <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
                     background:
                       'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
@@ -216,7 +216,7 @@ export default function Home() {
           </h2>
           <p className="text-slate-400 text-sm mt-2">Premium construction materials from top brands</p>
         </div>            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
-          {categories.map(cat => (
+          {(Array.isArray(categories) ? categories : []).map(cat => (
             <button key={cat.id} onClick={() => setPage('products')} className="rounded-2xl border border-white/14 p-3 flex flex-col items-center space-y-2 transition group hover:border-white/3 hover:bg-white/[0.02]" style={{
               background:
                 'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
