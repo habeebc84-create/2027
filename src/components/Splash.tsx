@@ -41,7 +41,7 @@ export default function Splash() {
   const handleEnter = () => {
     setExiting(true);
     setTimeout(() => {
-      dismissSplash();
+      try { dismissSplash(); } catch { /* entering must not be blocked by storage */ }
       // QR scans / shared links land on deep-link pages (/order-success/<id>,
       // /track-order/<id>) even before the splash is dismissed. Keep the
       // parsed route instead of overriding it with the home page.

@@ -80,7 +80,15 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 function load<T>(key: string, fallback: T): T {
-  try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fallback; } catch { return fallback; }
+  try {
+    const r = localStorage.getItem(key);
+    if (!r) return fallback;
+    const v = JSON.parse(r) as unknown;
+    // A stored literal "null" would otherwise become a null state and crash
+    // every .filter/.map that touches it, blanking the whole site.
+    if (v === null || v === undefined) return fallback;
+    return v as T;
+  } catch { return fallback; }
 }
 function save(key: string, value: unknown) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* */ }
@@ -104,10 +112,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [splashDismissed, setSplashDismissed] = useState(false);
   const [adminPage, setAdminPage] = useState<AdminPage>('overview');
 
-  const [products, setProducts] = useState<Product[]>(() => load('hsn_products', defaultProducts));
-  const [categories, setCategories] = useState<Category[]>(() => load('hsn_categories', defaultCategories));
-  const [brands] = useState<Brand[]>(() => load('hsn_brands', defaultBrands));
-  const [notifications, setNotifications] = useState<Notification[]>(() => load('hsn_notifications', defaultNotifications));
+  const [products, setProducts] = useState<Product[]>(() => { const v = load<Product[]>('hsn_products', defaultProducts); return Array.isArray(v) ? v : defaultProducts; });
+  const [categories, setCategories] = useState<Category[]>(() => { const v = load<Category[]>('hsn_categories', defaultCategories); return Array.isArray(v) ? v : defaultCategories; });
+  const [brands] = useState<Brand[]>(() => { const v = load<Brand[]>('hsn_brands', defaultBrands); return Array.isArray(v) ? v : defaultBrands; });
+  const [notifications, setNotifications] = useState<Notification[]>(() => { const v = load<Notification[]>('hsn_notifications', defaultNotifications); return Array.isArray(v) ? v : defaultNotifications; });
   const [siteContent, setSiteContent] = useState<SiteContent>(() => ({ ...defaultSiteContent, ...load('hsn_siteContent', {}) }));
 
   // Cloud sync refs: site content lives in a shared cloud copy so image changes
@@ -300,7 +308,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const dismissSplash = useCallback(() => {
     setSplashDismissed(true);
-    localStorage.setItem('hsn_splash_dismissed', 'true');
+    try { localStorage.setItem('hsn_splash_dismissed', 'true'); } catch { /* storage blocked/full: entering must still work */ }
   }, []);
 
   const addProduct = useCallback((p: Product) => { localEditRef.current = true; setProducts(prev => [...prev, p]); showToast('Product added'); }, [showToast]);
