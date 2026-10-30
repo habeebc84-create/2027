@@ -140,9 +140,17 @@ function AppContent() {
 
   const hideNavPages: Page[] = ['checkout', 'admin-login', 'admin', 'product-detail', 'order-success', 'welcome-gate', 'splash'];
   const showNav = !hideNavPages.includes(currentPage);
-  // The top bar lives on the home page only, pinned at the top; the bottom
-  // dock, footer and floating buttons still use showNav below.
-  const showTopBar = currentPage === 'home';
+  // Laptop (>=1024px): the top bar carries the navigation on every nav
+  // page, so the bottom dock is not needed there. Phone/tablet: the top
+  // bar stays home-only and the dock carries the navigation, as before.
+  const [isLaptop, setIsLaptop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const update = () => setIsLaptop(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  const showTopBar = currentPage === 'home' || (isLaptop && showNav);
 
   return (
     <div className="min-h-screen">
@@ -152,7 +160,7 @@ function AppContent() {
       </div>
       {showNav && <Footer />}
       {showNav && <FloatingButtons />}
-      {showNav && !cartOpen && <ScrollAwareBottomNav />}  {/* dock stays out of the cart drawer */}
+      {showNav && !cartOpen && <div className="lg:hidden"><ScrollAwareBottomNav /></div>}  {/* dock: phone/tablet only; laptop uses the merged top bar */}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />
       {!isAdmin && <NotificationPopup />}
