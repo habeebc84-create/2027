@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Search, Filter, Grid, List } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 
 export default function Products() {
-  const { products, categories, brands } = useApp();
+  const { products, categories } = useApp();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedBrand, setSelectedBrand] = useState('All');

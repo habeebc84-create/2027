@@ -156,6 +156,17 @@ function AppContent() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isAdmin, setPage, setSelectedProductId]);
 
+  // Laptop (>=1024px): the top bar carries the navigation on every nav
+  // page, so the bottom dock is not needed there. Phone/tablet: the top
+  // bar stays home-only and the dock carries the navigation, as before.
+  const [isLaptop, setIsLaptop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const update = () => setIsLaptop(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
   const isLoginPage = window.location.pathname === '/manage-portal-9f3a';
   // First paint on a QR deep link skips the splash gate; the mount effect
   // persists the dismissal so navigating away never re-shows it either.
@@ -165,7 +176,7 @@ function AppContent() {
   const renderPage = () => {
     switch (currentPage) {
       case 'splash': return <Splash />;
-      case 'welcome-gate': return <WelcomeGate onContinue={() => setPage('home')} onShopCategory={(cat) => { setPage('products'); }} />;
+      case 'welcome-gate': return <WelcomeGate onContinue={() => setPage('home')} onShopCategory={() => { setPage('products'); }} />;
       case 'home': return <Home />;
       case 'products': return <Products />;
       case 'product-detail': return <ProductDetail />;
@@ -185,16 +196,6 @@ function AppContent() {
 
   const hideNavPages: Page[] = ['checkout', 'admin-login', 'admin', 'product-detail', 'order-success', 'welcome-gate', 'splash'];
   const showNav = !hideNavPages.includes(currentPage);
-  // Laptop (>=1024px): the top bar carries the navigation on every nav
-  // page, so the bottom dock is not needed there. Phone/tablet: the top
-  // bar stays home-only and the dock carries the navigation, as before.
-  const [isLaptop, setIsLaptop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const update = () => setIsLaptop(mq.matches);
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
   const showTopBar = currentPage === 'home' || (isLaptop && showNav);
 
   return (

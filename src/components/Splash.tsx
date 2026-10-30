@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Shield, MapPin, Truck, Award, ArrowRight, Phone, Clock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, MapPin, Truck, Award, Phone, Clock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
 import { bustedImageSrc } from '../lib/images';
@@ -12,7 +12,6 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 
 export default function Splash() {
   const { siteContent, dismissSplash, setPage } = useApp();
-  const [exiting, setExiting] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [currentImg, setCurrentImg] = useState(0);
 
@@ -52,7 +51,7 @@ export default function Splash() {
 
   return (
     <div
-      className={`splash-page ${exiting ? 'splash-exit' : ''}`}
+      className="splash-page"
       style={{
         fontFamily: '"Poppins", sans-serif',
       }}

@@ -10,7 +10,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 );
 
 export default function Footer() {
-  const { setPage, siteContent, logoutAdmin } = useApp();
+  const { setPage, siteContent } = useApp();
 
   return (
     <footer className="bg-gradient-to-b from-slate-950/80 to-slate-950 border-t border-blue-500/30 text-slate-400 text-xs pt-16 pb-28 lg:pb-8 relative z-10 overflow-hidden">

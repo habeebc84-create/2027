@@ -8,7 +8,7 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: CartDrawerProps) {
-  const { cart, removeFromCart, updateCartQuantity, cartTotal, siteContent, setPage } = useApp();
+  const { cart, removeFromCart, updateCartQuantity, cartTotal, setPage } = useApp();
 
   if (!isOpen) return null;
 
