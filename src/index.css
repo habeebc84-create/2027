@@ -242,6 +242,12 @@
   right: auto;
   width: 100%;
   z-index: 50;
+  /* Own compositing layer: on some phones a fixed bar with
+     backdrop-filter can flicker or drop out while the page scrolls.
+     translateZ(0) keeps it painted and pinned through the scroll. */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
   height: 100px;
   display: flex;
   align-items: center;
