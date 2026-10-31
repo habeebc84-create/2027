@@ -339,23 +339,27 @@
   filter: brightness(1.08);
 }
 
-/* ====== HERO ====== */
+/* ====== HERO — full-width centred welcome ====== */
 .splash-hero {
   position: relative;
   left: auto;
   top: auto;
-  margin: 178px 0 0 6.7%;
-  width: 860px;
-  max-width: 86.6%;
+  margin: 178px 0 0;
+  width: 100%;
+  max-width: 100%;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateY(24px);
   transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
 }
 
 .splash-hero.visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
 }
 
 /* Badges */
@@ -363,6 +367,8 @@
   display: flex;
   gap: 10px;
   margin-bottom: 34px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .splash-badge {
@@ -380,17 +386,62 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
-/* Heading */
+/* Heading — spans the whole entry screen, animates in line by line */
 .splash-heading {
   font-family: 'Barlow Condensed', 'Oswald', sans-serif;
-  font-size: clamp(65px, 5.2vw, 88px);
-  line-height: 0.91;
+  font-size: clamp(56px, 8.5vw, 110px);
+  line-height: 0.95;
   font-weight: 900;
   letter-spacing: -1px;
   color: #fff;
   text-transform: uppercase;
   text-shadow: 0 3px 10px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.6);
   margin-bottom: 43px;
+  width: 100%;
+  text-align: center;
+}
+
+.splash-welcome-line {
+  display: block;
+}
+
+.splash-hero.visible .splash-welcome-line {
+  animation: splashWelcomeIn 0.9s ease both;
+}
+
+.splash-hero.visible .splash-welcome-line:nth-child(2) {
+  animation-delay: 0.22s;
+}
+
+@keyframes splashWelcomeIn {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.97);
+    letter-spacing: 2px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    letter-spacing: -1px;
+  }
+}
+
+/* CTA row and info pills follow the heading in, centred */
+.splash-hero.visible .splash-badges {
+  animation: splashFadeIn 0.7s ease both;
+}
+
+.splash-hero.visible .splash-cta-row {
+  animation: splashFadeIn 0.7s ease 0.4s both;
+}
+
+.splash-hero.visible .splash-info-row {
+  animation: splashFadeIn 0.7s ease 0.55s both;
+}
+
+@keyframes splashFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* CTA Row */
@@ -399,6 +450,7 @@
   flex-wrap: wrap;
   gap: 17px;
   align-items: center;
+  justify-content: center;
 }
 
 .splash-primary-btn,
@@ -467,6 +519,8 @@
   margin-top: 39px;
   display: flex;
   gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
 }  .splash-info-pill {
   display: flex;
   align-items: center;
@@ -565,6 +619,22 @@
   color: rgba(255,255,255,0.82);
 }
 
+/* Reduced motion: welcome appears instantly, no entrance/exit animation */
+@media (prefers-reduced-motion: reduce) {
+  .splash-page,
+  .splash-navbar,
+  .splash-hero {
+    transition: none;
+  }
+  .splash-bg img,
+  .splash-hero.visible .splash-welcome-line,
+  .splash-hero.visible .splash-badges,
+  .splash-hero.visible .splash-cta-row,
+  .splash-hero.visible .splash-info-row {
+    animation: none;
+  }
+}
+
 /* ====== RESPONSIVE ====== */
 
 @media (max-width: 1200px) {
@@ -573,14 +643,14 @@
     right: 4%;
   }
   .splash-hero {
-    margin-left: 4%;
+    margin-left: 0;
   }
   .splash-features {
     margin-left: 4%;
     margin-right: 4%;
   }
   .splash-heading {
-    font-size: 72px;
+    font-size: clamp(48px, 7.5vw, 96px);
   }
   .splash-primary-btn {
     width: 500px;
@@ -633,11 +703,11 @@
     position: relative;
     left: auto;
     top: auto;
-    width: auto;
-    margin: 124px 7% 0;
+    width: 100%;
+    margin: 124px 0 0;
   }
   .splash-heading {
-    font-size: 60px;
+    font-size: clamp(44px, 9vw, 64px);
   }
   .splash-cta-row {
     flex-direction: column;
@@ -681,7 +751,7 @@
     flex-wrap: wrap;
   }
   .splash-heading {
-    font-size: 50px;
+    font-size: clamp(38px, 11vw, 52px);
     margin-bottom: 24px;
   }
   .splash-primary-btn {
