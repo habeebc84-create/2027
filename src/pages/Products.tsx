@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Search, Filter, Grid, List } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
+import Reveal from '../components/Reveal';
 
 export default function Products() {
   const { products, categories, brands } = useApp();
@@ -28,12 +29,14 @@ export default function Products() {
     <div className="py-12 bg-transparent min-h-screen relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
+        <Reveal>
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-5xl font-black text-slate-100 font-industrial">
             Our <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Product Catalog</span>
           </h1>
           <p className="text-slate-400 text-sm sm:text-base mt-2">Browse genuine construction materials at wholesale direct daily rates</p>
         </div>
+        </Reveal>
 
         {/* Filters */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 mb-8 backdrop-blur-xl">
@@ -101,13 +104,16 @@ export default function Products() {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-            {filtered.map(product => (
-              <ProductCard key={product.id} product={product} />
+            {filtered.map((product, i) => (
+              <Reveal key={product.id} delay={Math.min(i * 60, 360)} className="h-full">
+                <ProductCard product={product} />
+              </Reveal>
             ))}
           </div>
         )}
 
         {/* Categories quick access */}
+        <Reveal>
         <div className="mt-16 pt-12 border-t border-slate-800">
           <h2 className="text-xl font-black text-white font-industrial mb-6 text-center">
             Shop by <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Category</span>
@@ -131,6 +137,7 @@ export default function Products() {
             })}
           </div>
         </div>
+        </Reveal>
       </div>
     </div>
   );

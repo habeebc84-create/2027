@@ -1,6 +1,7 @@
 import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
+import Reveal from '../components/Reveal';
 import { telHref } from '../lib/phone';
 import { bustedImageSrc } from '../lib/images';
 
@@ -16,7 +17,7 @@ export default function Home() {
   return (
     <div className="relative z-10">
       {/* Hero Section */}
-      <section className="relative min-h-[72vh] flex items-center overflow-hidden">
+      <section className="home-hero relative flex items-center overflow-hidden">
         {/* Shop photo background (added on request — the hero previously
             had a colour-only background): the real HSN shop photo with
             a dark scrim over it so the white heading stays readable,
@@ -90,6 +91,7 @@ export default function Home() {
 
       {/* Daily Market Price Index */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 mb-12">
+        <Reveal>
         <div className="rounded-3xl border border-white/16 p-6 sm:p-8 lg:p-10" style={{
           background:
             'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
@@ -215,18 +217,23 @@ export default function Home() {
             </button>
           </div>
         </div>
+        </Reveal>
       </section>
 
       {/* Categories Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <Reveal>
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
             Browse Our Product Categories
           </h2>
           <p className="text-slate-400 text-sm mt-2">Premium construction materials from top brands</p>
-        </div>            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
-          {categories.map(cat => (
-            <button key={cat.id} onClick={() => setPage('products')} className="rounded-2xl border border-white/14 p-3 flex flex-col items-center space-y-2 transition group hover:border-white/3 hover:bg-white/[0.02]" style={{
+        </div>
+        </Reveal>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
+          {categories.map((cat, i) => (
+            <Reveal key={cat.id} delay={Math.min(i * 50, 400)} className="h-full">
+            <button onClick={() => setPage('products')} className="rounded-2xl border border-white/14 p-3 flex flex-col items-center space-y-2 transition group hover:border-white/3 hover:bg-white/[0.02] w-full h-full" style={{
               background:
                 'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
               backdropFilter: 'blur(14px) saturate(160%)',
@@ -237,12 +244,14 @@ export default function Home() {
               <img src={cat.image} alt={cat.name} className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl group-hover:scale-110 transition" />
               <span className="text-[10px] sm:text-xs font-bold text-slate-300 text-center leading-tight">{cat.name}</span>
             </button>
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* Featured Products */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <Reveal>
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
@@ -255,21 +264,26 @@ export default function Home() {
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
+        </Reveal>
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
+          {featuredProducts.map((product, i) => (
+            <Reveal key={product.id} delay={Math.min(i * 60, 360)} className="h-full">
+              <ProductCard product={product} />
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* Services highlight */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <Reveal>
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
             Our Services
           </h2>
           <p className="text-slate-400 text-sm mt-2">Comprehensive supply and logistics for all project sizes</p>
         </div>
+        </Reveal>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
             { icon: Building2, title: 'Bulk Supply', desc: 'Direct factory dispatch for projects' },
@@ -279,7 +293,8 @@ export default function Home() {
           ].map((svc, i) => {
             const Icon = svc.icon;
             return (
-              <div key={i} className="rounded-2xl border border-white/14 p-5 text-center space-y-3 transition hover:border-white/25 hover:bg-white/[0.02]" style={{
+              <Reveal key={i} delay={Math.min(i * 60, 240)} className="h-full">
+              <div className="rounded-2xl border border-white/14 p-5 text-center space-y-3 transition hover:border-white/25 hover:bg-white/[0.02] h-full w-full" style={{
                 background:
                   'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
                 backdropFilter: 'blur(14px) saturate(160%)',
@@ -300,6 +315,7 @@ export default function Home() {
                 <h4 className="text-sm font-bold text-white">{svc.title}</h4>
                 <p className="text-xs text-slate-400">{svc.desc}</p>
               </div>
+              </Reveal>
             );
           })}
         </div>

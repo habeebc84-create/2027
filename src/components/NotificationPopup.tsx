@@ -35,6 +35,16 @@ export default function NotificationPopup() {
     }
   }, [activeNotifications, dismissedIds, showPanel, autoShown, currentPage]);
 
+  // Close the panel (and its full-screen backdrop) whenever the page
+  // changes. The panel used to travel with the user from Home to
+  // Products: its backdrop sits above the cart bubble, so the first
+  // tap on the cart did nothing except dismiss the popup — the exact
+  // "cart button doesn't work" feeling. Navigating must dismiss it.
+  // autoShown stays set, so it still only auto-pops once per session.
+  useEffect(() => {
+    setShowPanel(false);
+  }, [currentPage]);
+
   const dismissNotification = (notifId: string) => {
     setDismissedIds(prev => new Set(prev).add(notifId));
     markNotificationRead(notifId);
