@@ -2,6 +2,7 @@ import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Pac
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import { telHref } from '../lib/phone';
+import { bustedImageSrc } from '../lib/images';
 
 export default function Home() {
   const { siteContent, products, setPage, categories, marketPrices, siteSettings } = useApp();
@@ -16,11 +17,19 @@ export default function Home() {
     <div className="relative z-10">
       {/* Hero Section */}
       <section className="relative min-h-[72vh] flex items-center overflow-hidden">
-        {/* Colour-only background (hero image removed on request): deep
-            slate-blue gradient with soft blue/indigo glows, fading into
-            the page at the bottom so the price-index card below blends. */}
+        {/* Shop photo background (added on request — the hero previously
+            had a colour-only background): the real HSN shop photo with
+            a dark scrim over it so the white heading stays readable,
+            fading into the page at the bottom so the price-index card
+            below blends. The photo itself is still (no zoom). */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, #0d1b31 0%, #081120 45%, #040814 100%)' }} />
+          <img
+            src={bustedImageSrc('/hsn_hero_new.png')}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+          />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, rgba(4,8,20,0.72) 0%, rgba(4,8,20,0.55) 45%, rgba(4,8,20,0.85) 100%)' }} />
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/15 blur-[120px] rounded-full" />
           <div className="absolute top-1/3 -right-24 w-96 h-96 bg-indigo-500/10 blur-[120px] rounded-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
