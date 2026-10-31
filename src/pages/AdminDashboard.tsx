@@ -616,14 +616,70 @@ export default function AdminDashboard() {
           </label>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
             <h4 className="text-xs font-bold text-white">Homepage Hero Colour</h4>
-            <p className="text-[10px] text-slate-400">The home hero behind the "HSN CEMENT AND STEEL" heading now uses the website colour instead of a photo — no image upload.</p>
+            <p className="text-[10px] text-slate-400">The home hero behind the "HSN CEMENT AND STEEL" heading now uses a blue-pink fill instead of a photo — no image upload.</p>
             <div className="relative w-32 h-20 rounded-xl overflow-hidden border border-white/10 shrink-0">
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, #0d1b31 0%, #081120 45%, #040814 100%)' }} />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, #1d4ed8 0%, #6d28d9 48%, #db2777 100%)' }} />
               <div className="absolute -top-6 -left-6 w-20 h-20 bg-blue-500/15 blur-[30px] rounded-full" />
-              <div className="absolute top-1/3 -right-6 w-20 h-20 bg-indigo-500/10 blur-[30px] rounded-full" />
-              <span className="absolute bottom-1.5 left-2 text-[8px] font-bold text-white/80">Website colour</span>
+              <div className="absolute top-1/3 -right-6 w-20 h-20 bg-pink-500/15 blur-[30px] rounded-full" />
+              <span className="absolute bottom-1.5 left-2 text-[8px] font-bold text-white/80">Blue-pink fill</span>
             </div>
           </div>
+        </div>
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+          <h3 className="text-sm font-bold text-white">Entry Photos — Mobile (phones & tablets)</h3>
+          <p className="text-[10px] text-slate-400">Photos shown on the entry screen before entering, on phones and tablets. If empty, the shared Front Page Photos above are used. If multiple images are added, they rotate automatically every 5 seconds.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {(siteContent.splashMobileImages || []).map((img, i) => (
+              <div key={i} className="relative group rounded-xl overflow-hidden border border-white/10">
+                <img src={img} alt={`Mobile entry ${i + 1}`} className="w-full aspect-video object-cover" />
+                <div className="absolute top-1 left-1 bg-black/60 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">#{i + 1}</div>
+                <button onClick={() => {
+                  const imgs = (siteContent.splashMobileImages || []).filter((_: string, j: number) => j !== i);
+                  updateSiteContent({ splashMobileImages: imgs });
+                }} className="absolute top-1 right-1 bg-red-500/80 hover:bg-red-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+              </div>
+            ))}
+          </div>
+          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+            <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Mobile Entry Photo</span></span>
+            <input type="file" accept="image/*" className="hidden" onChange={async e => {
+              const file = e.target.files?.[0];
+              e.target.value = '';
+              if (!file) return;
+              const compressed = await compressImageFile(file);
+              if (!compressed) return;
+              const imgs = [...(siteContent.splashMobileImages || []), compressed];
+              updateSiteContent({ splashMobileImages: imgs });
+            }} />
+          </label>
+        </div>
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+          <h3 className="text-sm font-bold text-white">Entry Photos — Laptop (desktop)</h3>
+          <p className="text-[10px] text-slate-400">Photos shown on the entry screen before entering, on laptops and desktops. If empty, the shared Front Page Photos above are used. If multiple images are added, they rotate automatically every 5 seconds.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {(siteContent.splashLaptopImages || []).map((img, i) => (
+              <div key={i} className="relative group rounded-xl overflow-hidden border border-white/10">
+                <img src={img} alt={`Laptop entry ${i + 1}`} className="w-full aspect-video object-cover" />
+                <div className="absolute top-1 left-1 bg-black/60 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">#{i + 1}</div>
+                <button onClick={() => {
+                  const imgs = (siteContent.splashLaptopImages || []).filter((_: string, j: number) => j !== i);
+                  updateSiteContent({ splashLaptopImages: imgs });
+                }} className="absolute top-1 right-1 bg-red-500/80 hover:bg-red-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+              </div>
+            ))}
+          </div>
+          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+            <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Laptop Entry Photo</span></span>
+            <input type="file" accept="image/*" className="hidden" onChange={async e => {
+              const file = e.target.files?.[0];
+              e.target.value = '';
+              if (!file) return;
+              const compressed = await compressImageFile(file);
+              if (!compressed) return;
+              const imgs = [...(siteContent.splashLaptopImages || []), compressed];
+              updateSiteContent({ splashLaptopImages: imgs });
+            }} />
+          </label>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-white">Homepage Hero</h3>

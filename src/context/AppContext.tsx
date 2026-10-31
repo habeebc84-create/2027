@@ -497,6 +497,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return i;
       })).then(arr => { localEditRef.current = true; setSiteContent(p => ({ ...p, frontPageImages: arr })); });
     }
+    if (updates.splashMobileImages?.some(i => typeof i === 'string' && i.startsWith('data:image/'))) {
+      Promise.all(updates.splashMobileImages.map(async i => {
+        if (typeof i === 'string' && i.startsWith('data:image/')) {
+          const c = await compress(i);
+          return c;
+        }
+        return i;
+      })).then(arr => { localEditRef.current = true; setSiteContent(p => ({ ...p, splashMobileImages: arr })); });
+    }
+    if (updates.splashLaptopImages?.some(i => typeof i === 'string' && i.startsWith('data:image/'))) {
+      Promise.all(updates.splashLaptopImages.map(async i => {
+        if (typeof i === 'string' && i.startsWith('data:image/')) {
+          const c = await compress(i);
+          return c;
+        }
+        return i;
+      })).then(arr => { localEditRef.current = true; setSiteContent(p => ({ ...p, splashLaptopImages: arr })); });
+    }
     setSiteContent(prev => ({ ...prev, ...updates }));
     Promise.all(pending).catch(() => {});
     showToast('Site content updated');

@@ -3,6 +3,7 @@ import { ArrowRight, Phone, ShoppingBag, Star, Truck, Shield, MapPin, Package, C
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
 import { bustedImageSrc } from '../lib/images';
+import Reveal from '../components/Reveal';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -89,8 +90,9 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
           </p>
         </div>
 
-        {/* Category Grid */}
-        <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-10 sm:mb-14 transition-all duration-700 ${phase >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+        {/* Category Grid — slides in as you enter / scroll */}
+        <Reveal className="mb-10 sm:mb-14">
+        <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 transition-all duration-700 ${phase >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
           {activeCategories.map((cat, i) => (
             <button key={cat.id} onClick={() => onShopCategory(cat.name)}
               className="group bg-white/5 hover:bg-white/10 border border-white/8 hover:border-amber-500/30 rounded-2xl p-4 sm:p-5 text-center transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
@@ -106,10 +108,12 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
             </button>
           ))}
         </div>
+        </Reveal>
 
         {/* Featured Products */}
         {featuredProducts.length > 0 && (
-          <div className={`mb-10 sm:mb-14 transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <Reveal delay={120} className="mb-10 sm:mb-14">
+          <div className={`transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center space-x-2">
                 <Star className="w-4 h-4 text-amber-400" />
@@ -137,10 +141,12 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
               ))}
             </div>
           </div>
+          </Reveal>
         )}
 
         {/* Quick Links */}
-        <div className={`grid grid-cols-3 gap-3 sm:gap-4 mb-10 sm:mb-14 transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <Reveal delay={200} className="mb-10 sm:mb-14">
+        <div className={`grid grid-cols-3 gap-3 sm:gap-4 transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           {[
             { label: 'Our Services', desc: 'Site delivery & custom cutting', icon: Truck, color: 'from-blue-500/20 to-cyan-600/20' },
             { label: 'About HSN', desc: '15+ years of trust', icon: Shield, color: 'from-purple-500/20 to-pink-600/20' },
@@ -161,6 +167,7 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
             );
           })}
         </div>
+        </Reveal>
 
         {/* Brand Badges */}
         <div className={`flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 sm:mb-12 transition-all duration-700 ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
