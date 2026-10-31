@@ -39,18 +39,30 @@ export default function Splash() {
   }, []);
 
   const handleEnter = () => {
-    // Play the exit animation (fade + zoom out, 0.7s in CSS) and then
-    // move on. This is safe now: PR #28 fixed the hooks-order bug that
-    // used to unmount the whole app on entering, so a short timer here
-    // cannot strand the page. Guard against double-clicks.
-    if (exiting) return;
-    setExiting(true);
-    window.setTimeout(() => {
-      try { dismissSplash(); } catch { /* entering must not be blocked by storage */ }
-      setPage('welcome-gate');
-    }, 700);
+    // Back to the pre-BUILD-29 behaviour: dismiss immediately, no exit
+    // animation delay, so entering can never get stuck.
+    try { dismissSplash(); } catch { /* entering must not be blocked by storage */ }
+    setPage('welcome-gate');
   };
 
+  // Letter-by-letter welcome: each character gets its own span with a
+  // growing animation delay, so the text writes itself one letter at
+  // a time. Spaces render as non-breaking spaces so they keep their slot.
+  const welcomeLines = ['WELCOME TO', 'HSN CEMENT AND STEEL'];
+  let welcomeLetterIndex = 0;
+  const welcomeLetterSpans = (line: string) => {
+    const start = welcomeLetterIndex;
+    welcomeLetterIndex += line.length;
+    return [...line].map((ch, i) => (
+      <span
+        key={i}
+        className="splash-letter"
+        style={{ animationDelay: `${(start + i) * 0.06}s` }}
+      >
+        {ch === ' ' ? '\u00A0' : ch}
+      </span>
+    ));
+  };
   const callHref = telHref(siteContent.phone);
   const whatsappHref = waHref(siteContent.whatsapp);
 
@@ -115,10 +127,10 @@ export default function Splash() {
             </div>
           </div>
 
-          {/* Heading — full-width animated welcome, one line at a time */}
+          {/* Heading — writes itself letter by letter */}
           <h1 className="splash-heading">
-            <span className="splash-welcome-line">WELCOME TO</span>
-            <span className="splash-welcome-line">HSN CEMENT AND STEEL</span>
+            <span className="splash-welcome-line">{welcomeLetterSpans(welcomeLines[0])}</span>
+            <span className="splash-welcome-line">{welcomeLetterSpans(welcomeLines[1])}</span>
           </h1>
 
           {/* CTA Buttons */}
@@ -136,7 +148,7 @@ export default function Splash() {
             </button>
           </div>
 
-          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 29</div>
+          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 30</div>
           {/* Info Pills */}
           <div className="splash-info-row">
             <div className="splash-info-pill">
