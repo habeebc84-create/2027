@@ -39,12 +39,16 @@ export default function Splash() {
   }, []);
 
   const handleEnter = () => {
-    // Dismiss immediately, not after a timer: if the 800ms timer stalls
-    // (background tab throttling, frozen page), the splash stays faded
-    // out at opacity 0 forever and every page behind it is unreachable.
-    // The fade is sacrificed so entering can never get stuck.
-    try { dismissSplash(); } catch { /* entering must not be blocked by storage */ }
-    setPage('welcome-gate');
+    // Play the exit animation (fade + zoom out, 0.7s in CSS) and then
+    // move on. This is safe now: PR #28 fixed the hooks-order bug that
+    // used to unmount the whole app on entering, so a short timer here
+    // cannot strand the page. Guard against double-clicks.
+    if (exiting) return;
+    setExiting(true);
+    window.setTimeout(() => {
+      try { dismissSplash(); } catch { /* entering must not be blocked by storage */ }
+      setPage('welcome-gate');
+    }, 700);
   };
 
   const callHref = telHref(siteContent.phone);
@@ -111,10 +115,10 @@ export default function Splash() {
             </div>
           </div>
 
-          {/* Heading */}
+          {/* Heading — full-width animated welcome, one line at a time */}
           <h1 className="splash-heading">
-            WELCOME TO<br />
-            HSN CEMENT AND STEEL
+            <span className="splash-welcome-line">WELCOME TO</span>
+            <span className="splash-welcome-line">HSN CEMENT AND STEEL</span>
           </h1>
 
           {/* CTA Buttons */}
@@ -132,7 +136,7 @@ export default function Splash() {
             </button>
           </div>
 
-          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 28</div>
+          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 29</div>
           {/* Info Pills */}
           <div className="splash-info-row">
             <div className="splash-info-pill">
