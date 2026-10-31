@@ -22,7 +22,7 @@ export default function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className="rounded-2xl border border-white/18 overflow-hidden hover:border-white/35 transition-all duration-300 hover:shadow-[0_18px_44px_-20px_rgba(0,0,0,0.7),0_8px_22px_-12px_rgba(0,0,0,0.5)] flex flex-col group" style={{
+    <div className="rounded-2xl border border-white/18 overflow-hidden hover:border-white/35 transition-all duration-300 hover:shadow-[0_18px_44px_-20px_rgba(0,0,0,0.7),0_8px_22px_-12px_rgba(0,0,0,0.5)] flex flex-col group h-full" style={{
       background:
         'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
       backdropFilter: 'blur(14px) saturate(160%)',
