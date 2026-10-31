@@ -524,6 +524,19 @@
   box-shadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
+/* ENTER button blink: a soft amber pulse that draws the eye to ENTER
+   until it is tapped. Reduced-motion users get a steady button. */
+@keyframes splash-enter-blink {
+  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 0 rgba(245,158,11,0.45); }
+  50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 14px rgba(245,158,11,0); }
+}
+.splash-primary-btn {
+  animation: splash-enter-blink 2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-primary-btn { animation: none; }
+}
+
 /* Info Pills */
 .splash-info-row {
   margin-top: 39px;

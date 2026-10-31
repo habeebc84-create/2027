@@ -15,6 +15,15 @@ export default function Splash() {
   const [exiting, setExiting] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [currentImg, setCurrentImg] = useState(0);
+  // Phones/tablets (<=900px, same breakpoint as the CSS) get the
+  // admin's mobile entry photos; laptops get the laptop entry photos.
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 900px)');
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   // Legacy swap: the shared cloud copy still carries '/splash_bg_clear.png'
   // (a generic construction site). Show the HSN shop photo instead, unless
@@ -22,9 +31,15 @@ export default function Splash() {
   const legacySplash = siteContent.splashImage === '/splash_bg_clear.png'
     ? '/hsn_hero_new.png'
     : siteContent.splashImage;
-  const frontImages = siteContent.frontPageImages && siteContent.frontPageImages.length > 0
-    ? siteContent.frontPageImages
-    : [bustedImageSrc(legacySplash) || bustedImageSrc('/hero_bg_ultra_8k.png')];
+  // Entry photos: the admin's per-device list first; if that list is
+  // empty, fall back to the shared front-page photos, then the shop photo.
+  const deviceImages = isMobile ? siteContent.splashMobileImages : siteContent.splashLaptopImages;
+  const frontImages = deviceImages && deviceImages.length > 0
+    ? deviceImages
+    : (siteContent.frontPageImages && siteContent.frontPageImages.length > 0
+      ? siteContent.frontPageImages
+      : [bustedImageSrc(legacySplash) || bustedImageSrc('/hero_bg_ultra_8k.png')]);
+  const shownImg = frontImages.length ? currentImg % frontImages.length : 0;
 
   // Auto-rotate images if more than one
   useEffect(() => {
@@ -84,7 +99,7 @@ export default function Splash() {
               (e.currentTarget as HTMLImageElement).src = '/hero_bg_ultra_8k.png';
             }}
             className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${
-              i === currentImg ? 'opacity-100' : 'opacity-0'
+              i === shownImg ? 'opacity-100' : 'opacity-0'
             }`}
           />
         ))}
@@ -148,7 +163,7 @@ export default function Splash() {
             </button>
           </div>
 
-          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 41</div>
+          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 42</div>
           {/* Info Pills */}
           <div className="splash-info-row">
             <div className="splash-info-pill">

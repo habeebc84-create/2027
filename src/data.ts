@@ -205,6 +205,8 @@ export const defaultSiteContent: SiteContent = {
     { id: 'g-4', url: '/hsn_hero_new.png', title: 'Delivery Fleet', category: 'Logistics' },
   ],
   frontPageImages: [],
+  splashMobileImages: [],
+  splashLaptopImages: [],
   maintenanceMode: false,
 };
 

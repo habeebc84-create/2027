@@ -79,6 +79,8 @@ export interface SiteContent {
   services: SiteService[];
   galleryImages: GalleryImage[];
   frontPageImages: string[];
+  splashMobileImages?: string[];
+  splashLaptopImages?: string[];
   maintenanceMode: boolean;
 }
 
