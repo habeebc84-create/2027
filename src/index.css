@@ -675,7 +675,10 @@
     position: fixed;
   }
   .splash-navbar {
-    position: fixed;
+    /* On phones/tablets the bar scrolls WITH the page instead of
+       staying fixed: while scrolling, everything moves together, so
+       the bar can never sit on top of the contents below it. */
+    position: absolute;
     top: 0;
     left: 0;
     right: auto;
