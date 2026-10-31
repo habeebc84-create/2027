@@ -1,4 +1,4 @@
-import { Phone } from 'lucide-react';
+import { Phone, ShoppingCart } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
 
@@ -8,11 +8,30 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export default function FloatingButtons() {
-  const { siteContent } = useApp();
+export default function FloatingButtons({ onCartClick }: { onCartClick?: () => void }) {
+  const { siteContent, cartCount } = useApp();
 
   return (
     <div className="fixed bottom-32 md:bottom-36 right-3 sm:right-6 z-40 flex flex-col items-end space-y-3">
+      {/* Cart shortcut, phone/tablet only (laptop already has cart in the
+          top bar). Shown only when the cart has items. Without it, the
+          cart was unreachable on phone inner pages: the top bar — and
+          its cart button — only appears on Home, so after adding an
+          item on Products there was no way to open the cart. */}
+      {cartCount > 0 && onCartClick && (
+        <button
+          type="button"
+          onClick={onCartClick}
+          className="lg:hidden relative w-11 h-11 md:w-14 md:h-14 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:scale-110 transition-all duration-300"
+          title="Open cart"
+          aria-label={`Open cart, ${cartCount} items`}
+        >
+          <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold min-w-5 h-5 px-1 rounded-full flex items-center justify-center shadow-lg">
+            {cartCount}
+          </span>
+        </button>
+      )}
       <a
         href={waHref(siteContent.whatsapp, 'Hi, I want to inquire about construction materials')}
         target="_blank"
