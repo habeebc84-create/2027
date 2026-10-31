@@ -233,10 +233,10 @@
 
 /* ====== TOP NAVBAR ====== */
 .splash-navbar {
-  /* Pinned flush to the top of the viewport, permanently, while the
-     entry page scrolls beneath it. No slide-down entrance: the bar
-     must not "come down" on load, it just sits at the top. */
-  position: fixed;
+  /* Sits at the top of the entry content and scrolls with the page
+     on all sizes, so it never sits on top of the contents below it.
+     No slide-down entrance: the bar just sits at the top. */
+  position: absolute;
   top: 0;
   left: 0;
   right: auto;
