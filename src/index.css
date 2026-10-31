@@ -689,19 +689,31 @@
 
 @media (max-width: 600px) {
   .splash-navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
+    /* Single row on phones: logo + WhatsApp stay side by side and the
+       WhatsApp button must NOT drop down below the logo. */
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .splash-brand {
+    gap: 10px;
+    min-width: 0;
+  }
+  .splash-brand-title {
+    font-size: 13px;
   }
   .splash-nav-actions {
-    width: 100%;
+    width: auto;
+    flex-shrink: 0;
   }
   .splash-nav-btn {
-    flex: 1;
+    flex: none;
     justify-content: center;
   }
   .splash-hero {
-    margin-top: 170px;
+    /* Single-row bar now, so the old 170px gap for the two-row bar
+       would leave a big empty space. */
+    margin-top: 100px;
   }
   .splash-badges {
     flex-wrap: wrap;

@@ -36,10 +36,10 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
     <nav className="fixed top-0 left-0 right-0 z-50 pt-2 px-3 sm:px-5">
       {/* Floating rounded bar — compact height */}
       <div className="w-full max-w-7xl mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-3 sm:px-4 py-1.5">
-        <div className="flex items-center justify-between gap-3 sm:gap-4 h-16">
+        <div className="flex items-center justify-between gap-3 sm:gap-4 h-12 sm:h-16">
           {/* Logo */}
           <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
-            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-contain border border-white/10 bg-slate-950/40 p-1 shadow-md group-hover:border-white/30 transition duration-300" />
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl object-contain border border-white/10 bg-slate-950/40 p-1 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
               <span className="text-sm sm:text-lg font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
               <span className="text-[11px] tracking-[0.08em] font-bold text-slate-400 uppercase hidden sm:block leading-tight">Premium Building Materials</span>

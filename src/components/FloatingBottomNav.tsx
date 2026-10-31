@@ -57,7 +57,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
       aria-label="Primary navigation"
     >
       <div
-        className="relative rounded-full p-1.5 border border-white/10"
+        className="relative rounded-full p-1 sm:p-1.5 border border-white/10"
         style={{
           pointerEvents: 'auto',
           maxWidth: 'calc(100vw - 16px)',
@@ -101,7 +101,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                 aria-current={isActive ? 'page' : undefined}
                 aria-label={item.label}
                 onClick={() => setPage(item.page)}
-                className="relative flex-1 sm:flex-none flex flex-col items-center justify-center gap-1 rounded-full px-1 sm:px-2.5 py-2 min-w-0 sm:min-w-[64px] h-[56px] leading-none"
+                className="relative flex-1 sm:flex-none flex flex-col items-center justify-center gap-1 rounded-full px-1 sm:px-2.5 py-2 min-w-0 sm:min-w-[64px] h-[52px] sm:h-[56px] leading-none"
                 whileHover={animate ? { y: -1.5 } : undefined}
                 whileTap={animate ? { scale: 0.94 } : undefined}
                 transition={{ duration: 0.18, ease: 'easeOut' }}
