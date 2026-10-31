@@ -233,32 +233,32 @@
 
 /* ====== TOP NAVBAR ====== */
 .splash-navbar {
-  /* Fixed in one spot: the landing page scrolls, so an absolute bar used
-     to slide away and come back down when scrolling stopped. */
+  /* Pinned flush to the top of the viewport, permanently, while the
+     entry page scrolls beneath it. No slide-down entrance: the bar
+     must not "come down" on load, it just sits at the top. */
   position: fixed;
-  top: 30px;
-  left: 6.7%;
-  right: 6.7%;
-  z-index: 20;
+  top: 0;
+  left: 0;
+  right: auto;
+  width: 100%;
+  z-index: 50;
   height: 100px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 25px;
-  border-radius: 20px;
+  border-radius: 0;
   background: rgba(16, 21, 33, 0.35);
   border: 1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05);
   opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 0.7s ease;
 }
 
 .splash-navbar.visible {
   opacity: 1;
-  transform: translateY(0);
 }
 
 /* Brand */
@@ -595,8 +595,8 @@
 
 @media (max-width: 1200px) {
   .splash-navbar {
-    left: 4%;
-    right: 4%;
+    left: 0;
+    right: auto;
   }
   .splash-hero {
     margin-left: 4%;
@@ -632,9 +632,10 @@
   }
   .splash-navbar {
     position: fixed;
-    top: 12px;
-    left: 12px;
-    right: 12px;
+    top: 0;
+    left: 0;
+    right: auto;
+    width: 100%;
     margin: 0;
     height: auto;
     min-height: 64px;
