@@ -200,7 +200,7 @@
   object-fit: cover;
   object-position: center;
   background-attachment: fixed;
-  animation: kenBurns 25s ease-in-out infinite;
+  /* No ken-burns zoom: the background stays still while the page scrolls. */
 }
 
 .splash-overlay {

@@ -218,7 +218,7 @@ function AppContent() {
         {renderPage()}
       </div>
       {showNav && <Footer />}
-      {showNav && <FloatingButtons />}
+      {showNav && <FloatingButtons onCartClick={() => setCartOpen(true)} />}
       {showNav && !cartOpen && <div className="lg:hidden"><ScrollAwareBottomNav /></div>}  {/* dock: phone/tablet only; laptop uses the merged top bar */}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} onProceedToCheckout={() => { setCartOpen(false); setPage('checkout'); }} />
       <ToastContainer />

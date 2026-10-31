@@ -11,23 +11,29 @@ const typeConfig: Record<string, { icon: LucideIcon; color: string; bg: string; 
 };
 
 export default function NotificationPopup() {
-  const { notifications, markNotificationRead } = useApp();
+  const { notifications, markNotificationRead, currentPage } = useApp();
   const [showPanel, setShowPanel] = useState(false);
   const [autoShown, setAutoShown] = useState(false);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
 
   const activeNotifications = notifications.filter(n => n.active !== false && n.type !== 'order');
 
-  // Auto-show panel once after 3 seconds if there are unread notifications.
+  // Auto-show panel once after 3 seconds, but ONLY on the Home page.
+  // It used to pop up on every page — including Products — 3s after
+  // load, covering the screen (92vw + full backdrop) and swallowing
+  // the tap the user meant for Add-to-cart or the cart button. On
+  // shopping pages it must never auto-open; the panel stays reachable
+  // from Home, where it auto-shows once per session.
   // It must not re-open after the user closes it: closing is not a
   // dismissal, so without this flag the effect would re-arm every time.
   useEffect(() => {
+    if (currentPage !== 'home') return;
     const unread = activeNotifications.find(n => !n.read && !dismissedIds.has(n.id));
     if (unread && !showPanel && !autoShown) {
       const timer = setTimeout(() => { setShowPanel(true); setAutoShown(true); }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [activeNotifications, dismissedIds, showPanel, autoShown]);
+  }, [activeNotifications, dismissedIds, showPanel, autoShown, currentPage]);
 
   const dismissNotification = (notifId: string) => {
     setDismissedIds(prev => new Set(prev).add(notifId));
@@ -43,8 +49,10 @@ export default function NotificationPopup() {
         <div className="fixed inset-0 bg-slate-950/40 z-[80] backdrop-blur-sm transition-opacity" onClick={() => setShowPanel(false)} />
       )}
 
-      {/* Left side notification panel - always renders, slides in */}
-      <div className={`fixed inset-y-0 left-0 z-[85] w-[420px] max-w-[92vw] bg-slate-950/98 backdrop-blur-xl border-r border-white/10 flex flex-col transition-transform duration-300 ease-out ${showPanel ? 'translate-x-0' : '-translate-x-full'}`}>
+      {/* Left side notification panel - always renders, slides in.
+          On phones it stops at 85vw so the cart shortcut on the right
+          edge stays tappable even while the panel is open. */}
+      <div className={`fixed inset-y-0 left-0 z-[85] w-[420px] max-w-[85vw] bg-slate-950/98 backdrop-blur-xl border-r border-white/10 flex flex-col transition-transform duration-300 ease-out ${showPanel ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Header */}
         <div className="p-5 border-b border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-3">
