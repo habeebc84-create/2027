@@ -26,15 +26,6 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
   const activeCategories = useMemo(() => (Array.isArray(categories) ? categories : []).filter(c => c && c.enabled !== false).slice(0, 10), [categories]);
   const featuredProducts = useMemo(() => (Array.isArray(products) ? products : []).filter(p => p && p.featured && p.enabled).slice(0, 6), [products]);
 
-  // Store photos for the image section below: the front-page pictures
-  // Habeeb adds in the Manage Portal (AdminDashboard front-page
-  // images) appear here automatically; the shop photo is the fallback
-  // so the section is never empty.
-  const storePhotos = useMemo(() => {
-    const imgs = (Array.isArray(siteContent.frontPageImages) ? siteContent.frontPageImages : []).filter(Boolean);
-    return imgs.length > 0 ? imgs : ['/hsn_hero_new.png'];
-  }, [siteContent.frontPageImages]);
-
   const categoryIcons: Record<string, string> = {
     'Cement': '🏗️',
     'TMT Steel': '🔩',
@@ -50,28 +41,20 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
 
   return (
     <div className="min-h-screen bg-slate-950 relative overflow-hidden">
-      {/* Glassy background with animated gradient orbs — locked to the
-          viewport (fixed, not absolute) so the background stays put
-          while the page content scrolls smoothly down over it. */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {/* Glassy background with animated gradient orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] bg-pink-600/15 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
         <div className="absolute -bottom-[15%] -right-[10%] w-[55vw] h-[55vw] bg-blue-600/15 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '10s' }} />
         <div className="absolute top-[30%] left-[40%] w-[35vw] h-[35vw] bg-amber-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '12s' }} />
         <div className="absolute top-[60%] right-[20%] w-[30vw] h-[30vw] bg-purple-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '9s' }} />
       </div>
-      {/* Glassy mesh overlay — fixed with the background above. */}
-      <div className="fixed inset-0 bg-gradient-to-br from-black/40 via-slate-950/30 to-black/50 pointer-events-none" />
-      <div className="fixed inset-0 backdrop-blur-[40px] pointer-events-none" />
+      {/* Glassy mesh overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-slate-950/30 to-black/50 pointer-events-none" />
+      <div className="absolute inset-0 backdrop-blur-[40px] pointer-events-none" />
 
-      {/* Top Bar — fixed to the top of the viewport, like the
-          entry-screen and main-site headers. It used to be part of
-          the scrolling content, so on this long page it scrolled
-          away and the user was left with no logo/WhatsApp bar at
-          all while scrolling down to CONTINUE. The content below
-          gets top padding equal to the bar height so nothing hides
-          behind it. */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-slate-950/85 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+        {/* Top Bar */}
+        <div className={`flex items-center justify-between mb-8 sm:mb-12 transition-all duration-700 ${phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
           <div className="flex items-center space-x-3">
             <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-white/10 bg-slate-900/50 p-1.5" />
             <div>
@@ -91,9 +74,6 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
             </a>
           </div>
         </div>
-      </header>
-
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-[84px] sm:pt-[96px] pb-6 sm:pb-10">
 
         {/* Hero Section */}
         <div className={`text-center mb-10 sm:mb-14 transition-all duration-700 ${phase >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
@@ -107,36 +87,6 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
           <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
             Choose a category to explore our premium building materials, or continue to the full website.
           </p>
-        </div>
-
-        {/* Store photos — a picture section for the shop. New pictures
-            added in the Manage Portal (front-page images) show up
-            here on their own; photos scale with object-cover so they
-            never stretch or distort. */}
-        <div className="mb-10 sm:mb-14">
-          <div className="text-center mb-5">
-            <h3 className="text-xl sm:text-2xl font-black text-white font-industrial">Visit Our Store</h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">Real photos from HSN Cement & Steel, Kalikiri</p>
-          </div>
-          <img
-            src={bustedImageSrc(storePhotos[0])}
-            alt="HSN Cement and Steel store"
-            className="w-full aspect-[16/9] object-cover rounded-2xl border border-white/10"
-            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-          />
-          {storePhotos.length > 1 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
-              {storePhotos.slice(1, 4).map((src, i) => (
-                <img
-                  key={i}
-                  src={bustedImageSrc(src)}
-                  alt=""
-                  className="w-full aspect-[4/3] object-cover rounded-2xl border border-white/10"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                />
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Category Grid */}
