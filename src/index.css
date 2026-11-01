@@ -12,13 +12,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #040814;
-    background-image:
-      radial-gradient(at 10% 20%, rgba(59, 130, 246, 0.5) 0%, transparent 60%),
-      radial-gradient(at 90% 80%, rgba(236, 72, 153, 0.5) 0%, transparent 60%),
-      radial-gradient(rgba(139, 92, 246, 0.3) 0%, transparent 65%);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
     position: relative;
     overflow-x: hidden;
   }
@@ -233,27 +226,28 @@
 
 /* ====== TOP NAVBAR ====== */
 .splash-navbar {
-  /* Sits at the top of the entry content and scrolls with the page
+  /* Floating pill dock around the logo, title and WhatsApp: it sits
+     inset from the screen edges, centred, and scrolls with the page
      on all sizes, so it never sits on top of the contents below it.
-     No slide-down entrance: the bar just sits at the top. */
+     No slide-down entrance: the dock just sits at the top. */
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 18px;
+  left: 50%;
   right: auto;
-  width: 100%;
+  width: min(1200px, calc(100% - 48px));
   z-index: 50;
-  /* Own compositing layer: on some phones a fixed bar with
-     backdrop-filter can flicker or drop out while the page scrolls.
-     translateZ(0) keeps it painted and pinned through the scroll. */
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
+  /* Own compositing layer: on some phones a bar with backdrop-filter
+     can flicker or drop out while the page scrolls. translateZ(0)
+     keeps it painted; translateX(-50%) centres the dock. */
+  -webkit-transform: translateX(-50%) translateZ(0);
+  transform: translateX(-50%) translateZ(0);
   will-change: transform;
-  height: 100px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 25px;
-  border-radius: 0;
+  border-radius: 999px;
   background: rgba(16, 21, 33, 0.35);
   border: 1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(24px) saturate(180%);
@@ -453,6 +447,34 @@
 @keyframes splashLetterIn {
   from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gate heading letters: a DIFFERENT animation from the splash
+   letters (which rise). Gate letters pop in blurred and small,
+   sharpening into place, one after another. */
+.gate-letter {
+  display: inline-block;
+  opacity: 0;
+}
+.gate-letter-space {
+  display: inline-block;
+  width: 0.3em;
+}
+.gate-letter-gradient {
+  background: linear-gradient(to right, #fbbf24, #fb923c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.gate-heading-in .gate-letter {
+  animation: gateLetterIn 0.5s ease forwards;
+}
+@keyframes gateLetterIn {
+  from { opacity: 0; transform: scale(0.5); filter: blur(6px); }
+  to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gate-heading-in .gate-letter { animation: none; opacity: 1; filter: none; transform: none; }
 }
 
 /* CTA Row */
@@ -688,18 +710,21 @@
     position: fixed;
   }
   .splash-navbar {
-    /* On phones/tablets the bar scrolls WITH the page instead of
-       staying fixed: while scrolling, everything moves together, so
-       the bar can never sit on top of the contents below it. */
+    /* On phones/tablets the bar is a floating dock with side insets
+       and scrolls WITH the page: while scrolling, everything moves
+       together, so the dock can never sit on top of the contents
+       below it. No centring transform here — the side insets do it. */
     position: absolute;
-    top: 0;
-    left: 0;
-    right: auto;
-    width: 100%;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
     margin: 0;
     height: auto;
     min-height: 64px;
     padding: 12px 16px;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   .splash-brand-title {
     font-size: 15px;

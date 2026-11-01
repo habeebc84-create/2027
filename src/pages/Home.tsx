@@ -27,7 +27,7 @@ export default function Home() {
           <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, rgba(4,8,20,0.72) 0%, rgba(4,8,20,0.55) 45%, rgba(4,8,20,0.85) 100%)' }} />
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/15 blur-[120px] rounded-full" />
           <div className="absolute top-1/3 -right-24 w-96 h-96 bg-indigo-500/10 blur-[120px] rounded-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#040814] via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 w-full">
