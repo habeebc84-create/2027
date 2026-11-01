@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hsn-pwa-v14';
+const CACHE_NAME = 'hsn-pwa-v15';
 const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/windows-h-logo.png', '/icons/icon.svg', '/icons/icon-maskable.svg', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {

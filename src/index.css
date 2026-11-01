@@ -1316,6 +1316,26 @@ svg {
 }
 
 /* ============================================================
+   SITE-WIDE CURSOR DOT FIELD
+   Fixed decorative overlay: never blocks clicks, sits above page backgrounds
+   but below high-priority overlays (notifications, checkout modal, toasts).
+   ============================================================ */
+
+.site-cursor-dots {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.site-cursor-dots canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
    ADMIN PORTAL — rounded command-center panels + login light field
    ============================================================ */
 
@@ -1329,13 +1349,6 @@ svg {
     radial-gradient(1100px 520px at 18% -10%, color-mix(in srgb, var(--color-champagne) 10%, transparent), transparent 62%),
     radial-gradient(900px 520px at 88% 112%, color-mix(in srgb, var(--color-charcoal) 85%, transparent), transparent 60%),
     var(--color-obsidian);
-}
-
-.admin-login-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
 }
 
 .admin-login-orb {
