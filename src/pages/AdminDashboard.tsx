@@ -33,10 +33,10 @@ export default function AdminDashboard() {
   ];
 
   const Sidebar = () => (
-    <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-obsidian/95 backdrop-blur-xl border-r border-gunmetal flex flex-col transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+    <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-obsidian/95 backdrop-blur-xl border-r border-gunmetal flex flex-col transition-transform shadow-2xl shadow-obsidian/60 lg:inset-y-4 lg:left-4 lg:rounded-3xl lg:border ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
       <div className="p-5 border-b border-gunmetal">
         <div className="flex items-center space-x-3">
-          <img src={bustedImageSrc('/windows-h-logo.png')} alt="Logo" className="w-10 h-10 rounded-xl border border-gunmetal bg-charcoal p-1" />
+          <img src={bustedImageSrc('/windows-h-logo.png')} alt="Logo" className="w-10 h-10 rounded-2xl border border-gunmetal bg-charcoal p-1" />
           <div>
             <div className="text-sm font-black text-ivory font-industrial">HSN COMMAND CENTER</div>
             <div className="text-[9px] text-silver font-bold uppercase tracking-wider">Admin Portal</div>
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
           const Icon = item.icon;
           return (
             <button key={item.id} onClick={() => { setAdminPage(item.id); setSidebarOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition ${adminPage === item.id ? 'bg-gradient-to-r from-brand-500/20 to-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver hover:text-ivory hover:bg-charcoal border border-transparent'}`}>
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-xs font-bold transition ${adminPage === item.id ? 'bg-gradient-to-r from-brand-500/20 to-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver hover:text-ivory hover:bg-charcoal border border-transparent'}`}>
               <Icon className="w-4 h-4" />
               <span className="flex-1 text-left">{item.label}</span>
               {item.badge !== undefined && item.badge > 0 && <span className="btn-brand text-[9px] px-1.5 py-0.5 rounded-full">{item.badge}</span>}
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         })}
       </nav>
       <div className="p-3 border-t border-gunmetal">
-        <button onClick={() => { logoutAdmin(); setPage('home'); }} className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold text-brand-400 hover:text-brand-300 hover:bg-brand-500/10 transition">
+        <button onClick={() => { logoutAdmin(); setPage('home'); }} className="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-xs font-bold text-brand-400 hover:text-brand-300 hover:bg-brand-500/10 transition">
           <LogOut className="w-4 h-4" /><span>Secure Logout</span>
         </button>
       </div>
@@ -67,14 +67,14 @@ export default function AdminDashboard() {
   const TopHeader = ({ title }: { title: string }) => (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center space-x-3">
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden p-2 rounded-lg bg-charcoal border border-gunmetal text-ivory"><Menu className="w-5 h-5" /></button>
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden p-2 rounded-xl bg-charcoal border border-gunmetal text-ivory"><Menu className="w-5 h-5" /></button>
         <h2 className="text-lg font-black text-ivory font-industrial">{title}</h2>
       </div>
       <div className="flex items-center space-x-3">
-        <button className="hidden sm:flex items-center space-x-2 bg-charcoal border border-gunmetal text-silver px-3 py-2 rounded-xl text-xs font-bold hover:bg-white/10 transition">
+        <button className="hidden sm:flex items-center space-x-2 bg-charcoal border border-gunmetal text-silver px-3 py-2 rounded-2xl text-xs font-bold hover:bg-white/10 transition">
           <Globe className="w-3.5 h-3.5" /><span>Sync Database</span>
         </button>
-        <div className="flex items-center space-x-2 bg-charcoal border border-gunmetal px-3 py-2 rounded-xl">
+        <div className="flex items-center space-x-2 bg-charcoal border border-gunmetal px-3 py-2 rounded-2xl">
           <div className="w-2 h-2 bg-brand-400 rounded-full animate-pulse" />
           <span className="text-xs font-bold text-silver">Admin Online</span>
         </div>
@@ -113,9 +113,9 @@ export default function AdminDashboard() {
         ].map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <div key={i} className="bg-charcoal border border-gunmetal rounded-2xl p-5 hover:border-brand-500/30 transition">
+            <div key={i} className="bg-charcoal border border-gunmetal rounded-3xl p-5 hover:border-brand-500/30 transition">
               <div className="flex items-center justify-between mb-3">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}><Icon className={`w-5 h-5 ${stat.label === 'Delivered' ? 'text-ivory' : 'text-obsidian'}`} /></div>
+                <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}><Icon className={`w-5 h-5 ${stat.label === 'Delivered' ? 'text-ivory' : 'text-obsidian'}`} /></div>
                 {stat.trend && <span className="text-[10px] font-bold text-brand-400 bg-brand-500/15 px-2 py-0.5 rounded-full">↗ Live</span>}
               </div>
               <div className="text-2xl font-black text-ivory">{stat.value}</div>
@@ -124,12 +124,12 @@ export default function AdminDashboard() {
           );
         })}
       </div>
-      <div className="bg-charcoal border border-gunmetal rounded-2xl p-6">
+      <div className="bg-charcoal border border-gunmetal rounded-3xl p-6">
         <h3 className="text-sm font-bold text-ivory mb-4">Recent Orders</h3>
         {orders.length === 0 ? <p className="text-xs text-silver text-center py-8">No orders yet</p> : (
           <div className="space-y-3">
             {orders.slice(0, 5).map(o => (
-              <div key={o.id} className="flex items-center justify-between bg-charcoal/50 p-3 rounded-xl border border-gunmetal">
+              <div key={o.id} className="flex items-center justify-between bg-charcoal/50 p-3 rounded-2xl border border-gunmetal">
                 <div>
                   <div className="text-xs font-bold text-ivory">{o.orderId} - {o.customer.name}</div>
                   <div className="text-[10px] text-silver">{o.customer.mobile} | {new Date(o.date).toLocaleDateString()}</div>
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
             { label: 'This Week', revenue: thisWeek.reduce((a, o) => a + o.total, 0), orders: thisWeek.length },
             { label: 'This Month', revenue: thisMonth.reduce((a, o) => a + o.total, 0), orders: thisMonth.length },
           ].map((period, i) => (
-            <div key={i} className="bg-charcoal border border-gunmetal rounded-2xl p-5">
+            <div key={i} className="bg-charcoal border border-gunmetal rounded-3xl p-5">
               <div className="text-xs font-bold text-silver mb-2">{period.label}</div>
               <div className="text-xl font-black text-ivory">Rs.{period.revenue.toLocaleString('en-IN')}</div>
               <div className="text-[10px] text-silver mt-1">{period.orders} orders</div>
@@ -175,7 +175,7 @@ export default function AdminDashboard() {
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-charcoal border border-gunmetal rounded-2xl p-6">
+          <div className="bg-charcoal border border-gunmetal rounded-3xl p-6">
             <h3 className="text-sm font-bold text-ivory mb-4">Order Status Breakdown</h3>
             {ORDER_STATUSES.map(s => {
               const count = orders.filter(o => o.status === s.key).length;
@@ -191,14 +191,14 @@ export default function AdminDashboard() {
               );
             })}
           </div>
-          <div className="bg-charcoal border border-gunmetal rounded-2xl p-6">
+          <div className="bg-charcoal border border-gunmetal rounded-3xl p-6">
             <h3 className="text-sm font-bold text-ivory mb-4">Low Stock Alert</h3>
             {lowStock.length === 0 ? <p className="text-xs text-silver text-center py-8">All products well stocked</p> : (
               <div className="space-y-3">
                 {lowStock.map(p => (
-                  <div key={p.id} className="flex items-center justify-between bg-brand-500/5 border border-brand-500/20 p-3 rounded-xl">
+                  <div key={p.id} className="flex items-center justify-between bg-brand-500/5 border border-brand-500/20 p-3 rounded-2xl">
                     <div className="flex items-center space-x-3">
-                      <img src={p.image} alt="" className="w-8 h-8 rounded-lg object-cover" />
+                      <img src={p.image} alt="" className="w-8 h-8 rounded-xl object-cover" />
                       <div>
                         <div className="text-xs font-bold text-ivory line-clamp-1">{p.name}</div>
                         <div className="text-[10px] text-silver">{p.brand}</div>
@@ -210,7 +210,7 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
-          <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 lg:col-span-2">
+          <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 lg:col-span-2">
             <h3 className="text-sm font-bold text-ivory mb-4">Top Selling Products — Units Sold</h3>
             {bestSelling.length === 0 ? <p className="text-xs text-silver text-center py-8">No sales recorded yet</p> : (
               <div className="space-y-3">
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                   const maxUnits = bestSelling[0][1] || 1;
                   return (
                     <div key={name} className="flex items-center space-x-3">
-                      <span className="w-5 h-5 rounded-lg bg-brand text-[9px] font-black text-obsidian flex items-center justify-center shrink-0">{i + 1}</span>
+                      <span className="w-5 h-5 rounded-xl bg-brand text-[9px] font-black text-obsidian flex items-center justify-center shrink-0">{i + 1}</span>
                       <span className="w-36 sm:w-44 text-xs font-bold text-ivory line-clamp-1">{name}</span>
                       <div className="flex-1 h-3 bg-charcoal rounded-full overflow-hidden">
                         <div className="h-full bg-gradient-to-r from-brand-500 to-brand-500 rounded-full transition-all" style={{ width: `${(units / maxUnits) * 100}%` }} />
@@ -270,31 +270,31 @@ export default function AdminDashboard() {
           <div className="relative flex-1 max-w-sm">
             <Search className="w-4 h-4 text-silver absolute left-3 top-1/2 -translate-y-1/2" />
             <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..."
-              className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
+              className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory pl-10 pr-4 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
           </div>
-          <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); }} className="flex items-center space-x-2 btn-brand px-4 py-2.5 rounded-xl text-xs font-bold">
+          <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); }} className="flex items-center space-x-2 btn-brand px-4 py-2.5 rounded-2xl text-xs font-bold">
             <Plus className="w-3.5 h-3.5" /><span>Add Product</span>
           </button>
         </div>
 
         {showAdd && (
-          <div className="bg-charcoal border border-brand-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-charcoal border border-brand-500/30 rounded-3xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-ivory">Add New Product</h3>
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Product Name" value={newProd.name} onChange={e => setNewProd({ ...newProd, name: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <select value={newProd.category} onChange={e => setNewProd({ ...newProd, category: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500">
+              <input type="text" placeholder="Product Name" value={newProd.name} onChange={e => setNewProd({ ...newProd, name: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <select value={newProd.category} onChange={e => setNewProd({ ...newProd, category: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500">
                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
-              <input type="text" placeholder="Brand" value={newProd.brand} onChange={e => setNewProd({ ...newProd, brand: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="number" placeholder="Price" value={newProd.price || ''} onChange={e => setNewProd({ ...newProd, price: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="number" placeholder="Stock" value={newProd.stock || ''} onChange={e => setNewProd({ ...newProd, stock: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="text" placeholder="Grade" value={newProd.grade} onChange={e => setNewProd({ ...newProd, grade: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Brand" value={newProd.brand} onChange={e => setNewProd({ ...newProd, brand: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="number" placeholder="Price" value={newProd.price || ''} onChange={e => setNewProd({ ...newProd, price: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="number" placeholder="Stock" value={newProd.stock || ''} onChange={e => setNewProd({ ...newProd, stock: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Grade" value={newProd.grade} onChange={e => setNewProd({ ...newProd, grade: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
             </div>
-            <textarea placeholder="Description" value={newProd.description} onChange={e => setNewProd({ ...newProd, description: e.target.value })} rows={2} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
+            <textarea placeholder="Description" value={newProd.description} onChange={e => setNewProd({ ...newProd, description: e.target.value })} rows={2} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <label className="block text-xs font-bold text-silver mb-1">Product Image</label>
-                <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-4 py-3 text-center transition">
+                <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-4 py-3 text-center transition">
                   <span className="text-xs font-bold text-silver flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newProd.image ? 'Change Image' : 'Upload Image'}</span></span>
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const file = e.target.files?.[0];
@@ -304,35 +304,35 @@ export default function AdminDashboard() {
                     reader.readAsDataURL(file);
                   }} />
                 </label>
-                {newProd.image && <img src={newProd.image} alt="Preview" className="w-16 h-16 object-cover rounded-lg mt-2 border border-gunmetal" />}
+                {newProd.image && <img src={newProd.image} alt="Preview" className="w-16 h-16 object-cover rounded-xl mt-2 border border-gunmetal" />}
               </div>
             </div>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-xl text-xs font-bold">Save Product</button>
-              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-2xl text-xs font-bold">Save Product</button>
+              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-2xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
 
         {editingId && (
-          <div className="bg-charcoal border border-brand-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-charcoal border border-brand-500/30 rounded-3xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-ivory">Edit Product</h3>
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Product Name" value={editProd.name} onChange={e => setEditProd({ ...editProd, name: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <select value={editProd.category} onChange={e => setEditProd({ ...editProd, category: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500">
+              <input type="text" placeholder="Product Name" value={editProd.name} onChange={e => setEditProd({ ...editProd, name: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <select value={editProd.category} onChange={e => setEditProd({ ...editProd, category: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500">
                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
-              <input type="text" placeholder="Brand" value={editProd.brand} onChange={e => setEditProd({ ...editProd, brand: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="text" placeholder="Unit" value={editProd.unit} onChange={e => setEditProd({ ...editProd, unit: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="number" placeholder="Price (Rs.)" value={editProd.price || ''} onChange={e => setEditProd({ ...editProd, price: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="number" placeholder="Stock" value={editProd.stock || ''} onChange={e => setEditProd({ ...editProd, stock: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="text" placeholder="Grade" value={editProd.grade} onChange={e => setEditProd({ ...editProd, grade: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Brand" value={editProd.brand} onChange={e => setEditProd({ ...editProd, brand: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Unit" value={editProd.unit} onChange={e => setEditProd({ ...editProd, unit: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="number" placeholder="Price (Rs.)" value={editProd.price || ''} onChange={e => setEditProd({ ...editProd, price: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="number" placeholder="Stock" value={editProd.stock || ''} onChange={e => setEditProd({ ...editProd, stock: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Grade" value={editProd.grade} onChange={e => setEditProd({ ...editProd, grade: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
             </div>
-            <textarea placeholder="Description" value={editProd.description} onChange={e => setEditProd({ ...editProd, description: e.target.value })} rows={3} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
+            <textarea placeholder="Description" value={editProd.description} onChange={e => setEditProd({ ...editProd, description: e.target.value })} rows={3} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <label className="block text-xs font-bold text-silver mb-1">Product Image</label>
-                <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-4 py-3 text-center transition">
+                <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-4 py-3 text-center transition">
                   <span className="text-xs font-bold text-silver flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{editProd.image ? 'Change Image' : 'Upload Image'}</span></span>
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const file = e.target.files?.[0];
@@ -342,17 +342,17 @@ export default function AdminDashboard() {
                     reader.readAsDataURL(file);
                   }} />
                 </label>
-                {editProd.image && <img src={editProd.image} alt="Preview" className="w-16 h-16 object-cover rounded-lg mt-2 border border-gunmetal" />}
+                {editProd.image && <img src={editProd.image} alt="Preview" className="w-16 h-16 object-cover rounded-xl mt-2 border border-gunmetal" />}
               </div>
             </div>
             <div className="flex space-x-3">
-              <button onClick={saveEdit} className="btn-brand px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
-              <button onClick={() => setEditingId(null)} className="bg-charcoal text-silver px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+              <button onClick={saveEdit} className="btn-brand px-4 py-2 rounded-2xl text-xs font-bold">Save Changes</button>
+              <button onClick={() => setEditingId(null)} className="bg-charcoal text-silver px-4 py-2 rounded-2xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
 
-        <div className="bg-charcoal border border-gunmetal rounded-2xl overflow-hidden">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead><tr className="border-b border-gunmetal">
@@ -366,7 +366,7 @@ export default function AdminDashboard() {
               <tbody>
                 {filtered.map(p => (
                   <tr key={p.id} className="border-b border-gunmetal/50 hover:bg-charcoal">
-                    <td className="px-4 py-3"><div className="flex items-center space-x-3"><img src={p.image} alt="" className="w-9 h-9 rounded-lg object-cover" /><div><div className="font-bold text-ivory line-clamp-1 max-w-[200px]">{p.name}</div><div className="text-[10px] text-silver">{p.brand}</div></div></div></td>
+                    <td className="px-4 py-3"><div className="flex items-center space-x-3"><img src={p.image} alt="" className="w-9 h-9 rounded-xl object-cover" /><div><div className="font-bold text-ivory line-clamp-1 max-w-[200px]">{p.name}</div><div className="text-[10px] text-silver">{p.brand}</div></div></div></td>
                     <td className="px-4 py-3 text-silver hidden sm:table-cell">{p.category}</td>
                     <td className="px-4 py-3 font-bold text-ivory">Rs.{p.price}</td>
                     <td className="px-4 py-3"><span className={`font-bold ${p.stock < 50 ? 'text-brand-400' : 'text-silver'}`}>{p.stock}</span></td>
@@ -412,44 +412,44 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         <TopHeader title="Categories" />
         {/* Add new category */}
-        <div className="bg-charcoal border border-gunmetal rounded-2xl p-4">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl p-4">
           <h3 className="text-xs font-black text-ivory uppercase tracking-wider mb-3">Add New Category</h3>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 space-y-3">
-              <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Category name (e.g. TMT Steel Bars)" className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-4 py-3 text-center transition">
+              <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Category name (e.g. TMT Steel Bars)" className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory px-4 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-4 py-3 text-center transition">
                 <span className="text-xs font-bold text-silver flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newCatImage ? 'Change Image' : 'Upload Category Image'}</span></span>
                 <input type="file" accept="image/*" className="hidden" onChange={e => pickImage(e.target.files?.[0], setNewCatImage)} />
               </label>
             </div>
             <div className="flex sm:flex-col items-center justify-center gap-3">
-              {newCatImage ? <img src={newCatImage} alt="Preview" className="w-20 h-20 object-cover rounded-xl border border-gunmetal" /> : <div className="w-20 h-20 rounded-xl border border-dashed border-gunmetal flex items-center justify-center text-slate-600"><ImageIcon className="w-6 h-6" /></div>}
-              <button onClick={handleAdd} className="btn-brand px-5 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 self-stretch justify-center"><Plus className="w-3.5 h-3.5" /><span>Add</span></button>
+              {newCatImage ? <img src={newCatImage} alt="Preview" className="w-20 h-20 object-cover rounded-2xl border border-gunmetal" /> : <div className="w-20 h-20 rounded-2xl border border-dashed border-gunmetal flex items-center justify-center text-slate-600"><ImageIcon className="w-6 h-6" /></div>}
+              <button onClick={handleAdd} className="btn-brand px-5 py-2.5 rounded-2xl text-xs font-bold flex items-center space-x-2 self-stretch justify-center"><Plus className="w-3.5 h-3.5" /><span>Add</span></button>
             </div>
           </div>
         </div>
         {/* Category grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map(c => editingId === c.id ? (
-            <div key={c.id} className="bg-charcoal border border-brand-500/40 rounded-2xl p-4 space-y-3 sm:col-span-2 lg:col-span-1">
-              <input type="text" value={editCat.name} onChange={e => setEditCat({ ...editCat, name: e.target.value })} className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="text" value={editCat.description} onChange={e => setEditCat({ ...editCat, description: e.target.value })} placeholder="Short description (optional)" className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
+            <div key={c.id} className="bg-charcoal border border-brand-500/40 rounded-3xl p-4 space-y-3 sm:col-span-2 lg:col-span-1">
+              <input type="text" value={editCat.name} onChange={e => setEditCat({ ...editCat, name: e.target.value })} className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" value={editCat.description} onChange={e => setEditCat({ ...editCat, description: e.target.value })} placeholder="Short description (optional)" className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
               <div className="flex items-center gap-3">
-                <img src={editCat.image} alt="" className="w-12 h-12 rounded-xl object-cover border border-gunmetal" />
-                <label className="flex-1 cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-3 py-2.5 text-center transition">
+                <img src={editCat.image} alt="" className="w-12 h-12 rounded-2xl object-cover border border-gunmetal" />
+                <label className="flex-1 cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-3 py-2.5 text-center transition">
                   <span className="text-[10px] font-bold text-silver flex items-center justify-center space-x-2"><ImageIcon className="w-3.5 h-3.5" /><span>Change Image</span></span>
                   <input type="file" accept="image/*" className="hidden" onChange={e => pickImage(e.target.files?.[0], img => setEditCat({ ...editCat, image: img }))} />
                 </label>
               </div>
               <div className="flex space-x-2">
-                <button onClick={() => saveEdit(c.id)} className="flex-1 btn-brand px-3 py-2 rounded-xl text-[10px] font-bold">Save</button>
-                <button onClick={() => setEditingId(null)} className="flex-1 bg-charcoal text-silver px-3 py-2 rounded-xl text-[10px] font-bold">Cancel</button>
+                <button onClick={() => saveEdit(c.id)} className="flex-1 btn-brand px-3 py-2 rounded-2xl text-[10px] font-bold">Save</button>
+                <button onClick={() => setEditingId(null)} className="flex-1 bg-charcoal text-silver px-3 py-2 rounded-2xl text-[10px] font-bold">Cancel</button>
               </div>
             </div>
           ) : (
-            <div key={c.id} className="bg-charcoal border border-gunmetal rounded-2xl p-4 flex items-center justify-between hover:border-brand-500/30 transition">
+            <div key={c.id} className="bg-charcoal border border-gunmetal rounded-3xl p-4 flex items-center justify-between hover:border-brand-500/30 transition">
               <div className="flex items-center space-x-3">
-                <img src={c.image} alt="" className="w-10 h-10 rounded-xl object-cover" />
+                <img src={c.image} alt="" className="w-10 h-10 rounded-2xl object-cover" />
                 <div>
                   <div className="text-xs font-bold text-ivory">{c.name}</div>
                   <div className="text-[10px] text-silver">{products.filter(p => p.category === c.name).length} products</div>
@@ -474,15 +474,15 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         <TopHeader title="Orders" />
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => setFilter('all')} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition ${filter === 'all' ? 'bg-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver border border-gunmetal'}`}>All ({orders.length})</button>
+          <button onClick={() => setFilter('all')} className={`px-3 py-1.5 rounded-2xl text-[10px] font-bold transition ${filter === 'all' ? 'bg-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver border border-gunmetal'}`}>All ({orders.length})</button>
           {ORDER_STATUSES.slice(0, 6).map(s => (
-            <button key={s.key} onClick={() => setFilter(s.key)} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition ${filter === s.key ? 'bg-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver border border-gunmetal'}`}>{s.label} ({orders.filter(o => o.status === s.key).length})</button>
+            <button key={s.key} onClick={() => setFilter(s.key)} className={`px-3 py-1.5 rounded-2xl text-[10px] font-bold transition ${filter === s.key ? 'bg-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver border border-gunmetal'}`}>{s.label} ({orders.filter(o => o.status === s.key).length})</button>
           ))}
         </div>
         {filtered.length === 0 ? <p className="text-xs text-silver text-center py-12">No orders found</p> : (
           <div className="space-y-4">
             {filtered.map(o => (
-              <div key={o.id} className="bg-charcoal border border-gunmetal rounded-2xl p-5 space-y-4">
+              <div key={o.id} className="bg-charcoal border border-gunmetal rounded-3xl p-5 space-y-4">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="text-sm font-bold text-ivory">{o.orderId}</div>
@@ -497,7 +497,7 @@ export default function AdminDashboard() {
                   <div>Delivery: {o.deliveryLocation} | Payment: {o.paymentMode}</div>
                   <div>Address: {o.customer.address}, {o.customer.landmark}</div>
                   {o.customerLocation && (
-                    <div className="mt-2 bg-brand-500/10 border border-brand-500/25 rounded-xl p-2.5">
+                    <div className="mt-2 bg-brand-500/10 border border-brand-500/25 rounded-2xl p-2.5">
                       <div className="text-[10px] font-bold text-brand-300 mb-1">📍 Customer-shared delivery location:</div>
                       <a href={o.customerLocation} target="_blank" rel="noreferrer" className="text-[11px] text-brand-400 hover:text-brand-300 underline break-all line-clamp-1">Open on Google Maps →</a>
                     </div>
@@ -506,7 +506,7 @@ export default function AdminDashboard() {
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="flex items-center space-x-2">
                     <span className="text-[10px] font-bold text-silver">Update Status:</span>
-                    <select value={o.status} onChange={e => updateOrderStatus(o.orderId, e.target.value as OrderStatus)} className="bg-charcoal border border-gunmetal text-ivory px-3 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-brand-500">
+                    <select value={o.status} onChange={e => updateOrderStatus(o.orderId, e.target.value as OrderStatus)} className="bg-charcoal border border-gunmetal text-ivory px-3 py-1.5 rounded-xl text-[10px] font-bold focus:outline-none focus:border-brand-500">
                       {ORDER_STATUSES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
                     </select>
                   </div>
@@ -518,12 +518,12 @@ export default function AdminDashboard() {
                         defaultValue={o.finalDeliveryCharge ?? o.deliveryCharge}
                         key={`${o.orderId}-${o.finalDeliveryCharge ?? o.deliveryCharge}`}
                         onBlur={e => { const v = Number(e.target.value); if (!Number.isNaN(v) && v !== (o.finalDeliveryCharge ?? o.deliveryCharge)) setOrderFinalDeliveryCharge(o.orderId, v); }}
-                        className="w-24 bg-charcoal border border-gunmetal text-ivory px-2 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-brand-500"
+                        className="w-24 bg-charcoal border border-gunmetal text-ivory px-2 py-1.5 rounded-xl text-[10px] font-bold focus:outline-none focus:border-brand-500"
                       />
                       <span className="text-[9px] text-silver">(original: Rs.{o.deliveryCharge})</span>
                     </div>
                   )}
-                  <button onClick={() => { if (window.confirm(`Delete order ${o.orderId}? This cannot be undone.`)) deleteOrder(o.orderId); }} className="flex items-center space-x-1 text-[10px] font-bold text-brand-400 hover:text-brand-300 bg-brand-500/10 border border-brand-500/20 px-3 py-1.5 rounded-lg transition ml-auto">
+                  <button onClick={() => { if (window.confirm(`Delete order ${o.orderId}? This cannot be undone.`)) deleteOrder(o.orderId); }} className="flex items-center space-x-1 text-[10px] font-bold text-brand-400 hover:text-brand-300 bg-brand-500/10 border border-brand-500/20 px-3 py-1.5 rounded-xl transition ml-auto">
                     <Trash2 className="w-3 h-3" /><span>Delete</span>
                   </button>
                 </div>
@@ -540,7 +540,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <TopHeader title="Customers" />
       {customers.length === 0 ? <p className="text-xs text-silver text-center py-12">No customers yet. They will appear after first orders.</p> : (
-        <div className="bg-charcoal border border-gunmetal rounded-2xl overflow-hidden">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead><tr className="border-b border-gunmetal">
@@ -560,7 +560,7 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 font-bold text-ivory">Rs.{c.totalSpending.toLocaleString('en-IN')}</td>
                     <td className="px-4 py-3 text-silver hidden sm:table-cell">{new Date(c.lastOrder).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-right">
-                      <button onClick={() => { if (window.confirm(`Delete customer ${c.name}?`)) deleteCustomer(c.id); }} className="text-silver hover:text-brand-400 transition p-1.5 rounded-lg hover:bg-brand-500/10">
+                      <button onClick={() => { if (window.confirm(`Delete customer ${c.name}?`)) deleteCustomer(c.id); }} className="text-silver hover:text-brand-400 transition p-1.5 rounded-xl hover:bg-brand-500/10">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
@@ -587,22 +587,22 @@ export default function AdminDashboard() {
     return (
       <div className="space-y-6">
         <TopHeader title="Content & Ads" />
-        <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 space-y-4">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-ivory">Front Page Photos (Splash / Landing)</h3>
           <p className="text-[10px] text-silver">Upload photos that appear on the landing page. The first image is the default. If multiple images are added, they rotate automatically every 5 seconds.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {(siteContent.frontPageImages || []).map((img, i) => (
-              <div key={i} className="relative group rounded-xl overflow-hidden border border-gunmetal">
+              <div key={i} className="relative group rounded-2xl overflow-hidden border border-gunmetal">
                 <img src={img} alt={`Front page ${i + 1}`} className="w-full aspect-video object-cover" />
                 <div className="absolute top-1 left-1 bg-black/60 text-ivory text-[8px] font-bold px-1.5 py-0.5 rounded">#{i + 1}</div>
                 <button onClick={() => {
                   const imgs = (siteContent.frontPageImages || []).filter((_: string, j: number) => j !== i);
                   updateSiteContent({ frontPageImages: imgs });
-                }} className="absolute top-1 right-1 bg-obsidian/85 hover:bg-gunmetal text-ivory p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+                }} className="absolute top-1 right-1 bg-obsidian/85 hover:bg-gunmetal text-ivory p-1 rounded-xl opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
-          <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-4 py-3 text-center transition">
+          <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-4 py-3 text-center transition">
             <span className="text-xs font-bold text-silver flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Front Page Photo</span></span>
             <input type="file" accept="image/*" className="hidden" onChange={async e => {
               const file = e.target.files?.[0];
@@ -614,10 +614,10 @@ export default function AdminDashboard() {
               updateSiteContent({ frontPageImages: imgs });
             }} />
           </label>
-          <div className="bg-charcoal border border-gunmetal rounded-2xl p-4 space-y-3">
+          <div className="bg-charcoal border border-gunmetal rounded-3xl p-4 space-y-3">
             <h4 className="text-xs font-bold text-ivory">Homepage Hero Colour</h4>
             <p className="text-[10px] text-silver">The home hero behind the "HSN CEMENT AND STEEL" heading uses an Obsidian/Charcoal Steel canvas with a champagne glow — no image upload.</p>
-            <div className="relative w-32 h-20 rounded-xl overflow-hidden border border-gunmetal shrink-0">
+            <div className="relative w-32 h-20 rounded-2xl overflow-hidden border border-gunmetal shrink-0">
               <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, var(--color-charcoal) 0%, var(--color-obsidian) 100%)' }} />
               <div className="absolute -top-6 -left-6 w-20 h-20 bg-brand-500/15 blur-[30px] rounded-full" />
               <div className="absolute top-1/3 -right-6 w-20 h-20 bg-brand-500/15 blur-[30px] rounded-full" />
@@ -625,22 +625,22 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-        <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 space-y-4">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-ivory">Entry Photos — Mobile (phones & tablets)</h3>
           <p className="text-[10px] text-silver">Photos shown on the entry screen before entering, on phones and tablets. If empty, the shared Front Page Photos above are used. If multiple images are added, they rotate automatically every 5 seconds.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {(siteContent.splashMobileImages || []).map((img, i) => (
-              <div key={i} className="relative group rounded-xl overflow-hidden border border-gunmetal">
+              <div key={i} className="relative group rounded-2xl overflow-hidden border border-gunmetal">
                 <img src={img} alt={`Mobile entry ${i + 1}`} className="w-full aspect-video object-cover" />
                 <div className="absolute top-1 left-1 bg-black/60 text-ivory text-[8px] font-bold px-1.5 py-0.5 rounded">#{i + 1}</div>
                 <button onClick={() => {
                   const imgs = (siteContent.splashMobileImages || []).filter((_: string, j: number) => j !== i);
                   updateSiteContent({ splashMobileImages: imgs });
-                }} className="absolute top-1 right-1 bg-obsidian/85 hover:bg-gunmetal text-ivory p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+                }} className="absolute top-1 right-1 bg-obsidian/85 hover:bg-gunmetal text-ivory p-1 rounded-xl opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
-          <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-4 py-3 text-center transition">
+          <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-4 py-3 text-center transition">
             <span className="text-xs font-bold text-silver flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Mobile Entry Photo</span></span>
             <input type="file" accept="image/*" className="hidden" onChange={async e => {
               const file = e.target.files?.[0];
@@ -653,22 +653,22 @@ export default function AdminDashboard() {
             }} />
           </label>
         </div>
-        <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 space-y-4">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-ivory">Entry Photos — Laptop (desktop)</h3>
           <p className="text-[10px] text-silver">Photos shown on the entry screen before entering, on laptops and desktops. If empty, the shared Front Page Photos above are used. If multiple images are added, they rotate automatically every 5 seconds.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {(siteContent.splashLaptopImages || []).map((img, i) => (
-              <div key={i} className="relative group rounded-xl overflow-hidden border border-gunmetal">
+              <div key={i} className="relative group rounded-2xl overflow-hidden border border-gunmetal">
                 <img src={img} alt={`Laptop entry ${i + 1}`} className="w-full aspect-video object-cover" />
                 <div className="absolute top-1 left-1 bg-black/60 text-ivory text-[8px] font-bold px-1.5 py-0.5 rounded">#{i + 1}</div>
                 <button onClick={() => {
                   const imgs = (siteContent.splashLaptopImages || []).filter((_: string, j: number) => j !== i);
                   updateSiteContent({ splashLaptopImages: imgs });
-                }} className="absolute top-1 right-1 bg-obsidian/85 hover:bg-gunmetal text-ivory p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+                }} className="absolute top-1 right-1 bg-obsidian/85 hover:bg-gunmetal text-ivory p-1 rounded-xl opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
-          <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-4 py-3 text-center transition">
+          <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-4 py-3 text-center transition">
             <span className="text-xs font-bold text-silver flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Laptop Entry Photo</span></span>
             <input type="file" accept="image/*" className="hidden" onChange={async e => {
               const file = e.target.files?.[0];
@@ -681,31 +681,31 @@ export default function AdminDashboard() {
             }} />
           </label>
         </div>
-        <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 space-y-4">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-ivory">Homepage Hero</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="text-[10px] font-bold text-silver block mb-1">Business Name</label><input type="text" value={siteContent.businessName} onChange={e => updateSiteContent({ businessName: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" /></div>
-            <div><label className="text-[10px] font-bold text-silver block mb-1">Phone</label><input type="text" value={siteContent.phone} onChange={e => updateSiteContent({ phone: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" /></div>
-            <div><label className="text-[10px] font-bold text-silver block mb-1">WhatsApp</label><input type="text" value={siteContent.whatsapp} onChange={e => updateSiteContent({ whatsapp: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" /></div>
-            <div><label className="text-[10px] font-bold text-silver block mb-1">Address</label><input type="text" value={siteContent.address} onChange={e => updateSiteContent({ address: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" /></div>
+            <div><label className="text-[10px] font-bold text-silver block mb-1">Business Name</label><input type="text" value={siteContent.businessName} onChange={e => updateSiteContent({ businessName: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" /></div>
+            <div><label className="text-[10px] font-bold text-silver block mb-1">Phone</label><input type="text" value={siteContent.phone} onChange={e => updateSiteContent({ phone: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" /></div>
+            <div><label className="text-[10px] font-bold text-silver block mb-1">WhatsApp</label><input type="text" value={siteContent.whatsapp} onChange={e => updateSiteContent({ whatsapp: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" /></div>
+            <div><label className="text-[10px] font-bold text-silver block mb-1">Address</label><input type="text" value={siteContent.address} onChange={e => updateSiteContent({ address: e.target.value })} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" /></div>
           </div>
         </div>
         {/* Achievements & Contracts (shows in public Gallery) */}
-        <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 space-y-4">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-ivory">Achievements & Contracts (Public Gallery)</h3>
           <p className="text-[10px] text-silver">Upload completed project photos, government/contract awards, or contract documents. They appear in the Gallery page for all customers.</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <input type="text" placeholder="Title (e.g. Government School Supply Contract)" value={newAch.title} onChange={e => setNewAch({ ...newAch, title: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-            <select value={newAch.kind} onChange={e => setNewAch({ ...newAch, kind: e.target.value as Achievement['kind'] })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500">
+            <input type="text" placeholder="Title (e.g. Government School Supply Contract)" value={newAch.title} onChange={e => setNewAch({ ...newAch, title: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+            <select value={newAch.kind} onChange={e => setNewAch({ ...newAch, kind: e.target.value as Achievement['kind'] })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500">
               <option value="achievement">🏆 Achievement</option>
               <option value="contract">📜 Contract</option>
               <option value="certificate">🎖️ Certificate</option>
             </select>
-            <input type="text" placeholder="Date (optional, e.g. Jan 2026)" value={newAch.date} onChange={e => setNewAch({ ...newAch, date: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
+            <input type="text" placeholder="Date (optional, e.g. Jan 2026)" value={newAch.date} onChange={e => setNewAch({ ...newAch, date: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
           </div>
-          <textarea placeholder="Description (what was delivered, quantity, client name...)" value={newAch.description} onChange={e => setNewAch({ ...newAch, description: e.target.value })} rows={2} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
+          <textarea placeholder="Description (what was delivered, quantity, client name...)" value={newAch.description} onChange={e => setNewAch({ ...newAch, description: e.target.value })} rows={2} className="w-full bg-charcoal border border-gunmetal text-ivory px-3 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
           <div className="flex flex-wrap items-center gap-3">
-            <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-xl px-4 py-2.5 text-center transition">
+            <label className="block cursor-pointer bg-charcoal hover:bg-charcoal border border-dashed border-gunmetal hover:border-brand-500 rounded-2xl px-4 py-2.5 text-center transition">
               <span className="text-xs font-bold text-silver flex items-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newAch.imageUrl ? 'Photo ✓ Change' : 'Add Photo (required)'}</span></span>
               <input type="file" accept="image/*" className="hidden" onChange={async e => {
                 const file = e.target.files?.[0];
@@ -715,18 +715,18 @@ export default function AdminDashboard() {
                 if (compressed) setNewAch(prev => ({ ...prev, imageUrl: compressed }));
               }} />
             </label>
-            {newAch.imageUrl && <img src={newAch.imageUrl} alt="" className="w-14 h-14 object-cover rounded-lg border border-gunmetal" />}
+            {newAch.imageUrl && <img src={newAch.imageUrl} alt="" className="w-14 h-14 object-cover rounded-xl border border-gunmetal" />}
             <button onClick={() => {
               if (!newAch.title.trim() || !newAch.imageUrl) return;
               ctx.addAchievement({ id: `ach-${Date.now()}`, title: newAch.title.trim(), description: newAch.description.trim(), imageUrl: newAch.imageUrl, kind: newAch.kind, date: newAch.date.trim() || undefined });
               setNewAch({ title: '', description: '', imageUrl: '', kind: 'achievement', date: '' });
-            }} className="btn-brand px-4 py-2.5 rounded-xl text-xs font-bold">Publish to Gallery</button>
+            }} className="btn-brand px-4 py-2.5 rounded-2xl text-xs font-bold">Publish to Gallery</button>
           </div>
           {achievements.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {achievements.map(a => (
-                <div key={a.id} className="flex items-center gap-3 bg-charcoal/50 border border-gunmetal rounded-xl p-2.5">
-                  <img src={a.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                <div key={a.id} className="flex items-center gap-3 bg-charcoal/50 border border-gunmetal rounded-2xl p-2.5">
+                  <img src={a.imageUrl} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold text-ivory line-clamp-1">{a.kind === 'contract' ? '📜' : a.kind === 'certificate' ? '🎖️' : '🏆'} {a.title}</div>
                     <div className="text-[10px] text-silver line-clamp-1">{a.date || ''} {a.description}</div>
@@ -739,23 +739,23 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-ivory">Banners & Promotions</h3>
-          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 btn-brand px-4 py-2 rounded-xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Banner</span></button>
+          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 btn-brand px-4 py-2 rounded-2xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Banner</span></button>
         </div>
         {showAdd && (
-          <div className="bg-charcoal border border-brand-500/30 rounded-2xl p-4 space-y-3">
+          <div className="bg-charcoal border border-brand-500/30 rounded-3xl p-4 space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <input type="text" placeholder="Title" value={newBlock.title} onChange={e => setNewBlock({ ...newBlock, title: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="text" placeholder="Subtitle" value={newBlock.subtitle || ''} onChange={e => setNewBlock({ ...newBlock, subtitle: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Title" value={newBlock.title} onChange={e => setNewBlock({ ...newBlock, title: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Subtitle" value={newBlock.subtitle || ''} onChange={e => setNewBlock({ ...newBlock, subtitle: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
             </div>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-xl text-xs font-bold">Save</button>
-              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-2xl text-xs font-bold">Save</button>
+              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-2xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
         <div className="space-y-3">
           {contentBlocks.length === 0 ? <p className="text-xs text-silver text-center py-8">No banners yet</p> : contentBlocks.map(b => (
-            <div key={b.id} className="bg-charcoal border border-gunmetal rounded-2xl p-4 flex items-center justify-between">
+            <div key={b.id} className="bg-charcoal border border-gunmetal rounded-3xl p-4 flex items-center justify-between">
               <div><div className="text-xs font-bold text-ivory">{b.title}</div><div className="text-[10px] text-silver">{b.subtitle} | {b.type}</div></div>
               <div className="flex items-center space-x-2">
                 <button onClick={() => ctx.toggleContentBlock(b.id)} className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${b.active ? 'bg-brand-500/20 text-brand-400' : 'bg-brand-500/20 text-brand-400'}`}>{b.active ? 'Active' : 'Off'}</button>
@@ -782,23 +782,23 @@ export default function AdminDashboard() {
         <TopHeader title="Transport Fares" />
         <div className="flex items-center justify-between">
           <p className="text-xs text-silver">Manage delivery zones and charges</p>
-          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 btn-brand px-4 py-2 rounded-xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Zone</span></button>
+          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 btn-brand px-4 py-2 rounded-2xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Zone</span></button>
         </div>
         {showAdd && (
-          <div className="bg-charcoal border border-brand-500/30 rounded-2xl p-4 space-y-3">
+          <div className="bg-charcoal border border-brand-500/30 rounded-3xl p-4 space-y-3">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <input type="text" placeholder="Zone Name" value={newZone.name} onChange={e => setNewZone({ ...newZone, name: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="text" placeholder="Mandal" value={newZone.mandal} onChange={e => setNewZone({ ...newZone, mandal: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="number" placeholder="Charge (Rs.)" value={newZone.charge || ''} onChange={e => setNewZone({ ...newZone, charge: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-              <input type="text" placeholder="Est. Time" value={newZone.estimatedTime} onChange={e => setNewZone({ ...newZone, estimatedTime: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Zone Name" value={newZone.name} onChange={e => setNewZone({ ...newZone, name: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Mandal" value={newZone.mandal} onChange={e => setNewZone({ ...newZone, mandal: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="number" placeholder="Charge (Rs.)" value={newZone.charge || ''} onChange={e => setNewZone({ ...newZone, charge: Number(e.target.value) })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+              <input type="text" placeholder="Est. Time" value={newZone.estimatedTime} onChange={e => setNewZone({ ...newZone, estimatedTime: e.target.value })} className="bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
             </div>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-xl text-xs font-bold">Save</button>
-              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-2xl text-xs font-bold">Save</button>
+              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-2xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
-        <div className="bg-charcoal border border-gunmetal rounded-2xl overflow-hidden">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl overflow-hidden">
           <table className="w-full text-xs">
             <thead><tr className="border-b border-gunmetal">
               <th className="text-left px-4 py-3 text-silver font-bold">Zone</th>
@@ -830,7 +830,7 @@ export default function AdminDashboard() {
       cement: ctx.marketPrices.cement.map(t => ({ ...t })),
       steel: ctx.marketPrices.steel.map(t => ({ ...t })),
     }));
-    const inputCls = "bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500 w-full";
+    const inputCls = "bg-charcoal border border-gunmetal text-ivory px-3 py-2 rounded-2xl text-xs focus:outline-none focus:border-brand-500 w-full";
     const setTier = (group: 'cement' | 'steel', idx: number, field: string, value: string) =>
       setDraft(d => ({ ...d, [group]: d[group].map((t, i) => i === idx ? { ...t, [field]: value } : t) }));
     const addTier = (group: 'cement' | 'steel') =>
@@ -845,10 +845,10 @@ export default function AdminDashboard() {
       ? new Date(ctx.marketPrices.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
       : 'Never (showing default rates)';
     const renderGroup = (group: 'cement' | 'steel', title: string, unitHint: string) => (
-      <div className="bg-charcoal border border-gunmetal rounded-2xl p-4 space-y-3">
+      <div className="bg-charcoal border border-gunmetal rounded-3xl p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-black text-ivory font-industrial">{title}</h4>
-          <button onClick={() => addTier(group)} className="flex items-center space-x-1.5 bg-charcoal border border-gunmetal text-ivory px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-white/10 transition"><Plus className="w-3 h-3" /><span>Add Price</span></button>
+          <button onClick={() => addTier(group)} className="flex items-center space-x-1.5 bg-charcoal border border-gunmetal text-ivory px-3 py-1.5 rounded-xl text-[11px] font-bold hover:bg-white/10 transition"><Plus className="w-3 h-3" /><span>Add Price</span></button>
         </div>
         <div className="hidden sm:grid grid-cols-[1.2fr_1.2fr_0.8fr_0.7fr_auto] gap-2 text-[10px] font-bold text-silver uppercase px-1">
           <span>Quantity Range</span><span>Tier Label</span><span>Price</span><span>Unit</span><span></span>
@@ -870,7 +870,7 @@ export default function AdminDashboard() {
         <TopHeader title="Market Prices" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-xs text-silver">These prices appear on the Home page in the <span className="text-ivory font-bold">Daily Market Price Index — Wholesale Tiered Pricing Table</span>. Saving stamps the "Rates Updated" date as today and syncs to all devices. Last updated: <span className="text-ivory font-bold">{lastUpdated}</span></p>
-          <button onClick={handleSave} className="shrink-0 btn-brand px-5 py-2.5 rounded-xl text-xs font-bold">Save Prices</button>
+          <button onClick={handleSave} className="shrink-0 btn-brand px-5 py-2.5 rounded-2xl text-xs font-bold">Save Prices</button>
         </div>
         {renderGroup('cement', 'Cement Bags (OPC 53 / PPC 50kg)', '/ bag')}
         {renderGroup('steel', 'TMT Steel Bars (6mm - 32mm Fe 550D)', '/ kg')}
@@ -927,46 +927,46 @@ export default function AdminDashboard() {
             <p className="text-xs text-silver">{notifications.filter(n => n.active).length} active</p>
           </div>
           <div className="flex items-center space-x-2">
-            <button onClick={() => ctx.clearNotifications()} className="text-xs font-bold text-silver hover:text-ivory border border-gunmetal px-3 py-1.5 rounded-lg transition">Mark All Read</button>
-            <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); setNewTitle(''); setNewContent(''); }} className="flex items-center space-x-2 btn-brand px-4 py-2 rounded-xl text-xs font-bold">
+            <button onClick={() => ctx.clearNotifications()} className="text-xs font-bold text-silver hover:text-ivory border border-gunmetal px-3 py-1.5 rounded-xl transition">Mark All Read</button>
+            <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); setNewTitle(''); setNewContent(''); }} className="flex items-center space-x-2 btn-brand px-4 py-2 rounded-2xl text-xs font-bold">
               <Plus className="w-3.5 h-3.5" /><span>New Alert</span>
             </button>
           </div>
         </div>
 
         {showAdd && (
-          <div className="bg-charcoal border border-brand-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-charcoal border border-brand-500/30 rounded-3xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-ivory">Create Notification Alert</h3>
-            <input type="text" placeholder="Title (e.g. Flash Sale, Price Drop, Holiday Notice)" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-            <textarea placeholder="Message content for customers..." value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
-            <select value={newType} onChange={e => setNewType(e.target.value)} className="bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500">
+            <input type="text" placeholder="Title (e.g. Flash Sale, Price Drop, Holiday Notice)" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+            <textarea placeholder="Message content for customers..." value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
+            <select value={newType} onChange={e => setNewType(e.target.value)} className="bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500">
               <option value="announcement">📢 Announcement</option>
               <option value="offer">🏷️ Offer / Sale</option>
               <option value="update">🔄 Price Update</option>
               <option value="alert">⚠️ Alert</option>
             </select>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-xl text-xs font-bold">Publish Alert</button>
-              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+              <button onClick={handleAdd} className="btn-brand px-4 py-2 rounded-2xl text-xs font-bold">Publish Alert</button>
+              <button onClick={() => setShowAdd(false)} className="bg-charcoal text-silver px-4 py-2 rounded-2xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
 
         {editingId && (
-          <div className="bg-charcoal border border-brand-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-charcoal border border-brand-500/30 rounded-3xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-ivory">Edit Notification</h3>
-            <input type="text" placeholder="Title" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500" />
-            <textarea placeholder="Message" value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
+            <input type="text" placeholder="Title" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500" />
+            <textarea placeholder="Message" value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-2.5 rounded-2xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
             <div className="flex space-x-3">
-              <button onClick={handleSaveEdit} className="btn-brand px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
-              <button onClick={() => { setEditingId(null); setNewTitle(''); setNewContent(''); }} className="bg-charcoal text-silver px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
+              <button onClick={handleSaveEdit} className="btn-brand px-4 py-2 rounded-2xl text-xs font-bold">Save Changes</button>
+              <button onClick={() => { setEditingId(null); setNewTitle(''); setNewContent(''); }} className="bg-charcoal text-silver px-4 py-2 rounded-2xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
 
         <div className="space-y-3">
           {notifications.length === 0 ? <p className="text-xs text-silver text-center py-12">No notifications yet. Create your first alert above!</p> : notifications.map(n => (
-            <div key={n.id} className={`bg-charcoal border rounded-2xl p-4 transition hover:border-brand-500/30 ${n.read ? 'border-gunmetal' : 'border-brand-500/30'}`}>
+            <div key={n.id} className={`bg-charcoal border rounded-3xl p-4 transition hover:border-brand-500/30 ${n.read ? 'border-gunmetal' : 'border-brand-500/30'}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 cursor-pointer" onClick={() => ctx.markNotificationRead(n.id)}>
                   <div className="flex items-center space-x-2 mb-1">
@@ -979,7 +979,7 @@ export default function AdminDashboard() {
                   {n.createdAt && <div className="text-[10px] text-silver mt-1 pl-4">{new Date(n.createdAt).toLocaleString()}</div>}
                 </div>
                 <div className="flex items-center space-x-1 shrink-0">
-                  <button onClick={() => ctx.updateNotification(n.id, { active: n.active === false ? true : false })} className={`text-[10px] px-2 py-1 rounded-lg font-bold transition ${n.active !== false ? 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30' : 'bg-slate-500/20 text-silver hover:bg-slate-500/30'}`}>{n.active !== false ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => ctx.updateNotification(n.id, { active: n.active === false ? true : false })} className={`text-[10px] px-2 py-1 rounded-xl font-bold transition ${n.active !== false ? 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30' : 'bg-slate-500/20 text-silver hover:bg-slate-500/30'}`}>{n.active !== false ? 'Hide' : 'Show'}</button>
                   <button onClick={() => handleEdit(n.id, n.title, n.content)} className="text-silver hover:text-brand-400 transition p-1"><Edit className="w-3.5 h-3.5" /></button>
                   <button onClick={() => { if (window.confirm(`Delete notification "${n.title}"?`)) ctx.deleteNotification(n.id); }} className="text-silver hover:text-brand-400 transition p-1"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
@@ -1000,15 +1000,15 @@ export default function AdminDashboard() {
         <TopHeader title="Terms & Conditions" />
         <div className="space-y-4">
           {termsContent.map(t => (
-            <div key={t.id} className="bg-charcoal border border-gunmetal rounded-2xl p-6">
+            <div key={t.id} className="bg-charcoal border border-gunmetal rounded-3xl p-6">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-ivory">{t.title}</h3>
                 <button onClick={() => { setEditing(editing === t.id ? null : t.id); setEditContent(t.content); }} className="text-xs font-bold text-brand-400 hover:text-brand-300">{editing === t.id ? 'Cancel' : 'Edit'}</button>
               </div>
               {editing === t.id ? (
                 <div className="space-y-3">
-                  <textarea value={editContent} onChange={e => setEditContent(e.target.value)} rows={6} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-3 rounded-xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
-                  <button onClick={() => { updateTermsContent(t.id, editContent); setEditing(null); }} className="btn-brand px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
+                  <textarea value={editContent} onChange={e => setEditContent(e.target.value)} rows={6} className="w-full bg-charcoal border border-gunmetal text-ivory px-4 py-3 rounded-2xl text-xs focus:outline-none focus:border-brand-500 resize-none" />
+                  <button onClick={() => { updateTermsContent(t.id, editContent); setEditing(null); }} className="btn-brand px-4 py-2 rounded-2xl text-xs font-bold">Save Changes</button>
                 </div>
               ) : (
                 <p className="text-xs text-silver leading-relaxed">{t.content}</p>
@@ -1025,7 +1025,7 @@ export default function AdminDashboard() {
   const SecuritySection = () => (
     <div className="space-y-6">
       <TopHeader title="Security & Settings" />
-      <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 space-y-6">
+      <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-6">
         <h3 className="text-sm font-bold text-ivory border-b border-gunmetal pb-3">Business Information</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
@@ -1039,23 +1039,23 @@ export default function AdminDashboard() {
           ].map(f => (
             <div key={f.key}>
               <label className="text-[10px] font-bold text-silver uppercase block mb-1">{f.label}</label>
-              <input type="text" value={f.val} onChange={e => updateSiteSettings({ [f.key]: e.target.value })} className="w-full bg-charcoal/50 border border-gunmetal rounded-xl px-3 py-2.5 text-xs text-ivory focus:outline-none focus:border-brand-500 transition" />
+              <input type="text" value={f.val} onChange={e => updateSiteSettings({ [f.key]: e.target.value })} className="w-full bg-charcoal/50 border border-gunmetal rounded-2xl px-3 py-2.5 text-xs text-ivory focus:outline-none focus:border-brand-500 transition" />
             </div>
           ))}
         </div>
       </div>
-      <div className="bg-charcoal border border-gunmetal rounded-2xl p-6 space-y-4">
+      <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
         <h3 className="text-sm font-bold text-ivory border-b border-gunmetal pb-3">Admin Account</h3>
         <div className="space-y-3">
-          <div><label className="text-xs font-bold text-silver block mb-1.5">Email</label><div className="bg-charcoal/50 border border-gunmetal rounded-xl px-3 py-2.5 text-xs text-ivory">habeebc84@gmail.com</div></div>
+          <div><label className="text-xs font-bold text-silver block mb-1.5">Email</label><div className="bg-charcoal/50 border border-gunmetal rounded-2xl px-3 py-2.5 text-xs text-ivory">habeebc84@gmail.com</div></div>
           <div><label className="text-xs font-bold text-silver block mb-1.5">Password</label>
             <div className="flex space-x-2">
-              <input type="password" value="Encrypted •••" disabled className="flex-1 bg-charcoal/50 border border-gunmetal rounded-xl px-3 py-2.5 text-xs text-ivory" />
-              <button onClick={() => { const np = prompt('Enter new password (min 6 chars):'); if (np && np.length >= 6) { changeAdminPassword(np); alert('Password updated and encrypted'); } else if (np) { alert('Password must be at least 6 characters'); } }} className="bg-white/10 border border-gunmetal text-ivory px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">Change</button>
+              <input type="password" value="Encrypted •••" disabled className="flex-1 bg-charcoal/50 border border-gunmetal rounded-2xl px-3 py-2.5 text-xs text-ivory" />
+              <button onClick={() => { const np = prompt('Enter new password (min 6 chars):'); if (np && np.length >= 6) { changeAdminPassword(np); alert('Password updated and encrypted'); } else if (np) { alert('Password must be at least 6 characters'); } }} className="bg-white/10 border border-gunmetal text-ivory px-4 py-2 rounded-2xl text-xs font-bold hover:bg-white/20 transition">Change</button>
             </div>
           </div>
         </div>
-        <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 text-xs text-brand-300">
+        <div className="bg-brand-500/10 border border-brand-500/20 rounded-2xl p-4 text-xs text-brand-300">
           <p className="font-bold mb-1"><Lock className="w-3.5 h-3.5 inline mr-1" />Security Note</p>
           <p>Keep your credentials secure. Admin access controls the entire store management system.</p>
         </div>
@@ -1064,10 +1064,10 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen relative z-10">
+    <div className="admin-dashboard min-h-screen relative z-10">
       <Sidebar />
       {sidebarOpen && <div className="fixed inset-0 bg-obsidian/50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
-      <div className="lg:ml-64 p-4 sm:p-6 lg:p-8">
+      <div className="lg:ml-[18rem] p-4 sm:p-6 lg:p-8">
         {renderContent()}
       </div>
     </div>

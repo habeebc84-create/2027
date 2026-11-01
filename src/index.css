@@ -1315,8 +1315,96 @@ svg {
   pointer-events: auto;
 }
 
+/* ============================================================
+   ADMIN PORTAL — rounded command-center panels + login light field
+   ============================================================ */
+
+.admin-login-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 520px at 18% -10%, color-mix(in srgb, var(--color-champagne) 10%, transparent), transparent 62%),
+    radial-gradient(900px 520px at 88% 112%, color-mix(in srgb, var(--color-charcoal) 85%, transparent), transparent 60%),
+    var(--color-obsidian);
+}
+
+.admin-login-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.admin-login-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.5;
+  transform: translateZ(0);
+  animation: adminOrbDrift 18s ease-in-out infinite alternate;
+}
+
+.admin-login-orb-a {
+  width: 340px;
+  height: 340px;
+  left: -90px;
+  top: -70px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-champagne) 34%, transparent), transparent 68%);
+}
+
+.admin-login-orb-b {
+  width: 420px;
+  height: 420px;
+  right: -140px;
+  bottom: -150px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-champagne) 22%, transparent), transparent 70%);
+  animation-duration: 23s;
+  animation-delay: -7s;
+}
+
+.admin-login-orb-c {
+  width: 260px;
+  height: 260px;
+  left: 52%;
+  top: 30%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-silver) 14%, transparent), transparent 70%);
+  animation-duration: 27s;
+  animation-delay: -12s;
+}
+
+.admin-login-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 42%, transparent 42%, rgb(11 12 14 / 62%) 100%);
+}
+
+.admin-login-card {
+  box-shadow:
+    0 24px 70px -30px rgb(0 0 0 / 85%),
+    0 0 0 1px rgb(198 168 117 / 6%),
+    0 0 44px -18px rgb(198 168 117 / 30%);
+}
+
+.admin-dashboard {
+  background:
+    radial-gradient(900px 420px at 85% -10%, color-mix(in srgb, var(--color-champagne) 6%, transparent), transparent 60%),
+    var(--color-obsidian);
+}
+
+@keyframes adminOrbDrift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(26px, 18px, 0) scale(1.06); }
+  100% { transform: translate3d(-20px, 26px, 0) scale(0.98); }
+}
+
 /* Respect reduced motion across the dock, the logo, and the liquid bead */
 @media (prefers-reduced-motion: reduce) {
+  .admin-login-orb {
+    animation: none !important;
+  }
   .floating-bottom-nav-indicator,
   .floating-bottom-nav-link,
   .floating-bottom-nav-list {
