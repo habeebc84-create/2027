@@ -1,4 +1,4 @@
-import type { Product, Category, Brand, Notification, Banner, SiteContent, TransportZone, Customer, TermsContent, MarketPrices } from './types';
+import type { Product, Category, Brand, Notification, Banner, SiteContent, TransportZone, TermsContent, MarketPrices } from './types';
 
 export const categories: Category[] = [
   { id: 'cat-cement', name: 'Cement', image: '/cement_banner_new.png', description: 'Premium Portland & Composite Cements', enabled: true, order: 1 },

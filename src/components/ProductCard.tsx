@@ -22,71 +22,51 @@ export default function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className="rounded-2xl border border-white/18 overflow-hidden hover:border-white/35 transition-all duration-300 hover:shadow-[0_18px_44px_-20px_rgba(0,0,0,0.7),0_8px_22px_-12px_rgba(0,0,0,0.5)] flex flex-col group h-full" style={{
-      background:
-        'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-      backdropFilter: 'blur(14px) saturate(160%)',
-      WebkitBackdropFilter: 'blur(14px) saturate(160%)',
-      boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.35), 0 18px 44px -22px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.5)',
-    }}>
+    <div className="rounded-2xl bg-charcoal border border-gunmetal overflow-hidden hover:border-champagne/60 transition-all duration-300 hover:shadow-[0_18px_44px_-20px_rgba(0,0,0,0.7)] flex flex-col group h-full">
       {/* Image */}
       <div className="relative overflow-hidden cursor-pointer" onClick={handleViewDetail}>
         <img src={product.image} alt={product.name} className="w-full h-32 sm:h-48 object-cover group-hover:scale-105 transition duration-500" />
         <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
           {product.featured ? (
-            <div className="bg-orange-500/90 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center space-x-1 shrink-0">
+            <div className="bg-champagne text-obsidian px-2 py-0.5 rounded-full text-[10px] font-black flex items-center space-x-1 shrink-0">
               <Star className="w-3 h-3" /><span>FEATURED</span>
             </div>
           ) : <span />}
-          <div className="rounded-lg px-2 py-1 text-[10px] text-slate-200 font-bold border border-white/18 bg-slate-950/35 backdrop-blur-md truncate min-w-0" style={{
-              background:
-                'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 14px -10px rgba(0,0,0,0.5)',
-            }}>{product.grade}</div>
+          <div className="rounded-lg px-2 py-1 text-[10px] text-ivory font-bold border border-gunmetal bg-obsidian/85 backdrop-blur-md truncate min-w-0">
+            {product.grade}
+          </div>
         </div>
       </div>
-      {/* Content */}        <div className="p-3 sm:p-4 flex-1 flex flex-col" style={{
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
-        }}>
-        <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-1">{product.category}</div>
-        <h3 className="text-sm font-bold text-slate-100 leading-tight mb-2 line-clamp-2 cursor-pointer hover:text-orange-400 transition" onClick={handleViewDetail}>{product.name}</h3>
-        <p className="text-xs text-slate-400 leading-relaxed mb-4 line-clamp-2 flex-1">{product.description}</p>
+
+      {/* Content */}
+      <div className="p-3 sm:p-4 flex-1 flex flex-col">
+        <div className="text-[10px] text-champagne font-semibold uppercase tracking-wider mb-1">{product.category}</div>
+        <h3 className="text-sm font-bold text-ivory leading-tight mb-2 line-clamp-2 cursor-pointer hover:text-champagne transition" onClick={handleViewDetail}>{product.name}</h3>
+        <p className="text-xs text-silver leading-relaxed mb-4 line-clamp-2 flex-1">{product.description}</p>
         <div className="flex items-center space-x-1.5 mb-3">
-          <Package className="w-3 h-3 text-slate-500" /><span className="text-[10px] text-slate-400 font-semibold">{product.brand}</span>
+          <Package className="w-3 h-3 text-silver" /><span className="text-[10px] text-silver font-semibold">{product.brand}</span>
         </div>
         {product.sizes && product.sizes.length > 0 && (
           <div className="mb-3">
-            <label className="text-[10px] font-bold text-slate-400 block mb-1">Select Size</label>
+            <label className="text-[10px] font-bold text-silver block mb-1">Select Size</label>
             <select value={selectedSize} onChange={e => setSelectedSize(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition">
+              className="w-full bg-obsidian border border-gunmetal text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-champagne transition">
               {product.sizes.map(s => <option key={s.size} value={s.size}>{s.size} - Rs.{s.price}</option>)}
             </select>
           </div>
-        )}          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mt-auto pt-2" style={{
-            borderTop: '1px solid rgba(255,255,255,0.12)',
-            background:
-              'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 100%)',
-          }}>
+        )}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mt-auto pt-3 border-t border-gunmetal">
           <div>
-            <div className="text-lg font-black text-white">Rs.{currentPrice}</div>
-            <div className="text-[10px] text-slate-500">{product.type === 'cement' ? 'per bag' : product.type === 'steel' ? 'per kg' : 'per unit'}</div>
+            <div className="text-lg font-black text-ivory">Rs.{currentPrice}</div>
+            <div className="text-[10px] text-silver">{product.type === 'cement' ? 'per bag' : product.type === 'steel' ? 'per kg' : 'per unit'}</div>
           </div>
-          <div className="flex items-center space-x-2">              <div className="flex items-center rounded-lg border border-white/14" style={{
-                background:
-                  'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-                backdropFilter: 'blur(10px) saturate(150%)',
-                WebkitBackdropFilter: 'blur(10px) saturate(150%)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 14px -10px rgba(0,0,0,0.5)',
-              }}>
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-2 py-1.5 text-slate-400 hover:text-white text-xs font-bold">-</button>
-              <span className="text-xs font-bold text-slate-200 px-1 min-w-[20px] text-center">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="px-2 py-1.5 text-slate-400 hover:text-white text-xs font-bold">+</button>
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center rounded-lg border border-gunmetal bg-obsidian">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-2 py-1.5 text-silver hover:text-ivory text-xs font-bold" aria-label={`Decrease quantity of ${product.name}`}>-</button>
+              <span className="text-xs font-bold text-ivory px-1 min-w-[20px] text-center">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="px-2 py-1.5 text-silver hover:text-ivory text-xs font-bold" aria-label={`Increase quantity of ${product.name}`}>+</button>
             </div>
-            <button onClick={() => addToCart(product, quantity, selectedSize)} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white p-2.5 rounded-xl transition shadow-lg">
+            <button onClick={() => addToCart(product, quantity, selectedSize)} className="btn-purchase p-2.5 rounded-xl shadow-lg" aria-label={`Add ${product.name} to cart`}>
               <ShoppingCart className="w-4 h-4" />
             </button>
           </div>

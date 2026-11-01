@@ -3,11 +3,11 @@ import { X, Megaphone, Tag, RefreshCw, AlertTriangle, Bell, LucideIcon } from 'l
 import { useApp } from '../context/AppContext';
 
 const typeConfig: Record<string, { icon: LucideIcon; color: string; bg: string; border: string }> = {
-  announcement: { icon: Megaphone, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
-  offer: { icon: Tag, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
-  update: { icon: RefreshCw, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
-  alert: { icon: AlertTriangle, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
-  order: { icon: Bell, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
+  announcement: { icon: Megaphone, color: 'text-brand-400', bg: 'bg-brand-500/15', border: 'border-brand-500/30' },
+  offer: { icon: Tag, color: 'text-brand-400', bg: 'bg-brand-500/15', border: 'border-brand-500/30' },
+  update: { icon: RefreshCw, color: 'text-brand-400', bg: 'bg-brand-500/15', border: 'border-brand-500/30' },
+  alert: { icon: AlertTriangle, color: 'text-brand-400', bg: 'bg-brand-500/15', border: 'border-brand-500/30' },
+  order: { icon: Bell, color: 'text-brand-400', bg: 'bg-brand-500/15', border: 'border-brand-500/30' },
 };
 
 export default function NotificationPopup() {
@@ -56,25 +56,25 @@ export default function NotificationPopup() {
     <>
       {/* Backdrop */}
       {showPanel && (
-        <div className="fixed inset-0 bg-slate-950/40 z-[80] backdrop-blur-sm transition-opacity" onClick={() => setShowPanel(false)} />
+        <div className="fixed inset-0 bg-obsidian/40 z-[80] backdrop-blur-sm transition-opacity" onClick={() => setShowPanel(false)} />
       )}
 
       {/* Left side notification panel - always renders, slides in.
           On phones it stops at 85vw so the cart shortcut on the right
           edge stays tappable even while the panel is open. */}
-      <div className={`fixed inset-y-0 left-0 z-[85] w-[420px] max-w-[85vw] bg-slate-950/98 backdrop-blur-xl border-r border-white/10 flex flex-col transition-transform duration-300 ease-out ${showPanel ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-y-0 left-0 z-[85] w-[420px] max-w-[85vw] bg-obsidian/98 backdrop-blur-xl border-r border-gunmetal flex flex-col transition-transform duration-300 ease-out ${showPanel ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Header */}
-        <div className="p-5 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div className="p-5 border-b border-gunmetal flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-              <Bell className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-brand flex items-center justify-center">
+              <Bell className="w-5 h-5 text-obsidian" />
             </div>
             <div>
-              <h3 className="text-sm font-black text-white">Notifications & Alerts</h3>
-              <p className="text-[10px] text-slate-400">{activeNotifications.filter(n => !n.read).length} unread · {activeNotifications.length} total</p>
+              <h3 className="text-sm font-black text-ivory">Notifications & Alerts</h3>
+              <p className="text-[10px] text-silver">{activeNotifications.filter(n => !n.read).length} unread · {activeNotifications.length} total</p>
             </div>
           </div>
-          <button onClick={() => setShowPanel(false)} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition">
+          <button onClick={() => setShowPanel(false)} className="p-2 rounded-xl bg-charcoal hover:bg-white/10 text-silver hover:text-ivory transition">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -84,7 +84,7 @@ export default function NotificationPopup() {
           {activeNotifications.length === 0 ? (
             <div className="text-center py-16">
               <Bell className="w-12 h-12 text-slate-700 mx-auto mb-3" />
-              <p className="text-sm text-slate-500 font-bold">No notifications yet</p>
+              <p className="text-sm text-silver font-bold">No notifications yet</p>
             </div>
           ) : (
             activeNotifications.map(n => {
@@ -95,7 +95,7 @@ export default function NotificationPopup() {
                 <div
                   key={n.id}
                   onClick={() => dismissNotification(n.id)}
-                  className={`bg-white/5 border rounded-2xl p-4 cursor-pointer transition hover:border-orange-500/30 ${n.read || isDismissed ? 'border-white/5 opacity-70' : 'border-orange-500/20'}`}
+                  className={`bg-charcoal border rounded-2xl p-4 cursor-pointer transition hover:border-brand-500/30 ${n.read || isDismissed ? 'border-gunmetal opacity-70' : 'border-brand-500/20'}`}
                 >
                   <div className="flex items-start space-x-3">
                     <div className={`w-11 h-11 rounded-xl ${config.bg} border ${config.border} flex items-center justify-center shrink-0`}>
@@ -103,13 +103,13 @@ export default function NotificationPopup() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        {!n.read && !isDismissed && <div className="w-2 h-2 bg-orange-400 rounded-full shrink-0 animate-pulse" />}
-                        <div className="text-sm font-bold text-white truncate">{n.title}</div>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 font-bold border border-orange-500/20 shrink-0">{n.type}</span>
+                        {!n.read && !isDismissed && <div className="w-2 h-2 bg-brand-400 rounded-full shrink-0 animate-pulse" />}
+                        <div className="text-sm font-bold text-ivory truncate">{n.title}</div>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-brand-500/20 text-brand-400 font-bold border border-brand-500/20 shrink-0">{n.type}</span>
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">{n.content}</p>
+                      <p className="text-xs text-silver leading-relaxed">{n.content}</p>
                       {n.createdAt && (
-                        <div className="text-[10px] text-slate-500 mt-2">
+                        <div className="text-[10px] text-silver mt-2">
                           {new Date(n.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </div>
                       )}

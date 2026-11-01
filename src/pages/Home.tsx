@@ -17,64 +17,46 @@ export default function Home() {
     <div className="relative z-10">
       {/* Hero Section */}
       <section className="home-hero relative flex items-center overflow-hidden">
-        {/* Vibrant Orange fill (single-colour theme — the hero photo
-            was removed): a #FF6B00 orange gradient, with a dark
-            scrim over it so the white heading stays readable, fading
-            into the page at the bottom so the price-index card below
-            blends. */}
+        {/* Obsidian/charcoal brand canvas with a restrained champagne glow.
+            Purchase orange is reserved for the catalog CTA below. */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, #FF8A2A 0%, #FF6B00 48%, #E85A00 100%)' }} />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, rgba(20, 9, 2,0.72) 0%, rgba(20, 9, 2,0.55) 45%, rgba(20, 9, 2,0.85) 100%)' }} />
-          <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-500/15 blur-[120px] rounded-full" />
-          <div className="absolute top-1/3 -right-24 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#140902] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-obsidian to-obsidian" />
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-champagne/10 blur-[120px] rounded-full" />
+          <div className="absolute top-1/3 -right-24 w-96 h-96 bg-champagne/5 blur-[120px] rounded-full" />
+          <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 w-full">
           {/* Badges */}
           <div className="flex flex-wrap items-center gap-3 mb-6">
-            <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{
-              background:
-                'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)',
-              backdropFilter: 'blur(14px) saturate(160%)',
-              WebkitBackdropFilter: 'blur(14px) saturate(160%)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
-            }}>
-              <Shield className="w-4 h-4 text-orange-400" />
+            <span className="rounded-full text-xs font-bold text-ivory bg-charcoal/70 border border-gunmetal px-4 py-2 flex items-center space-x-2 backdrop-blur-md">
+              <Shield className="w-4 h-4 text-champagne" />
               <span>GSTIN: {siteSettings.gstNumber}</span>
             </span>
-            <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{
-              background:
-                'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)',
-              backdropFilter: 'blur(14px) saturate(160%)',
-              WebkitBackdropFilter: 'blur(14px) saturate(160%)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
-            }}>
-              <MapPin className="w-4 h-4 text-slate-300" />
+            <span className="rounded-full text-xs font-bold text-ivory bg-charcoal/70 border border-gunmetal px-4 py-2 flex items-center space-x-2 backdrop-blur-md">
+              <MapPin className="w-4 h-4 text-silver" />
               <span>Serving Kalikiri & Annamayya District, AP</span>
             </span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-none drop-shadow-2xl font-industrial mb-8">
-            HSN CEMENT AND STEEL
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-ivory tracking-tight leading-none drop-shadow-2xl font-industrial mb-8">
+            HSN CEMENT <span className="text-champagne">AND STEEL</span>
           </h1>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={() => setPage('products')}
-              className="px-8 py-4 rounded-2xl shadow-xl flex items-center justify-center space-x-3 text-base transition transform group bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white hover:scale-105 active:scale-95 font-bold"
+              className="btn-purchase px-8 py-4 rounded-2xl shadow-xl flex items-center justify-center space-x-3 text-base group"
             >
-              <Eye className="w-5 h-5 group-hover:text-white transition" />
+              <Eye className="w-5 h-5" />
               <span className="tracking-wide">Explore Materials Catalogue</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition" />
             </button>
             <a
               href={telHref(siteContent.phone)}
-              className="bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white font-bold px-8 py-4 rounded-2xl text-center transition flex items-center justify-center space-x-2 text-base backdrop-blur-md shadow-xl"
+              className="btn-secondary font-bold px-8 py-4 rounded-2xl text-center flex items-center justify-center space-x-2 text-base backdrop-blur-md shadow-xl"
             >
               <Phone className="w-5 h-5" />
               <span>Call ({siteContent.phone})</span>
@@ -83,129 +65,68 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Daily Market Price Index */}
+      {/* Daily Market Price Index — warm porcelain reading surface */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 mb-12">
         <Reveal>
-        <div className="rounded-3xl border border-white/16 p-6 sm:p-8 lg:p-10" style={{
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-          backdropFilter: 'blur(16px) saturate(170%)',
-          WebkitBackdropFilter: 'blur(16px) saturate(170%)',
-          boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3), 0 22px 52px -26px rgba(0,0,0,0.75), 0 10px 24px -14px rgba(0,0,0,0.55)',
-        }}>
+        <div className="surface-light market-price-panel rounded-3xl p-6 sm:p-8 lg:p-10">
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
             <div>
-              <div className="inline-flex items-center space-x-2 bg-white/5 text-slate-200 text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/10 mb-3 uppercase tracking-wider">
+              <div className="inline-flex items-center space-x-2 bg-champagne/15 text-brand-ink text-[10px] font-bold px-3 py-1.5 rounded-full border border-champagne/40 mb-3 uppercase tracking-wider">
                 <Clock className="w-3 h-3" />
                 <span>Daily Market Price Index</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white font-industrial tracking-wide">
+              <h2 className="text-xl sm:text-2xl font-black text-graphite font-industrial tracking-wide">
                 WHOLESALE TIERED PRICING TABLE
               </h2>
             </div>
-            <div className="flex items-center space-x-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
-              <span className="w-2 h-2 bg-slate-200 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-slate-200">{pricesUpdatedText}</span>
+            <div className="status-success-light flex items-center space-x-2 px-4 py-2 rounded-full">
+              <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+              <span className="text-xs font-bold">{pricesUpdatedText}</span>
             </div>
           </div>
 
           {/* Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Cement */}
-            <div className="bg-slate-800/50 border border-white/5 rounded-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/16" style={{
-                  background:
-                    'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%)',
-                  backdropFilter: 'blur(12px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-                  boxShadow:
-                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
-                }}>
-                    <Package className="w-4 h-4 text-slate-300" />
+            {[
+              { title: 'Cement Bags (OPC 53 / PPC 50kg)', badge: 'JSW / ACC / Dalmia', icon: Package, tiers: marketPrices.cement },
+              { title: 'TMT Steel Bars (6mm - 32mm Fe 550D)', badge: 'Tata Tiscon / Vizag', icon: TrendingUp, tiers: marketPrices.steel },
+            ].map(group => {
+              const Icon = group.icon;
+              return (
+                <div key={group.title} className="market-price-card rounded-2xl overflow-hidden">
+                  <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gunmetal/20">
+                    <div className="flex items-center space-x-2 min-w-0">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-champagne/15 border border-champagne/40 shrink-0">
+                        <Icon className="w-4 h-4 text-brand-ink" />
+                      </div>
+                      <h3 className="text-sm font-bold text-graphite font-industrial">{group.title}</h3>
+                    </div>
+                    <span className="text-[10px] font-bold text-muted-light rounded-full border border-gunmetal/25 px-2.5 py-1 shrink-0">{group.badge}</span>
                   </div>
-                  <h3 className="text-sm font-bold text-white font-industrial">Cement Bags (OPC 53 / PPC 50kg)</h3>
+                  <div>
+                    {group.tiers.map((tier, i) => (
+                      <div key={i} className="market-price-row flex items-center justify-between px-5 py-3.5 transition">
+                        <div>
+                          <div className="text-sm font-bold text-graphite">{tier.range}</div>
+                          <div className="text-[10px] text-muted-light">{tier.label}</div>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-lg font-black text-graphite">{tier.price}</span>
+                          <span className="text-xs text-muted-light">{tier.unit}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold text-slate-200 rounded-full border border-white/16 px-2.5 py-1" style={{
-                  background:
-                    'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%)',
-                  backdropFilter: 'blur(12px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-                  boxShadow:
-                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 18px -12px rgba(0,0,0,0.6)',
-                }}>JSW / ACC / Dalmia</span>
-              </div>
-              <div className="divide-y divide-white/10">
-                {marketPrices.cement.map((tier, i) => (
-                  <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
-                    background:
-                      'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
-                  }}>
-                    <div>
-                      <div className="text-sm font-bold text-slate-100">{tier.range}</div>
-                      <div className="text-[10px] text-slate-500">{tier.label}</div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-lg font-black text-white">{tier.price}</span>
-                      <span className="text-xs text-slate-400">{tier.unit}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Steel */}
-            <div className="bg-slate-800/50 border border-white/5 rounded-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/16" style={{
-                  background:
-                    'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%)',
-                  backdropFilter: 'blur(12px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-                  boxShadow:
-                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
-                }}>
-                    <TrendingUp className="w-4 h-4 text-slate-300" />
-                  </div>
-                  <h3 className="text-sm font-bold text-white font-industrial">TMT Steel Bars (6mm - 32mm Fe 550D)</h3>
-                </div>
-                <span className="text-[10px] font-bold text-slate-200 rounded-full border border-white/16 px-2.5 py-1" style={{
-                  background:
-                    'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%)',
-                  backdropFilter: 'blur(12px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-                  boxShadow:
-                    'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 18px -12px rgba(0,0,0,0.6)',
-                }}>Tata Tiscon / Vizag</span>
-              </div>
-              <div className="divide-y divide-white/10">
-                {marketPrices.steel.map((tier, i) => (
-                  <div key={i} className="flex items-center justify-between px-5 py-3.5 transition hover:bg-white/[0.02]" style={{
-                    background:
-                      'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
-                  }}>
-                    <div>
-                      <div className="text-sm font-bold text-slate-100">{tier.range}</div>
-                      <div className="text-[10px] text-slate-500">{tier.label}</div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-lg font-black text-white">{tier.price}</span>
-                      <span className="text-xs text-slate-400">{tier.unit}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+              );
+            })}
           </div>
 
           {/* CTA */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-slate-400">Prices are indicative and may vary. Call for today's confirmed rates.</p>
-            <button onClick={() => setPage('products')} className="bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white font-bold px-6 py-3 rounded-xl text-sm flex items-center space-x-2 transition shadow-lg">
+            <p className="text-xs text-muted-light">Prices are indicative and may vary. Call for today's confirmed rates.</p>
+            <button onClick={() => setPage('products')} className="btn-secondary font-bold px-6 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg">
               <span>View Full Product Catalog</span>
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -218,25 +139,25 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <Reveal>
         <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
+          <h2 className="text-2xl sm:text-3xl font-black text-ivory font-industrial">
             Browse Our Product Categories
           </h2>
-          <p className="text-slate-400 text-sm mt-2">Premium construction materials from top brands</p>
+          <p className="text-silver text-sm mt-2">Premium construction materials from top brands</p>
         </div>
         </Reveal>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
           {categories.map((cat, i) => (
             <Reveal key={cat.id} delay={Math.min(i * 50, 400)} className="h-full">
-            <button onClick={() => setPage('products')} className="rounded-2xl border border-white/14 p-3 flex flex-col items-center space-y-2 transition group hover:border-white/3 hover:bg-white/[0.02] w-full h-full" style={{
+            <button onClick={() => setPage('products')} className="rounded-2xl border border-gunmetal p-3 flex flex-col items-center space-y-2 transition group hover:border-champagne/50 hover:bg-charcoal w-full h-full" style={{
               background:
-                'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+                'var(--color-charcoal)',
               backdropFilter: 'blur(14px) saturate(160%)',
               WebkitBackdropFilter: 'blur(14px) saturate(160%)',
               boxShadow:
                 'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 14px 34px -18px rgba(0,0,0,0.7), 0 6px 16px -10px rgba(0,0,0,0.45)',
             }}>
               <img src={cat.image} alt={cat.name} className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl group-hover:scale-110 transition" />
-              <span className="text-[10px] sm:text-xs font-bold text-slate-300 text-center leading-tight">{cat.name}</span>
+              <span className="text-[10px] sm:text-xs font-bold text-silver text-center leading-tight">{cat.name}</span>
             </button>
             </Reveal>
           ))}
@@ -248,12 +169,12 @@ export default function Home() {
         <Reveal>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
+            <h2 className="text-2xl sm:text-3xl font-black text-ivory font-industrial">
               Featured Products
             </h2>
-            <p className="text-slate-400 text-xs mt-1">Top-rated materials at wholesale direct rates</p>
+            <p className="text-silver text-xs mt-1">Top-rated materials at wholesale direct rates</p>
           </div>
-          <button onClick={() => setPage('products')} className="flex items-center space-x-1 text-xs font-bold text-slate-200 hover:text-white transition">
+          <button onClick={() => setPage('products')} className="flex items-center space-x-1 text-xs font-bold text-ivory hover:text-ivory transition">
             <span>View All</span>
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -272,10 +193,10 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <Reveal>
         <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-black text-white font-industrial">
+          <h2 className="text-2xl sm:text-3xl font-black text-ivory font-industrial">
             Our Services
           </h2>
-          <p className="text-slate-400 text-sm mt-2">Comprehensive supply and logistics for all project sizes</p>
+          <p className="text-silver text-sm mt-2">Comprehensive supply and logistics for all project sizes</p>
         </div>
         </Reveal>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -288,33 +209,33 @@ export default function Home() {
             const Icon = svc.icon;
             return (
               <Reveal key={i} delay={Math.min(i * 60, 240)} className="h-full">
-              <div className="rounded-2xl border border-white/14 p-5 text-center space-y-3 transition hover:border-white/25 hover:bg-white/[0.02] h-full w-full" style={{
+              <div className="rounded-2xl border border-gunmetal p-5 text-center space-y-3 transition hover:border-champagne/50 hover:bg-charcoal h-full w-full" style={{
                 background:
-                  'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+                  'var(--color-charcoal)',
                 backdropFilter: 'blur(14px) saturate(160%)',
                 WebkitBackdropFilter: 'blur(14px) saturate(160%)',
                 boxShadow:
                   'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 14px 34px -18px rgba(0,0,0,0.7), 0 6px 16px -10px rgba(0,0,0,0.45)',
               }}>
-                <div className="w-12 h-12 rounded-xl border border-white/16 flex items-center justify-center mx-auto" style={{
+                <div className="w-12 h-12 rounded-xl border border-gunmetal flex items-center justify-center mx-auto" style={{
                   background:
-                    'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%)',
+                    'color-mix(in srgb, var(--color-champagne) 14%, var(--color-charcoal))',
                   backdropFilter: 'blur(12px) saturate(150%)',
                   WebkitBackdropFilter: 'blur(12px) saturate(150%)',
                   boxShadow:
                     'inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 14px -10px rgba(0,0,0,0.5)',
                 }}>
-                  <Icon className="w-6 h-6 text-white" />
+                  <Icon className="w-6 h-6 text-champagne" />
                 </div>
-                <h4 className="text-sm font-bold text-white">{svc.title}</h4>
-                <p className="text-xs text-slate-400">{svc.desc}</p>
+                <h4 className="text-sm font-bold text-ivory">{svc.title}</h4>
+                <p className="text-xs text-silver">{svc.desc}</p>
               </div>
               </Reveal>
             );
           })}
         </div>
         <div className="text-center mt-8">
-          <button onClick={() => setPage('services')} className="bg-slate-900/80 hover:bg-slate-800 border border-white/15 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center space-x-2 mx-auto">
+          <button onClick={() => setPage('services')} className="bg-charcoal/80 hover:bg-charcoal border border-gunmetal text-ivory font-bold px-6 py-3 rounded-xl text-sm transition flex items-center space-x-2 mx-auto">
             <span>View All Services</span>
             <ChevronRight className="w-4 h-4" />
           </button>

@@ -23,10 +23,9 @@ interface FloatingBottomNavProps {
 }
 
 // Apple-style bottom bar (iOS liquid-glass dock): a floating capsule of
-// CLEAR warm-dark glass — a deep tone of the site's single Vibrant
-// Orange theme, heavily blurred with restrained saturation so photos
-// behind it stay muted. Only the selected item carries the vibrant
-// orange pill; every other item sits directly on the glass.
+// Charcoal Steel glass with a Gunmetal edge. The selected item carries
+// a Burnished Champagne pill with Obsidian ink; inactive items use
+// Silver Mist so the dock stays readable over photos.
 export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
   const { currentPage, setPage } = useApp();
   const shouldReduceMotion = useReducedMotion();
@@ -56,12 +55,12 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
       aria-label="Primary navigation"
     >
       <div
-        className="relative rounded-full w-[calc(100vw-16px)] sm:w-auto p-1.5 border border-white/10"
+        className="relative rounded-full w-[calc(100vw-16px)] sm:w-auto p-1.5 border border-gunmetal"
         style={{
           pointerEvents: 'auto',
           maxWidth: 'calc(100vw - 16px)',
           background:
-            'linear-gradient(180deg, rgba(33, 19, 8,0.44) 0%, rgba(33, 19, 8,0.34) 55%, rgba(33, 19, 8,0.28) 100%)',
+            'linear-gradient(180deg, rgba(26,29,33,0.44) 0%, rgba(26,29,33,0.34) 55%, rgba(26,29,33,0.28) 100%)',
           backdropFilter: 'blur(28px) saturate(135%)',
           WebkitBackdropFilter: 'blur(28px) saturate(135%)',
           boxShadow:
@@ -115,9 +114,9 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                     className="absolute inset-0 rounded-full"
                     style={{
                       background:
-                        'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 100%)',
+                        'var(--color-champagne)',
                       boxShadow:
-                        'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 0 0 1px rgba(255,255,255,0.13), 0 8px 18px -8px rgba(0,0,0,0.55)',
+                        'inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 18px -8px rgba(0,0,0,0.55)',
                       backdropFilter: 'blur(10px) saturate(140%)',
                       WebkitBackdropFilter: 'blur(10px) saturate(140%)',
                     }}
@@ -133,8 +132,8 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
                 <span
                   className="relative flex items-center justify-center transition-opacity duration-200"
                   style={{
-                    color: '#ffffff',
-                    opacity: isActive ? 1 : 0.62,
+                    color: isActive ? 'var(--color-obsidian)' : 'var(--color-silver)',
+                    opacity: 1,
                   }}
                 >
                   <SvgIcon name={item.label} size={22} />
@@ -142,8 +141,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
 
                 {/* Label */}
                 <span
-                  className="relative text-[11px] sm:text-[10px] font-medium tracking-tight text-white select-none whitespace-nowrap leading-none transition-opacity duration-200"
-                  style={{ opacity: isActive ? 1 : 0.62 }}
+                  className={`relative text-[11px] sm:text-[10px] font-medium tracking-tight select-none whitespace-nowrap leading-none ${isActive ? 'text-obsidian' : 'text-silver'}`}
                 >
                   <span className="sm:hidden">{item.short ?? item.label}</span>
                   <span className="hidden sm:inline">{item.label}</span>

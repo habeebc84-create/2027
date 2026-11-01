@@ -1,13 +1,6 @@
-import { Building2, Truck, Scissors, ShieldCheck, Phone, ExternalLink, Check, type LucideIcon } from 'lucide-react';
+import { Building2, Truck, Scissors, ShieldCheck, Phone, ExternalLink, Check } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
-
-const iconMap: Record<string, LucideIcon> = {
-  Building2,
-  Truck,
-  Scissors,
-  ShieldCheck,
-};
 
 const detailedServices = [
   {
@@ -44,14 +37,14 @@ export default function Services() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center space-x-1.5 bg-orange-500/10 text-white text-xs font-bold px-3 py-1 rounded-full border border-orange-500/30 mb-4">
+          <div className="inline-flex items-center space-x-1.5 bg-brand-500/10 text-ivory text-xs font-bold px-3 py-1 rounded-full border border-brand-500/30 mb-4">
             <Truck className="w-3.5 h-3.5" />
             <span>Our Premium Services</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-100 leading-tight font-industrial">
-            Comprehensive <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Supply & Logistics</span>
+          <h1 className="text-3xl sm:text-5xl font-black text-ivory leading-tight font-industrial">
+            Comprehensive <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">Supply & Logistics</span>
           </h1>
-          <p className="text-slate-400 text-sm sm:text-base mt-4 leading-relaxed">
+          <p className="text-silver text-sm sm:text-base mt-4 leading-relaxed">
             HSN CEMENT AND STEEL offers comprehensive supply, logistics, and site support tailored for contractors, civil engineers, and individual home builders.
           </p>
         </div>
@@ -61,22 +54,22 @@ export default function Services() {
           {detailedServices.map((svc, i) => {
             const Icon = svc.icon;
             return (
-              <div key={i} className="bg-white/5 rounded-3xl border border-slate-800 hover:border-orange-500/40 transition duration-300 flex flex-col p-6 sm:p-8">
-                <div className="w-14 h-14 rounded-2xl bg-orange-500/10 text-white border border-orange-500/30 flex items-center justify-center mb-6">
+              <div key={i} className="bg-charcoal rounded-3xl border border-gunmetal hover:border-brand-500/40 transition duration-300 flex flex-col p-6 sm:p-8">
+                <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-ivory border border-brand-500/30 flex items-center justify-center mb-6">
                   <Icon className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-100 mb-3">{svc.title}</h3>
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6">{svc.description}</p>
+                <h3 className="text-xl font-bold text-ivory mb-3">{svc.title}</h3>
+                <p className="text-silver text-xs sm:text-sm leading-relaxed mb-6">{svc.description}</p>
                 <ul className="space-y-2 mb-6">
                   {svc.features.map((feat, j) => (
-                    <li key={j} className="flex items-center space-x-2 text-xs text-slate-300 font-semibold">
-                      <Check className="w-4 h-4 text-orange-400 shrink-0" />
+                    <li key={j} className="flex items-center space-x-2 text-xs text-silver font-semibold">
+                      <Check className="w-4 h-4 text-brand-400 shrink-0" />
                       <span>{feat}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between mt-auto">
-                  <a href={telHref(siteContent.phone)} className="text-white hover:text-orange-300 font-bold text-xs flex items-center space-x-1">
+                <div className="pt-4 border-t border-gunmetal/80 flex items-center justify-between mt-auto">
+                  <a href={telHref(siteContent.phone)} className="text-ivory hover:text-brand-300 font-bold text-xs flex items-center space-x-1">
                     <Phone className="w-3.5 h-3.5" />
                     <span>Call for Quote</span>
                   </a>
@@ -84,7 +77,7 @@ export default function Services() {
                     href={waHref(siteContent.whatsapp, `Hi, I want to inquire about ${svc.title}`)}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 text-[#FF6B00] font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1 border border-[#FF6B00]/30"
+                    className="bg-champagne/10 hover:bg-champagne/20 text-champagne font-bold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1 border border-champagne/30"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>WhatsApp Inquiry</span>
@@ -96,9 +89,9 @@ export default function Services() {
         </div>
 
         {/* Delivery Zones */}
-        <div className="mt-16 pt-12 border-t border-slate-800">
-          <h2 className="text-xl font-black text-white font-industrial mb-6 text-center">
-            Delivery <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Zones & Rates</span>
+        <div className="mt-16 pt-12 border-t border-gunmetal">
+          <h2 className="text-xl font-black text-ivory font-industrial mb-6 text-center">
+            Delivery <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">Zones & Rates</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
@@ -110,9 +103,9 @@ export default function Services() {
               { zone: 'Gurramkonda', charge: '₹1,800' },
               { zone: 'Madanapalle', charge: '₹2,000' },
             ].map((loc, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between hover:border-orange-500/30 transition">
-                <span className="text-xs font-bold text-slate-200">{loc.zone}</span>
-                <span className={`text-xs font-black ${loc.charge === 'FREE' ? 'text-orange-400' : 'text-white'}`}>{loc.charge}</span>
+              <div key={i} className="bg-charcoal border border-gunmetal rounded-xl p-4 flex items-center justify-between hover:border-brand-500/30 transition">
+                <span className="text-xs font-bold text-ivory">{loc.zone}</span>
+                <span className={`text-xs font-black ${loc.charge === 'FREE' ? 'text-brand-400' : 'text-ivory'}`}>{loc.charge}</span>
               </div>
             ))}
           </div>

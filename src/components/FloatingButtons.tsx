@@ -22,12 +22,12 @@ export default function FloatingButtons({ onCartClick }: { onCartClick?: () => v
         <button
           type="button"
           onClick={onCartClick}
-          className="lg:hidden relative w-11 h-11 md:w-14 md:h-14 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(255, 107, 0,0.4)] hover:scale-110 transition-all duration-300"
+          className="lg:hidden relative w-11 h-11 md:w-14 md:h-14 btn-purchase rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(249,115,22,0.25)] hover:scale-110 transition-all duration-300"
           title="Open cart"
           aria-label={`Open cart, ${cartCount} items`}
         >
-          <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-white" />
-          <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold min-w-5 h-5 px-1 rounded-full flex items-center justify-center shadow-lg">
+          <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
+          <span className="absolute -top-1 -right-1 bg-purchase text-obsidian text-[10px] font-bold min-w-5 h-5 px-1 rounded-full flex items-center justify-center shadow-lg">
             {cartCount}
           </span>
         </button>
@@ -36,17 +36,17 @@ export default function FloatingButtons({ onCartClick }: { onCartClick?: () => v
         href={waHref(siteContent.whatsapp, 'Hi, I want to inquire about construction materials')}
         target="_blank"
         rel="noreferrer"
-        className="w-11 h-11 md:w-14 md:h-14 bg-[#FF6B00] hover:bg-[#E85A00] rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(255, 107, 0,0.4)] hover:scale-110 transition-all duration-300"
+        className="w-11 h-11 md:w-14 md:h-14 bg-brand hover:bg-brand-300 rounded-full text-obsidian flex items-center justify-center shadow-[0_4px_20px_rgba(198,168,117,0.4)] hover:scale-110 transition-all duration-300"
         title="Chat on WhatsApp"
       >
-        <WhatsAppIcon className="w-6 h-6 md:w-7 md:h-7 text-white" />
+        <WhatsAppIcon className="w-6 h-6 md:w-7 md:h-7" />
       </a>
       <a
         href={telHref(siteContent.phone)}
-        className="w-11 h-11 md:w-14 md:h-14 bg-orange-500 hover:bg-orange-400 rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(255, 107, 0,0.4)] hover:scale-110 transition-all duration-300"
+        className="w-11 h-11 md:w-14 md:h-14 btn-secondary rounded-full flex items-center justify-center shadow-[0_4px_20px_rgba(198,168,117,0.4)] hover:scale-110 transition-all duration-300"
         title="Call Store"
       >
-        <Phone className="w-5 h-5 md:w-6 md:h-6 text-white" />
+        <Phone className="w-5 h-5 md:w-6 md:h-6 text-ivory" />
       </a>
     </div>
   );

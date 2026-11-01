@@ -61,8 +61,8 @@ const DeviceToggle = ({ mode, onToggle }: DeviceToggleProps) => {
             onClick={() => onToggle(device.mode)}
             className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
               active
-                ? 'bg-white/20 text-white shadow-inner'
-                : 'text-slate-300 hover:text-white hover:bg-white/5'
+                ? 'bg-white/20 text-ivory shadow-inner'
+                : 'text-silver hover:text-ivory hover:bg-charcoal'
             }`}
           >
             <span className="relative">
@@ -80,7 +80,7 @@ const DeviceToggle = ({ mode, onToggle }: DeviceToggleProps) => {
               {active && (
                 <motion.span
                   layoutId="device-check"
-                  className="ml-0.5 text-orange-500"
+                  className="ml-0.5 text-brand-500"
                   initial={{ opacity: 0, scale: 0.4 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.4 }}

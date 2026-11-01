@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Search, Filter, Grid, List } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
 
 export default function Products() {
-  const { products, categories, brands } = useApp();
+  const { products, categories } = useApp();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedBrand, setSelectedBrand] = useState('All');
@@ -31,35 +31,35 @@ export default function Products() {
         {/* Header */}
         <Reveal>
         <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-100 font-industrial">
-            Our <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Product Catalog</span>
+          <h1 className="text-3xl sm:text-5xl font-black text-ivory font-industrial">
+            Our <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">Product Catalog</span>
           </h1>
-          <p className="text-slate-400 text-sm sm:text-base mt-2">Browse genuine construction materials at wholesale direct daily rates</p>
+          <p className="text-silver text-sm sm:text-base mt-2">Browse genuine construction materials at wholesale direct daily rates</p>
         </div>
         </Reveal>
 
         {/* Filters */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 mb-8 backdrop-blur-xl">
+        <div className="bg-charcoal border border-gunmetal rounded-2xl p-4 sm:p-6 mb-8 backdrop-blur-xl">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-silver absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search products, brands..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition"
+                className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 transition"
               />
             </div>
 
             {/* Category filter */}
             <div className="relative">
-              <Filter className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Filter className="w-4 h-4 text-silver absolute left-3 top-1/2 -translate-y-1/2" />
               <select
                 value={selectedCategory}
                 onChange={e => setSelectedCategory(e.target.value)}
-                className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition appearance-none"
+                className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 transition appearance-none"
               >
                 {allCategoryNames.map(cat => (
                   <option key={cat} value={cat}>{cat === 'All' ? 'All Categories' : cat}</option>
@@ -71,7 +71,7 @@ export default function Products() {
             <select
               value={selectedBrand}
               onChange={e => setSelectedBrand(e.target.value)}
-              className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition appearance-none"
+              className="w-full bg-charcoal/50 border border-gunmetal/50 text-ivory px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-brand-500 transition appearance-none"
             >
               {allBrandNames.map(brand => (
                 <option key={brand} value={brand}>{brand === 'All' ? 'All Brands' : brand}</option>
@@ -82,13 +82,13 @@ export default function Products() {
 
         {/* Results count */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-xs text-slate-400 font-semibold">
-            Showing <span className="text-white">{filtered.length}</span> of {enabledProducts.length} products
+          <p className="text-xs text-silver font-semibold">
+            Showing <span className="text-ivory">{filtered.length}</span> of {enabledProducts.length} products
           </p>
           {(selectedCategory !== 'All' || selectedBrand !== 'All' || search) && (
             <button
               onClick={() => { setSearch(''); setSelectedCategory('All'); setSelectedBrand('All'); }}
-              className="text-xs font-bold text-orange-400 hover:text-orange-300 transition"
+              className="text-xs font-bold text-brand-400 hover:text-brand-300 transition"
             >
               Clear Filters
             </button>
@@ -97,7 +97,7 @@ export default function Products() {
 
         {/* Products Grid */}
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-slate-500">
+          <div className="text-center py-20 text-silver">
             <Search className="w-12 h-12 mx-auto mb-4 text-slate-600" />
             <p className="text-lg font-bold">No products found</p>
             <p className="text-sm mt-1">Try adjusting your search or filter criteria</p>
@@ -114,9 +114,9 @@ export default function Products() {
 
         {/* Categories quick access */}
         <Reveal>
-        <div className="mt-16 pt-12 border-t border-slate-800">
-          <h2 className="text-xl font-black text-white font-industrial mb-6 text-center">
-            Shop by <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Category</span>
+        <div className="mt-16 pt-12 border-t border-gunmetal">
+          <h2 className="text-xl font-black text-ivory font-industrial mb-6 text-center">
+            Shop by <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">Category</span>
           </h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
             {categories.map(cat => {
@@ -125,13 +125,13 @@ export default function Products() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.name)}
-                  className={`bg-white/5 border rounded-2xl p-3 flex flex-col items-center space-y-2 transition group ${
-                    selectedCategory === cat.name ? 'border-orange-500/50 bg-orange-500/10' : 'border-white/10 hover:border-orange-500/30'
+                  className={`bg-charcoal border rounded-2xl p-3 flex flex-col items-center space-y-2 transition group ${
+                    selectedCategory === cat.name ? 'border-brand-500/50 bg-brand-500/10' : 'border-gunmetal hover:border-brand-500/30'
                   }`}
                 >
                   <img src={cat.image} alt={cat.name} className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-xl group-hover:scale-110 transition" />
-                  <span className="text-[9px] sm:text-[10px] font-bold text-slate-300 text-center leading-tight">{cat.name}</span>
-                  <span className="text-[8px] text-slate-500">{count} items</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold text-silver text-center leading-tight">{cat.name}</span>
+                  <span className="text-[8px] text-silver">{count} items</span>
                 </button>
               );
             })}
