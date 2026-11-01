@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Shield, MapPin, Truck, Award, Phone, Clock } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Shield, MapPin, Truck, Award, ArrowRight, Phone, Clock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
 import { bustedImageSrc } from '../lib/images';
@@ -12,7 +12,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 
 export default function Splash() {
   const { siteContent, dismissSplash, setPage } = useApp();
-  const [exiting] = useState(false);
+  const [exiting, setExiting] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [currentImg, setCurrentImg] = useState(0);
   // Phones/tablets (<=900px, same breakpoint as the CSS) get the
@@ -133,11 +133,11 @@ export default function Splash() {
           {/* Badges */}
           <div className="splash-badges">
             <div className="splash-badge">
-              <Shield className="w-4 h-4 text-brand-300" />
+              <Shield className="w-4 h-4 text-purple-300" />
               <span>GSTIN Registered Dealer</span>
             </div>
             <div className="splash-badge">
-              <MapPin className="w-4 h-4 text-brand-300" />
+              <MapPin className="w-4 h-4 text-blue-300" />
               <span>Kalikiri, AP</span>
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function Splash() {
             </button>
           </div>
 
-          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 46</div>
+          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 44</div>
           {/* Info Pills */}
           <div className="splash-info-row">
             <div className="splash-info-pill">
