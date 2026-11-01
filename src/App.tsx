@@ -22,6 +22,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Terms from './pages/Terms';
 import WelcomeGate from './pages/WelcomeGate';
 import Splash from './components/Splash';
+import SiteCursorDots from './components/SiteCursorDots';
 import type { Page } from './types';
 
 function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?: string } {
@@ -278,6 +279,7 @@ function ScrollAwareBottomNav() {
 export default function App() {
   return (
     <AppProvider>
+      <SiteCursorDots />
       <AppContent />
     </AppProvider>
   );
