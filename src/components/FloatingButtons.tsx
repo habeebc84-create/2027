@@ -36,7 +36,7 @@ export default function FloatingButtons({ onCartClick }: { onCartClick?: () => v
         href={waHref(siteContent.whatsapp, 'Hi, I want to inquire about construction materials')}
         target="_blank"
         rel="noreferrer"
-        className="w-11 h-11 md:w-14 md:h-14 bg-brand hover:bg-brand-300 rounded-full text-obsidian flex items-center justify-center shadow-[0_4px_20px_rgba(198,168,117,0.4)] hover:scale-110 transition-all duration-300"
+        className="w-11 h-11 md:w-14 md:h-14 bg-[#25D366] hover:bg-[#1DA851] rounded-full text-white flex items-center justify-center shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:scale-110 transition-all duration-300"
         title="Chat on WhatsApp"
       >
         <WhatsAppIcon className="w-6 h-6 md:w-7 md:h-7" />

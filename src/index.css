@@ -539,8 +539,8 @@
 }
 
 .splash-whatsapp {
-  background: var(--color-champagne);
-  box-shadow: 0 7px 20px rgba(198, 168, 117, 0.35);
+  background: #25D366;
+  box-shadow: 0 7px 20px rgba(37, 211, 102, 0.35);
 }
 
 .splash-nav-btn:hover {
