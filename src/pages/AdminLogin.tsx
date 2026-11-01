@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Lock, Mail, Eye, EyeOff, Timer } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { bustedImageSrc } from '../lib/images';
+import AdminLoginBackground from '../components/AdminLoginBackground';
 
 const LOCK_KEY = 'hsn_admin_login_lock';
 
@@ -96,24 +97,26 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative z-10">
+    <div className="relative min-h-screen overflow-hidden bg-obsidian">
+      <AdminLoginBackground />
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src={bustedImageSrc(siteSettings.logo || '/windows-h-logo.png')} alt="HSN Logo" className="w-16 h-16 rounded-2xl object-contain border border-gunmetal bg-obsidian/40 p-1.5 shadow-md mx-auto mb-4" />
+          <img src={bustedImageSrc(siteSettings.logo || '/windows-h-logo.png')} alt="HSN Logo" className="w-16 h-16 rounded-3xl object-contain border border-gunmetal bg-obsidian/60 p-1.5 shadow-lg shadow-obsidian/60 mx-auto mb-4" />
           <h1 className="text-2xl font-black text-ivory font-industrial">Admin Portal</h1>
           <p className="text-silver text-[11px] font-bold tracking-[0.18em] mt-1.5">HSN CEMENT & STEEL</p>
           <p className="text-silver text-xs mt-1">Authorized personnel only</p>
         </div>
 
-        <div className="bg-charcoal border border-gunmetal rounded-3xl p-8 backdrop-blur-xl">
+        <div className="admin-login-card bg-charcoal/80 border border-gunmetal/80 rounded-[2rem] p-8 backdrop-blur-2xl">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-brand-500/10 border border-brand-500/30 text-brand-400 px-4 py-3 rounded-xl text-xs font-bold text-center">
+              <div className="bg-brand-500/10 border border-brand-500/30 text-brand-400 px-4 py-3 rounded-2xl text-xs font-bold text-center">
                 {error}
               </div>
             )}
             {locked && (
-              <div className="bg-brand-500/10 border border-brand-500/30 text-brand-300 px-4 py-3 rounded-xl text-xs font-bold text-center space-y-1">
+              <div className="bg-brand-500/10 border border-brand-500/30 text-brand-300 px-4 py-3 rounded-2xl text-xs font-bold text-center space-y-1">
                 <p className="flex items-center justify-center space-x-2">
                   <Timer className="w-4 h-4 animate-pulse" />
                   <span>Too many failed attempts. Try again in {remaining}s</span>
@@ -131,7 +134,7 @@ export default function AdminLogin() {
                   onChange={e => setEmail(e.target.value)}
                   disabled={locked}
                   placeholder="admin@hsncement.com"
-                  className="w-full bg-obsidian border border-gunmetal text-ivory pl-10 pr-4 py-3 rounded-xl text-sm focus:outline-none focus:border-brand-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-obsidian border border-gunmetal text-ivory pl-10 pr-4 py-3 rounded-2xl text-sm focus:outline-none focus:border-brand-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -145,7 +148,7 @@ export default function AdminLogin() {
                   onChange={e => setPassword(e.target.value)}
                   disabled={locked}
                   placeholder="Enter admin password"
-                  className="w-full bg-obsidian border border-gunmetal text-ivory pl-10 pr-10 py-3 rounded-xl text-sm focus:outline-none focus:border-brand-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-obsidian border border-gunmetal text-ivory pl-10 pr-10 py-3 rounded-2xl text-sm focus:outline-none focus:border-brand-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-silver hover:text-ivory transition">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -155,7 +158,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={locked}
-              className="w-full btn-brand font-black py-3 rounded-xl text-sm transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-brand font-black py-3 rounded-2xl text-sm transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {locked ? `Locked — wait ${remaining}s` : submitting ? 'Verifying…' : 'Authenticate'}
             </button>
@@ -165,6 +168,7 @@ export default function AdminLogin() {
         <p className="text-center text-[10px] text-silver mt-4">
           Contact site owner for credentials
         </p>
+      </div>
       </div>
     </div>
   );
