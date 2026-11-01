@@ -13,24 +13,24 @@ export default function Footer() {
   const { setPage, siteContent, logoutAdmin } = useApp();
 
   return (
-    <footer className="bg-gradient-to-b from-slate-950/80 to-slate-950 border-t border-blue-500/30 text-slate-400 text-xs pt-16 pb-28 lg:pb-8 relative z-10 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-pink-500 to-indigo-500 shadow-[0_0_20px_rgba(6,182,212,0.8)]" />
-      <div className="absolute top-10 right-10 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-pink-500/10 blur-[120px] rounded-full pointer-events-none" />
+    <footer className="bg-gradient-to-b from-slate-950/80 to-slate-950 border-t border-orange-500/30 text-slate-400 text-xs pt-16 pb-28 lg:pb-8 relative z-10 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-500 shadow-[0_0_20px_rgba(255, 107, 0,0.8)]" />
+      <div className="absolute top-10 right-10 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setPage('home')}>
-              <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 rounded-xl object-contain bg-slate-900 border border-slate-800 p-1 shadow-sm group-hover:border-pink-500 transition" />
-              <span className="text-xl font-black text-white tracking-tight group-hover:text-pink-400 transition font-industrial">HSN CEMENT & STEEL</span>
+              <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 rounded-xl object-contain bg-slate-900 border border-slate-800 p-1 shadow-sm group-hover:border-orange-500 transition" />
+              <span className="text-xl font-black text-white tracking-tight group-hover:text-orange-400 transition font-industrial">HSN CEMENT & STEEL</span>
             </div>
             <p className="text-slate-400 leading-relaxed">
               Kalikiri's leading construction materials supplier. Authorised dealer for JSW, ACC, Dalmia, Bharathi Cement, Tata Tiscon, Vizag Steel & Bosch Cutting Blades.
             </p>
             <div className="flex items-center space-x-2 text-white font-semibold text-[11px]">
-              <Shield className="w-4 h-4 text-pink-400" />
+              <Shield className="w-4 h-4 text-orange-400" />
               <span>100% Factory Certified Genuine Quality</span>
             </div>
           </div>
@@ -80,8 +80,8 @@ export default function Footer() {
                 <a href={telHref(siteContent.phone)} className="hover:text-white font-bold">{nationalDigits(siteContent.phone)}</a>
               </li>
               <li className="flex items-center space-x-2">
-                <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
-                <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hover:text-[#25D366] font-bold">{siteContent.whatsapp}</a>
+                <WhatsAppIcon className="w-4 h-4 text-[#FF6B00] shrink-0" />
+                <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hover:text-[#FF6B00] font-bold">{siteContent.whatsapp}</a>
               </li>
               <li className="flex items-center space-x-2">
                 <Clock className="w-4 h-4 text-white shrink-0" />
@@ -99,7 +99,7 @@ export default function Footer() {
               © {new Date().getFullYear()} HSN CEMENT AND STEEL. All Rights Reserved. Kalikiri, AP.
             </p>
           </div>
-          <button onClick={() => setPage('terms')} className="mt-2 sm:mt-0 text-slate-300 hover:text-amber-400 font-bold transition flex items-center gap-1 cursor-pointer border border-white/15 px-3 py-1.5 rounded-full bg-slate-900/5">
+          <button onClick={() => setPage('terms')} className="mt-2 sm:mt-0 text-slate-300 hover:text-orange-400 font-bold transition flex items-center gap-1 cursor-pointer border border-white/15 px-3 py-1.5 rounded-full bg-slate-900/5">
             <span>Terms & Conditions</span>
           </button>
         </div>

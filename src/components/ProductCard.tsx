@@ -35,7 +35,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <img src={product.image} alt={product.name} className="w-full h-32 sm:h-48 object-cover group-hover:scale-105 transition duration-500" />
         <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
           {product.featured ? (
-            <div className="bg-amber-500/90 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center space-x-1 shrink-0">
+            <div className="bg-orange-500/90 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center space-x-1 shrink-0">
               <Star className="w-3 h-3" /><span>FEATURED</span>
             </div>
           ) : <span />}
@@ -52,7 +52,7 @@ export default function ProductCard({ product }: { product: Product }) {
             'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%)',
         }}>
         <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-1">{product.category}</div>
-        <h3 className="text-sm font-bold text-slate-100 leading-tight mb-2 line-clamp-2 cursor-pointer hover:text-blue-400 transition" onClick={handleViewDetail}>{product.name}</h3>
+        <h3 className="text-sm font-bold text-slate-100 leading-tight mb-2 line-clamp-2 cursor-pointer hover:text-orange-400 transition" onClick={handleViewDetail}>{product.name}</h3>
         <p className="text-xs text-slate-400 leading-relaxed mb-4 line-clamp-2 flex-1">{product.description}</p>
         <div className="flex items-center space-x-1.5 mb-3">
           <Package className="w-3 h-3 text-slate-500" /><span className="text-[10px] text-slate-400 font-semibold">{product.brand}</span>
@@ -61,7 +61,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="mb-3">
             <label className="text-[10px] font-bold text-slate-400 block mb-1">Select Size</label>
             <select value={selectedSize} onChange={e => setSelectedSize(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition">
+              className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition">
               {product.sizes.map(s => <option key={s.size} value={s.size}>{s.size} - Rs.{s.price}</option>)}
             </select>
           </div>
@@ -86,7 +86,7 @@ export default function ProductCard({ product }: { product: Product }) {
               <span className="text-xs font-bold text-slate-200 px-1 min-w-[20px] text-center">{quantity}</span>
               <button onClick={() => setQuantity(quantity + 1)} className="px-2 py-1.5 text-slate-400 hover:text-white text-xs font-bold">+</button>
             </div>
-            <button onClick={() => addToCart(product, quantity, selectedSize)} className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white p-2.5 rounded-xl transition shadow-lg">
+            <button onClick={() => addToCart(product, quantity, selectedSize)} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white p-2.5 rounded-xl transition shadow-lg">
               <ShoppingCart className="w-4 h-4" />
             </button>
           </div>

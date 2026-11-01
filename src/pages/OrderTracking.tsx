@@ -73,16 +73,16 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
         </button>
 
         <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-black text-white font-industrial">Track Your <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Order</span></h1>
+          <h1 className="text-3xl sm:text-4xl font-black text-white font-industrial">Track Your <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Order</span></h1>
           <p className="text-slate-400 text-sm mt-2">Enter your order details to check delivery status</p>
         </div>
 
         {/* Search Form */}
         <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8">
           <div className="space-y-4">
-            {error && <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl text-xs font-bold text-center">{error}</div>}
+            {error && <div className="bg-orange-500/10 border border-orange-500/30 text-orange-400 px-4 py-3 rounded-xl text-xs font-bold text-center">{error}</div>}
             {autoOpening && !found && (
-              <div className="bg-blue-500/10 border border-blue-500/30 text-blue-300 px-4 py-3 rounded-xl text-xs font-bold text-center flex items-center justify-center space-x-2">
+              <div className="bg-orange-500/10 border border-orange-500/30 text-orange-300 px-4 py-3 rounded-xl text-xs font-bold text-center flex items-center justify-center space-x-2">
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 <span>Opening live tracking for order #{initialOrderId}…</span>
               </div>
@@ -90,14 +90,14 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-1.5">Order ID</label>
               <input type="text" value={orderId} onChange={e => setOrderId(e.target.value)} placeholder="e.g., HSN-2026-00001"
-                className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition" />
+                className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition" />
             </div>
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-1.5">Mobile Number (optional)</label>
               <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} placeholder="10-digit mobile number"
-                className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition" />
+                className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition" />
             </div>
-            <button onClick={handleSearch} className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center space-x-2 hover:from-blue-400 hover:to-indigo-500 transition shadow-lg">
+            <button onClick={handleSearch} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center space-x-2 hover:from-orange-400 hover:to-orange-500 transition shadow-lg">
               <Search className="w-4 h-4" /><span>{searching ? 'Searching…' : 'Track Order'}</span>
             </button>
           </div>
@@ -129,17 +129,17 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
                   <div key={status.key} className="flex items-start space-x-4 relative">
                     {/* Line */}
                     {idx < ORDER_STATUSES.filter(s => s.key !== 'returned').length - 1 && (
-                      <div className={`absolute left-4 top-8 w-0.5 h-8 ${isCompleted ? 'bg-emerald-500' : 'bg-slate-700'}`} />
+                      <div className={`absolute left-4 top-8 w-0.5 h-8 ${isCompleted ? 'bg-orange-500' : 'bg-slate-700'}`} />
                     )}
                     {/* Dot */}
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 ${isCurrent ? 'bg-blue-500/30 border-2 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : isCompleted ? 'bg-emerald-500/20 border border-emerald-500' : 'bg-slate-800 border border-slate-700'}`}>
-                      <Icon className={`w-3.5 h-3.5 ${isCurrent ? 'text-blue-400' : isCompleted ? 'text-emerald-400' : 'text-slate-600'}`} />
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 ${isCurrent ? 'bg-orange-500/30 border-2 border-orange-400 shadow-[0_0_15px_rgba(255, 107, 0,0.3)]' : isCompleted ? 'bg-orange-500/20 border border-orange-500' : 'bg-slate-800 border border-slate-700'}`}>
+                      <Icon className={`w-3.5 h-3.5 ${isCurrent ? 'text-orange-400' : isCompleted ? 'text-orange-400' : 'text-slate-600'}`} />
                     </div>
                     {/* Label */}
                     <div className={`pb-8 ${isCurrent ? 'text-white' : isCompleted ? 'text-slate-300' : 'text-slate-600'}`}>
                       <div className={`text-sm font-bold ${isCurrent ? 'text-white' : ''}`}>{status.label}</div>
                       {timelineEntry && <div className="text-[10px] text-slate-500">{new Date(timelineEntry.date).toLocaleString()}</div>}
-                      {isCurrent && <div className="text-[10px] text-blue-400 font-bold mt-0.5">Current Status</div>}
+                      {isCurrent && <div className="text-[10px] text-orange-400 font-bold mt-0.5">Current Status</div>}
                     </div>
                   </div>
                 );
@@ -156,23 +156,23 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
                 <div className="text-xs font-bold text-white">HSN Cement &amp; Steel</div>
                 <div className="text-[10px] text-slate-400">Scan to re-open live status of this order</div>
                 <button onClick={copyTrackingLink} className="mt-2 inline-flex items-center space-x-1.5 bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-[10px] font-bold text-slate-300 hover:text-white hover:bg-white/15 transition">
-                  {linkCopied ? <><Check className="w-3 h-3 text-emerald-400" /><span className="text-emerald-400">Link copied!</span></> : <><Copy className="w-3 h-3" /><span>Copy tracking link</span></>}
+                  {linkCopied ? <><Check className="w-3 h-3 text-orange-400" /><span className="text-orange-400">Link copied!</span></> : <><Copy className="w-3 h-3" /><span>Copy tracking link</span></>}
                 </button>
               </div>
             </div>
 
             {/* Delivery Info */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
-              <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-blue-400" /><span className="text-slate-300">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
-              <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-emerald-400" /><span className="text-slate-300">{order.deliveryLocation} (Rs.{order.finalDeliveryCharge ?? order.deliveryCharge}{order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge ? ' final' : ''})</span></div>
-              <div className="flex items-center space-x-2"><Phone className="w-3.5 h-3.5 text-purple-400" /><span className="text-slate-300">{order.customer.mobile}</span></div>
+              <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-orange-400" /><span className="text-slate-300">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
+              <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-orange-400" /><span className="text-slate-300">{order.deliveryLocation} (Rs.{order.finalDeliveryCharge ?? order.deliveryCharge}{order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge ? ' final' : ''})</span></div>
+              <div className="flex items-center space-x-2"><Phone className="w-3.5 h-3.5 text-orange-400" /><span className="text-slate-300">{order.customer.mobile}</span></div>
             </div>
           </div>
         )}
 
         {/* Help */}
         <div className="text-center mt-8 text-xs text-slate-500">
-          Need help? <a href={telHref(siteContent.phone)} className="text-blue-400 font-bold hover:underline">Call {nationalDigits(siteContent.phone)}</a>
+          Need help? <a href={telHref(siteContent.phone)} className="text-orange-400 font-bold hover:underline">Call {nationalDigits(siteContent.phone)}</a>
         </div>
       </div>
     </div>

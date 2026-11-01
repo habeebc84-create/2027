@@ -50,10 +50,10 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
     <div className="min-h-screen bg-slate-950 relative overflow-hidden">
       {/* Glassy background with animated gradient orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] bg-pink-600/15 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute -bottom-[15%] -right-[10%] w-[55vw] h-[55vw] bg-blue-600/15 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '10s' }} />
-        <div className="absolute top-[30%] left-[40%] w-[35vw] h-[35vw] bg-amber-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '12s' }} />
-        <div className="absolute top-[60%] right-[20%] w-[30vw] h-[30vw] bg-purple-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '9s' }} />
+        <div className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] bg-orange-600/15 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute -bottom-[15%] -right-[10%] w-[55vw] h-[55vw] bg-orange-600/15 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '10s' }} />
+        <div className="absolute top-[30%] left-[40%] w-[35vw] h-[35vw] bg-orange-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '12s' }} />
+        <div className="absolute top-[60%] right-[20%] w-[30vw] h-[30vw] bg-orange-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '9s' }} />
       </div>
       {/* Glassy mesh overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-slate-950/30 to-black/50 pointer-events-none" />
@@ -75,7 +75,7 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
               <span className="hidden sm:inline">Call Now</span>
             </a>
             <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer"
-              className="flex items-center space-x-1.5 bg-[#25D366]/90 hover:bg-[#25D366] text-white px-3 py-2 rounded-xl text-[10px] sm:text-xs font-bold transition hover:scale-105 border border-[#25D366]/30">
+              className="flex items-center space-x-1.5 bg-[#FF6B00]/90 hover:bg-[#FF6B00] text-white px-3 py-2 rounded-xl text-[10px] sm:text-xs font-bold transition hover:scale-105 border border-[#FF6B00]/30">
               <WhatsAppIcon className="w-3.5 h-3.5" />
               <span>WhatsApp</span>
             </a>
@@ -84,9 +84,9 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
 
         {/* Hero Section */}
         <div className={`text-center mb-10 sm:mb-14 transition-all duration-700 ${phase >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/25 px-4 py-1.5 rounded-full mb-4">
-            <Package className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-[10px] sm:text-xs font-bold text-amber-300 uppercase tracking-wider">Browse Our Complete Catalog</span>
+          <div className="inline-flex items-center space-x-2 bg-orange-500/10 border border-orange-500/25 px-4 py-1.5 rounded-full mb-4">
+            <Package className="w-3.5 h-3.5 text-orange-400" />
+            <span className="text-[10px] sm:text-xs font-bold text-orange-300 uppercase tracking-wider">Browse Our Complete Catalog</span>
           </div>
           <h2 className="gate-heading-in text-3xl sm:text-5xl lg:text-6xl font-black text-white font-industrial tracking-tight mb-3">
             {gateWords.map(([word, gradient], wi) => {
@@ -114,7 +114,7 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
         <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 transition-all duration-700 ${phase >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
           {activeCategories.map((cat, i) => (
             <button key={cat.id} onClick={() => onShopCategory(cat.name)}
-              className="group bg-white/5 hover:bg-white/10 border border-white/8 hover:border-amber-500/30 rounded-2xl p-4 sm:p-5 text-center transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
+              className="group bg-white/5 hover:bg-white/10 border border-white/8 hover:border-orange-500/30 rounded-2xl p-4 sm:p-5 text-center transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
               style={{ transitionDelay: `${i * 50}ms` }}>
               <div className="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
                 {categoryIcons[cat.name] || '📦'}
@@ -123,7 +123,7 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
               <p className="text-[9px] sm:text-[10px] text-slate-500">
                 {products.filter(p => p.category === cat.name && p.enabled).length} products
               </p>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-400 mx-auto mt-2 transition-colors" />
+              <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-orange-400 mx-auto mt-2 transition-colors" />
             </button>
           ))}
         </div>
@@ -135,10 +135,10 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
           <div className={`transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center space-x-2">
-                <Star className="w-4 h-4 text-amber-400" />
+                <Star className="w-4 h-4 text-orange-400" />
                 <h3 className="text-sm sm:text-base font-black text-white font-industrial">Featured Products</h3>
               </div>
-              <button onClick={onContinue} className="text-[10px] sm:text-xs font-bold text-amber-400 hover:text-amber-300 transition flex items-center space-x-1">
+              <button onClick={onContinue} className="text-[10px] sm:text-xs font-bold text-orange-400 hover:text-orange-300 transition flex items-center space-x-1">
                 <span>View All</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
@@ -146,13 +146,13 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {featuredProducts.map((p, i) => (
                 <button key={p.id} onClick={() => onShopCategory(p.category)}
-                  className="group bg-white/5 hover:bg-white/10 border border-white/8 hover:border-amber-500/30 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] text-left cursor-pointer"
+                  className="group bg-white/5 hover:bg-white/10 border border-white/8 hover:border-orange-500/30 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] text-left cursor-pointer"
                   style={{ transitionDelay: `${i * 60}ms` }}>
                   <div className="aspect-square bg-slate-900/50 overflow-hidden">
                     <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   <div className="p-2.5 sm:p-3">
-                    <p className="text-[9px] text-amber-400 font-bold uppercase tracking-wider">{p.brand}</p>
+                    <p className="text-[9px] text-orange-400 font-bold uppercase tracking-wider">{p.brand}</p>
                     <h4 className="text-[10px] sm:text-xs font-bold text-white line-clamp-2 mt-0.5 leading-tight">{p.name}</h4>
                     <p className="text-xs sm:text-sm font-black text-white mt-1">₹{p.price.toLocaleString('en-IN')}</p>
                   </div>
@@ -167,9 +167,9 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
         <Reveal delay={200} className="mb-10 sm:mb-14">
         <div className={`grid grid-cols-3 gap-3 sm:gap-4 transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           {[
-            { label: 'Our Services', desc: 'Site delivery & custom cutting', icon: Truck, color: 'from-blue-500/20 to-cyan-600/20' },
-            { label: 'About HSN', desc: '15+ years of trust', icon: Shield, color: 'from-purple-500/20 to-pink-600/20' },
-            { label: 'Contact Us', desc: 'Kalikiri, AP – 517234', icon: MapPin, color: 'from-emerald-500/20 to-teal-600/20' },
+            { label: 'Our Services', desc: 'Site delivery & custom cutting', icon: Truck, color: 'from-orange-500/20 to-orange-600/20' },
+            { label: 'About HSN', desc: '15+ years of trust', icon: Shield, color: 'from-orange-500/20 to-orange-600/20' },
+            { label: 'Contact Us', desc: 'Kalikiri, AP – 517234', icon: MapPin, color: 'from-orange-500/20 to-orange-600/20' },
           ].map((item, i) => {
             const Icon = item.icon;
             return (
@@ -201,10 +201,10 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
         {/* CTA Section */}
         <div className={`text-center space-y-4 transition-all duration-700 ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
           <button onClick={onContinue}
-            className="group px-8 sm:px-12 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/10 hover:from-amber-500/30 hover:via-orange-500/30 hover:to-amber-500/20 border border-amber-500/30 hover:border-amber-400/50 text-white font-black text-sm sm:text-base tracking-wide inline-flex items-center space-x-3 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-[0_8px_32px_rgba(245,158,11,0.15)] hover:shadow-[0_12px_40px_rgba(245,158,11,0.25)] cursor-pointer">
-            <ShoppingBag className="w-5 h-5 text-amber-300" />
+            className="group px-8 sm:px-12 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-orange-500/20 via-orange-500/20 to-orange-500/10 hover:from-orange-500/30 hover:via-orange-500/30 hover:to-orange-500/20 border border-orange-500/30 hover:border-orange-400/50 text-white font-black text-sm sm:text-base tracking-wide inline-flex items-center space-x-3 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-[0_8px_32px_rgba(255, 107, 0,0.15)] hover:shadow-[0_12px_40px_rgba(255, 107, 0,0.25)] cursor-pointer">
+            <ShoppingBag className="w-5 h-5 text-orange-300" />
             <span>CONTINUE TO FULL WEBSITE</span>
-            <ArrowRight className="w-5 h-5 text-amber-300 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 text-orange-300 group-hover:translate-x-1 transition-transform" />
           </button>
           <p className="text-[10px] sm:text-xs text-slate-500">
             Explore all {products.filter(p => p.enabled).length}+ products across {activeCategories.length} categories

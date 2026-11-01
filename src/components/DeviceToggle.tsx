@@ -80,7 +80,7 @@ const DeviceToggle = ({ mode, onToggle }: DeviceToggleProps) => {
               {active && (
                 <motion.span
                   layoutId="device-check"
-                  className="ml-0.5 text-blue-500"
+                  className="ml-0.5 text-orange-500"
                   initial={{ opacity: 0, scale: 0.4 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.4 }}

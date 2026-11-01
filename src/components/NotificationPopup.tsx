@@ -3,11 +3,11 @@ import { X, Megaphone, Tag, RefreshCw, AlertTriangle, Bell, LucideIcon } from 'l
 import { useApp } from '../context/AppContext';
 
 const typeConfig: Record<string, { icon: LucideIcon; color: string; bg: string; border: string }> = {
-  announcement: { icon: Megaphone, color: 'text-blue-400', bg: 'bg-blue-500/15', border: 'border-blue-500/30' },
-  offer: { icon: Tag, color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/30' },
-  update: { icon: RefreshCw, color: 'text-amber-400', bg: 'bg-amber-500/15', border: 'border-amber-500/30' },
-  alert: { icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/15', border: 'border-rose-500/30' },
-  order: { icon: Bell, color: 'text-purple-400', bg: 'bg-purple-500/15', border: 'border-purple-500/30' },
+  announcement: { icon: Megaphone, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
+  offer: { icon: Tag, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
+  update: { icon: RefreshCw, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
+  alert: { icon: AlertTriangle, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
+  order: { icon: Bell, color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/30' },
 };
 
 export default function NotificationPopup() {
@@ -66,7 +66,7 @@ export default function NotificationPopup() {
         {/* Header */}
         <div className="p-5 border-b border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
               <Bell className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -95,7 +95,7 @@ export default function NotificationPopup() {
                 <div
                   key={n.id}
                   onClick={() => dismissNotification(n.id)}
-                  className={`bg-white/5 border rounded-2xl p-4 cursor-pointer transition hover:border-purple-500/30 ${n.read || isDismissed ? 'border-white/5 opacity-70' : 'border-purple-500/20'}`}
+                  className={`bg-white/5 border rounded-2xl p-4 cursor-pointer transition hover:border-orange-500/30 ${n.read || isDismissed ? 'border-white/5 opacity-70' : 'border-orange-500/20'}`}
                 >
                   <div className="flex items-start space-x-3">
                     <div className={`w-11 h-11 rounded-xl ${config.bg} border ${config.border} flex items-center justify-center shrink-0`}>
@@ -103,9 +103,9 @@ export default function NotificationPopup() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        {!n.read && !isDismissed && <div className="w-2 h-2 bg-purple-400 rounded-full shrink-0 animate-pulse" />}
+                        {!n.read && !isDismissed && <div className="w-2 h-2 bg-orange-400 rounded-full shrink-0 animate-pulse" />}
                         <div className="text-sm font-bold text-white truncate">{n.title}</div>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-bold border border-purple-500/20 shrink-0">{n.type}</span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 font-bold border border-orange-500/20 shrink-0">{n.type}</span>
                       </div>
                       <p className="text-xs text-slate-300 leading-relaxed">{n.content}</p>
                       {n.createdAt && (

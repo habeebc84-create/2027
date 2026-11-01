@@ -35,7 +35,7 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                 <ShoppingCart className="w-12 h-12 text-slate-400" />
                 <p className="text-sm font-medium">Your cart is empty.</p>
                 <p className="text-xs text-slate-500 max-w-xs">Explore our catalog for cement, steel rebar, cutting blades, and hardware tools.</p>
-                <button onClick={() => { onClose(); setPage('home'); }} className="bg-blue-500 hover:bg-blue-400 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">Return to Shop</button>
+                <button onClick={() => { onClose(); setPage('home'); }} className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">Return to Shop</button>
               </div>
             ) : (
               cart.map((item, idx) => {
@@ -52,7 +52,7 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                     <div className="flex-1 min-w-0">
                       <h4 className="text-xs font-bold text-slate-100 truncate">{item.product.name}</h4>
                       {item.selectedSize && (
-                        <span className="text-[10px] bg-blue-500/10 text-white px-2 py-0.5 rounded border border-blue-500/30 font-bold inline-block mt-0.5">
+                        <span className="text-[10px] bg-orange-500/10 text-white px-2 py-0.5 rounded border border-orange-500/30 font-bold inline-block mt-0.5">
                           Size: {item.selectedSize}
                         </span>
                       )}
@@ -72,7 +72,7 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                         </div>
                       </div>
                     </div>
-                    <button onClick={() => removeFromCart(item.product.id, item.selectedSize)} className="text-slate-500 hover:text-rose-400 p-1 transition">
+                    <button onClick={() => removeFromCart(item.product.id, item.selectedSize)} className="text-slate-500 hover:text-orange-400 p-1 transition">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
@@ -91,7 +91,7 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                 </div>
                 <div className="flex justify-between">
                   <span>Site Delivery Charge</span>
-                  <span className="text-pink-400 font-bold">FREE (Kalikiri Zone)</span>
+                  <span className="text-orange-400 font-bold">FREE (Kalikiri Zone)</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-slate-800 text-sm font-bold text-slate-100">
                   <span>Total Estimated Amount</span>
@@ -102,7 +102,7 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                 <Truck className="w-4 h-4 text-white shrink-0" />
                 <span>Heavy fleet lorry unloading directly at your building site.</span>
               </div>
-              <button onClick={onProceedToCheckout} className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 py-3.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 shadow-lg text-white transition">
+              <button onClick={onProceedToCheckout} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 py-3.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 shadow-lg text-white transition">
                 <span>Proceed to Order Checkout</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
