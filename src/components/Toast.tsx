@@ -13,8 +13,8 @@ export default function ToastContainer() {
           key={toast.id}
           className={`flex items-center space-x-2 px-4 py-3 rounded-xl text-xs font-bold shadow-2xl backdrop-blur-xl border animate-[slideIn_0.3s_ease-out] ${
             toast.type === 'error'
-              ? 'bg-orange-500/20 border-orange-500/30 text-orange-300'
-              : 'bg-orange-500/20 border-orange-500/30 text-orange-300'
+              ? 'bg-charcoal border-champagne text-ivory'
+              : 'status-success'
           }`}
         >
           {toast.type === 'error' ? (

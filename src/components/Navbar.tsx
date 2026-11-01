@@ -35,14 +35,14 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 pt-2 px-3 sm:px-5">
       {/* Floating rounded bar — compact height */}
-      <div className="w-full max-w-7xl mx-auto rounded-2xl bg-slate-950/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-3 sm:px-4 py-1.5">
+      <div className="w-full max-w-7xl mx-auto rounded-2xl bg-obsidian/90 backdrop-blur-xl border border-gunmetal shadow-[0_8px_32px_rgba(0,0,0,0.3)] px-3 sm:px-4 py-1.5">
         <div className="flex items-center justify-between gap-3 sm:gap-4 h-12 sm:h-16">
           {/* Logo */}
           <a href="/" onClick={e => handleNav(e, 'home')} className="flex items-center space-x-2 cursor-pointer group shrink-0" aria-label="HSN Cement and Steel — Home">
-            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl object-contain border border-white/10 bg-slate-950/40 p-1 shadow-md group-hover:border-white/30 transition duration-300" />
+            <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl object-contain border border-gunmetal bg-obsidian/40 p-1 shadow-md group-hover:border-white/30 transition duration-300" />
             <div className="flex flex-col">
-              <span className="text-sm sm:text-lg font-black text-white tracking-tight group-hover:text-slate-200 transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
-              <span className="text-[11px] tracking-[0.08em] font-bold text-slate-400 uppercase hidden sm:block leading-tight">Premium Building Materials</span>
+              <span className="text-sm sm:text-lg font-black text-ivory tracking-tight group-hover:text-ivory transition font-industrial leading-tight">HSN CEMENT & STEEL</span>
+              <span className="text-[11px] tracking-[0.08em] font-bold text-silver uppercase hidden sm:block leading-tight">Premium Building Materials</span>
             </div>
           </a>
 
@@ -57,7 +57,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
                   type="button"
                   aria-current={isActive ? 'page' : undefined}
                   onClick={e => handleNav(e, item.page)}
-                  className={`whitespace-nowrap px-3 py-2 rounded-full text-xs font-bold transition ${isActive ? 'bg-white/10 text-white' : 'text-slate-300 hover:text-white hover:bg-white/5'}`}
+                  className={`whitespace-nowrap px-3 py-2 rounded-full text-xs font-bold transition ${isActive ? 'bg-champagne/15 text-champagne' : 'text-silver hover:text-ivory hover:bg-charcoal'}`}
                 >
                   {item.label}
                 </button>
@@ -67,14 +67,14 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
 
           {/* Right actions */}
           <div className="flex items-center space-x-2 shrink-0">
-            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-[#FF6B00] hover:bg-[#E85A00] text-white px-3.5 py-2 rounded-lg text-xs xl:text-sm font-bold transition shadow-md shadow-orange-500/20">
+            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-brand hover:bg-brand-300 text-obsidian px-3.5 py-2 rounded-lg text-xs xl:text-sm font-bold transition shadow-md shadow-brand-500/20">
               <WhatsAppIcon className="w-4 h-4" />
               <span>WhatsApp</span>
             </a>
-            <button onClick={onCartClick} className="relative bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-2.5 rounded-lg transition shadow-md" aria-label="Open cart">
+            <button onClick={onCartClick} className="relative bg-charcoal/60 hover:bg-slate-700/60 border border-gunmetal text-ivory p-2.5 rounded-lg transition shadow-md" aria-label="Open cart">
               <ShoppingCart className="w-6 h-6" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-lg">
+                <span className="absolute -top-1 -right-1 bg-brand text-obsidian text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-lg">
                   {cartCount}
                 </span>
               )}

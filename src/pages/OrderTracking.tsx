@@ -68,36 +68,36 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
   return (
     <div className="py-12 min-h-screen bg-transparent relative z-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button onClick={() => setPage('home')} className="inline-flex items-center space-x-2 text-xs font-bold text-slate-300 hover:text-white transition mb-6">
+        <button onClick={() => setPage('home')} className="inline-flex items-center space-x-2 text-xs font-bold text-silver hover:text-ivory transition mb-6">
           <ArrowLeft className="w-4 h-4" /><span>Back to Home</span>
         </button>
 
         <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-black text-white font-industrial">Track Your <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Order</span></h1>
-          <p className="text-slate-400 text-sm mt-2">Enter your order details to check delivery status</p>
+          <h1 className="text-3xl sm:text-4xl font-black text-ivory font-industrial">Track Your <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">Order</span></h1>
+          <p className="text-silver text-sm mt-2">Enter your order details to check delivery status</p>
         </div>
 
         {/* Search Form */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8">
+        <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 sm:p-8 backdrop-blur-xl mb-8">
           <div className="space-y-4">
-            {error && <div className="bg-orange-500/10 border border-orange-500/30 text-orange-400 px-4 py-3 rounded-xl text-xs font-bold text-center">{error}</div>}
+            {error && <div className="bg-brand-500/10 border border-brand-500/30 text-brand-400 px-4 py-3 rounded-xl text-xs font-bold text-center">{error}</div>}
             {autoOpening && !found && (
-              <div className="bg-orange-500/10 border border-orange-500/30 text-orange-300 px-4 py-3 rounded-xl text-xs font-bold text-center flex items-center justify-center space-x-2">
+              <div className="bg-brand-500/10 border border-brand-500/30 text-brand-300 px-4 py-3 rounded-xl text-xs font-bold text-center flex items-center justify-center space-x-2">
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 <span>Opening live tracking for order #{initialOrderId}…</span>
               </div>
             )}
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">Order ID</label>
+              <label className="text-xs font-bold text-silver block mb-1.5">Order ID</label>
               <input type="text" value={orderId} onChange={e => setOrderId(e.target.value)} placeholder="e.g., HSN-2026-00001"
-                className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition" />
+                className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-brand-500 transition" />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">Mobile Number (optional)</label>
+              <label className="text-xs font-bold text-silver block mb-1.5">Mobile Number (optional)</label>
               <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} placeholder="10-digit mobile number"
-                className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition" />
+                className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-brand-500 transition" />
             </div>
-            <button onClick={handleSearch} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center space-x-2 hover:from-orange-400 hover:to-orange-500 transition shadow-lg">
+            <button onClick={handleSearch} className="w-full btn-brand font-bold py-3 rounded-xl text-sm flex items-center justify-center space-x-2 hover:from-brand-400 hover:to-brand-500 transition shadow-lg">
               <Search className="w-4 h-4" /><span>{searching ? 'Searching…' : 'Track Order'}</span>
             </button>
           </div>
@@ -105,15 +105,15 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
 
         {/* Order Result */}
         {order && (
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 sm:p-8 backdrop-blur-xl space-y-6">
+            <div className="flex items-center justify-between border-b border-gunmetal pb-4">
               <div>
-                <div className="text-lg font-black text-white">{order.orderId}</div>
-                <div className="text-xs text-slate-400">Placed on {new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                <div className="text-lg font-black text-ivory">{order.orderId}</div>
+                <div className="text-xs text-silver">Placed on {new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
               </div>
               <div className="text-right">
-                <div className="text-lg font-black text-white">Rs.{order.total.toLocaleString('en-IN')}</div>
-                <div className="text-xs text-slate-400">{order.items.length} item(s)</div>
+                <div className="text-lg font-black text-ivory">Rs.{order.total.toLocaleString('en-IN')}</div>
+                <div className="text-xs text-silver">{order.items.length} item(s)</div>
               </div>
             </div>
 
@@ -129,17 +129,17 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
                   <div key={status.key} className="flex items-start space-x-4 relative">
                     {/* Line */}
                     {idx < ORDER_STATUSES.filter(s => s.key !== 'returned').length - 1 && (
-                      <div className={`absolute left-4 top-8 w-0.5 h-8 ${isCompleted ? 'bg-orange-500' : 'bg-slate-700'}`} />
+                      <div className={`absolute left-4 top-8 w-0.5 h-8 ${isCompleted ? 'bg-success' : 'bg-gunmetal'}`} />
                     )}
                     {/* Dot */}
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 ${isCurrent ? 'bg-orange-500/30 border-2 border-orange-400 shadow-[0_0_15px_rgba(255, 107, 0,0.3)]' : isCompleted ? 'bg-orange-500/20 border border-orange-500' : 'bg-slate-800 border border-slate-700'}`}>
-                      <Icon className={`w-3.5 h-3.5 ${isCurrent ? 'text-orange-400' : isCompleted ? 'text-orange-400' : 'text-slate-600'}`} />
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 ${isCompleted ? 'bg-success/20 border border-success' : 'bg-charcoal border border-gunmetal'} ${isCurrent ? 'ring-2 ring-champagne/60' : ''}`}>
+                      <Icon className={`w-3.5 h-3.5 ${isCompleted ? 'text-success-foreground' : 'text-slate-600'}`} />
                     </div>
                     {/* Label */}
-                    <div className={`pb-8 ${isCurrent ? 'text-white' : isCompleted ? 'text-slate-300' : 'text-slate-600'}`}>
-                      <div className={`text-sm font-bold ${isCurrent ? 'text-white' : ''}`}>{status.label}</div>
-                      {timelineEntry && <div className="text-[10px] text-slate-500">{new Date(timelineEntry.date).toLocaleString()}</div>}
-                      {isCurrent && <div className="text-[10px] text-orange-400 font-bold mt-0.5">Current Status</div>}
+                    <div className={`pb-8 ${isCurrent ? 'text-ivory' : isCompleted ? 'text-silver' : 'text-slate-600'}`}>
+                      <div className={`text-sm font-bold ${isCurrent ? 'text-ivory' : ''}`}>{status.label}</div>
+                      {timelineEntry && <div className="text-[10px] text-silver">{new Date(timelineEntry.date).toLocaleString()}</div>}
+                      {isCurrent && <div className="text-[10px] text-champagne font-bold mt-0.5">Current Status</div>}
                     </div>
                   </div>
                 );
@@ -147,32 +147,32 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
             </div>
 
             {/* Share / re-open this tracking page (same QR as the invoice) */}
-            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 flex items-center space-x-4">
+            <div className="bg-charcoal/50 border border-gunmetal rounded-2xl p-4 flex items-center space-x-4">
               <div className="w-20 h-20 shrink-0 rounded-lg bg-white p-1.5">
                 <QRCodeSVG value={trackUrl} size={68} level="M" marginSize={0} />
               </div>
               <div className="min-w-0">
                 <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN logo" className="h-8 mb-1 rounded object-contain" />
-                <div className="text-xs font-bold text-white">HSN Cement &amp; Steel</div>
-                <div className="text-[10px] text-slate-400">Scan to re-open live status of this order</div>
-                <button onClick={copyTrackingLink} className="mt-2 inline-flex items-center space-x-1.5 bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-[10px] font-bold text-slate-300 hover:text-white hover:bg-white/15 transition">
-                  {linkCopied ? <><Check className="w-3 h-3 text-orange-400" /><span className="text-orange-400">Link copied!</span></> : <><Copy className="w-3 h-3" /><span>Copy tracking link</span></>}
+                <div className="text-xs font-bold text-ivory">HSN Cement &amp; Steel</div>
+                <div className="text-[10px] text-silver">Scan to re-open live status of this order</div>
+                <button onClick={copyTrackingLink} className="mt-2 inline-flex items-center space-x-1.5 bg-white/10 border border-gunmetal px-3 py-1.5 rounded-full text-[10px] font-bold text-silver hover:text-ivory hover:bg-white/15 transition">
+                  {linkCopied ? <><Check className="w-3 h-3 text-brand-400" /><span className="text-success-foreground">Link copied!</span></> : <><Copy className="w-3 h-3" /><span>Copy tracking link</span></>}
                 </button>
               </div>
             </div>
 
             {/* Delivery Info */}
-            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
-              <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-orange-400" /><span className="text-slate-300">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
-              <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-orange-400" /><span className="text-slate-300">{order.deliveryLocation} (Rs.{order.finalDeliveryCharge ?? order.deliveryCharge}{order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge ? ' final' : ''})</span></div>
-              <div className="flex items-center space-x-2"><Phone className="w-3.5 h-3.5 text-orange-400" /><span className="text-slate-300">{order.customer.mobile}</span></div>
+            <div className="bg-charcoal/50 border border-gunmetal rounded-2xl p-4 space-y-2 text-xs">
+              <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
+              <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.deliveryLocation} (Rs.{order.finalDeliveryCharge ?? order.deliveryCharge}{order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge ? ' final' : ''})</span></div>
+              <div className="flex items-center space-x-2"><Phone className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.customer.mobile}</span></div>
             </div>
           </div>
         )}
 
         {/* Help */}
-        <div className="text-center mt-8 text-xs text-slate-500">
-          Need help? <a href={telHref(siteContent.phone)} className="text-orange-400 font-bold hover:underline">Call {nationalDigits(siteContent.phone)}</a>
+        <div className="text-center mt-8 text-xs text-silver">
+          Need help? <a href={telHref(siteContent.phone)} className="text-brand-400 font-bold hover:underline">Call {nationalDigits(siteContent.phone)}</a>
         </div>
       </div>
     </div>

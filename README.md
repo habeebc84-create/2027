@@ -1,5 +1,12 @@
 # React + TypeScript + Vite
 
+## Color system
+
+The production palette lives in `src/index.css` (`@theme`) and is documented in
+[`COLOR_PALETTE.md`](./COLOR_PALETTE.md). Brand accent is Burnished Champagne,
+purchase actions use Construction Orange, and success states use Deep Green.
+PDF invoices mirror the same tokens through `src/lib/pdfColors.ts`.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

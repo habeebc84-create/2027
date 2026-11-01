@@ -10,44 +10,44 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 );
 
 export default function Footer() {
-  const { setPage, siteContent, logoutAdmin } = useApp();
+  const { setPage, siteContent } = useApp();
 
   return (
-    <footer className="bg-gradient-to-b from-slate-950/80 to-slate-950 border-t border-orange-500/30 text-slate-400 text-xs pt-16 pb-28 lg:pb-8 relative z-10 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-500 shadow-[0_0_20px_rgba(255, 107, 0,0.8)]" />
-      <div className="absolute top-10 right-10 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
+    <footer className="bg-gradient-to-b from-obsidian/80 to-obsidian border-t border-brand-500/30 text-silver text-xs pt-16 pb-28 lg:pb-8 relative z-10 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-400 via-brand-500 to-brand-500 shadow-[0_0_20px_rgba(198,168,117,0.8)]" />
+      <div className="absolute top-10 right-10 w-96 h-96 bg-brand-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-brand-500/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setPage('home')}>
-              <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 rounded-xl object-contain bg-slate-900 border border-slate-800 p-1 shadow-sm group-hover:border-orange-500 transition" />
-              <span className="text-xl font-black text-white tracking-tight group-hover:text-orange-400 transition font-industrial">HSN CEMENT & STEEL</span>
+              <img src={bustedImageSrc('/windows-h-logo.png')} alt="HSN Logo" className="w-12 h-12 rounded-xl object-contain bg-charcoal border border-gunmetal p-1 shadow-sm group-hover:border-brand-500 transition" />
+              <span className="text-xl font-black text-ivory tracking-tight group-hover:text-brand-400 transition font-industrial">HSN CEMENT & STEEL</span>
             </div>
-            <p className="text-slate-400 leading-relaxed">
+            <p className="text-silver leading-relaxed">
               Kalikiri's leading construction materials supplier. Authorised dealer for JSW, ACC, Dalmia, Bharathi Cement, Tata Tiscon, Vizag Steel & Bosch Cutting Blades.
             </p>
-            <div className="flex items-center space-x-2 text-white font-semibold text-[11px]">
-              <Shield className="w-4 h-4 text-orange-400" />
+            <div className="flex items-center space-x-2 text-ivory font-semibold text-[11px]">
+              <Shield className="w-4 h-4 text-brand-400" />
               <span>100% Factory Certified Genuine Quality</span>
             </div>
           </div>
 
           {/* Quick Nav */}
           <div>
-            <h4 className="text-sm font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2">Quick Navigation</h4>
+            <h4 className="text-sm font-bold text-ivory mb-4 border-b border-gunmetal pb-2">Quick Navigation</h4>
             <ul className="space-y-2 font-medium">
               {['home', 'products', 'services', 'gallery', 'about', 'contact'].map(page => (
                 <li key={page}>
-                  <button onClick={() => setPage(page as any)} className="hover:text-white transition capitalize text-xs">
+                  <button onClick={() => setPage(page as any)} className="hover:text-ivory transition capitalize text-xs">
                     {page === 'about' ? 'About Us' : page}
                   </button>
                 </li>
               ))}
               <li>
-                <button onClick={() => setPage('terms')} className="hover:text-white transition text-xs">
+                <button onClick={() => setPage('terms')} className="hover:text-ivory transition text-xs">
                   Terms & Conditions
                 </button>
               </li>
@@ -56,35 +56,35 @@ export default function Footer() {
 
           {/* Top Categories */}
           <div>
-            <h4 className="text-sm font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2">Top Categories</h4>
+            <h4 className="text-sm font-bold text-ivory mb-4 border-b border-gunmetal pb-2">Top Categories</h4>
             <ul className="space-y-2 font-medium text-xs">
-              <li><button onClick={() => setPage('products')} className="hover:text-white transition">OPC & PPC Cement Bags</button></li>
-              <li><button onClick={() => setPage('products')} className="hover:text-white transition">Tata Tiscon TMT (6mm-32mm)</button></li>
-              <li><button onClick={() => setPage('products')} className="hover:text-white transition">Vizag Steel Rebar</button></li>
-              <li><button onClick={() => setPage('products')} className="hover:text-white transition">Bosch Diamond & Metal Cutting Blades</button></li>
-              <li><button onClick={() => setPage('products')} className="hover:text-white transition">18G & 20G Binding Wires</button></li>
-              <li><button onClick={() => setPage('products')} className="hover:text-white transition">Waterproofing & Construction Chemicals</button></li>
+              <li><button onClick={() => setPage('products')} className="hover:text-ivory transition">OPC & PPC Cement Bags</button></li>
+              <li><button onClick={() => setPage('products')} className="hover:text-ivory transition">Tata Tiscon TMT (6mm-32mm)</button></li>
+              <li><button onClick={() => setPage('products')} className="hover:text-ivory transition">Vizag Steel Rebar</button></li>
+              <li><button onClick={() => setPage('products')} className="hover:text-ivory transition">Bosch Diamond & Metal Cutting Blades</button></li>
+              <li><button onClick={() => setPage('products')} className="hover:text-ivory transition">18G & 20G Binding Wires</button></li>
+              <li><button onClick={() => setPage('products')} className="hover:text-ivory transition">Waterproofing & Construction Chemicals</button></li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="text-sm font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2">Store Contact</h4>
+            <h4 className="text-sm font-bold text-ivory mb-4 border-b border-gunmetal pb-2">Store Contact</h4>
             <ul className="space-y-3 font-medium">
               <li className="flex items-start space-x-2">
-                <MapPin className="w-4 h-4 text-white shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-ivory shrink-0 mt-0.5" />
                 <span>{siteContent.address}</span>
               </li>
               <li className="flex items-center space-x-2">
-                <PhoneIcon className="w-4 h-4 text-white shrink-0" />
-                <a href={telHref(siteContent.phone)} className="hover:text-white font-bold">{nationalDigits(siteContent.phone)}</a>
+                <PhoneIcon className="w-4 h-4 text-ivory shrink-0" />
+                <a href={telHref(siteContent.phone)} className="hover:text-ivory font-bold">{nationalDigits(siteContent.phone)}</a>
               </li>
               <li className="flex items-center space-x-2">
-                <WhatsAppIcon className="w-4 h-4 text-[#FF6B00] shrink-0" />
-                <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hover:text-[#FF6B00] font-bold">{siteContent.whatsapp}</a>
+                <WhatsAppIcon className="w-4 h-4 text-champagne shrink-0" />
+                <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hover:text-champagne font-bold">{siteContent.whatsapp}</a>
               </li>
               <li className="flex items-center space-x-2">
-                <Clock className="w-4 h-4 text-white shrink-0" />
+                <Clock className="w-4 h-4 text-ivory shrink-0" />
                 <span>{siteContent.businessHours}</span>
               </li>
             </ul>
@@ -92,14 +92,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="pt-8 border-t border-white/10 text-center flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-500">
+        <div className="pt-8 border-t border-gunmetal text-center flex flex-col sm:flex-row justify-between items-center text-[11px] text-silver">
           <div className="flex items-center space-x-2">
             <img src={bustedImageSrc('/windows-h-logo.png')} alt="Logo" className="w-6 h-6 rounded-md object-contain" />
-            <p className="cursor-default text-slate-400">
+            <p className="cursor-default text-silver">
               © {new Date().getFullYear()} HSN CEMENT AND STEEL. All Rights Reserved. Kalikiri, AP.
             </p>
           </div>
-          <button onClick={() => setPage('terms')} className="mt-2 sm:mt-0 text-slate-300 hover:text-orange-400 font-bold transition flex items-center gap-1 cursor-pointer border border-white/15 px-3 py-1.5 rounded-full bg-slate-900/5">
+          <button onClick={() => setPage('terms')} className="mt-2 sm:mt-0 text-silver hover:text-brand-400 font-bold transition flex items-center gap-1 cursor-pointer border border-gunmetal px-3 py-1.5 rounded-full bg-charcoal/5">
             <span>Terms & Conditions</span>
           </button>
         </div>

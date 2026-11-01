@@ -33,27 +33,27 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
   if (cart.length === 0) {
     return (
       <div className="py-20 text-center space-y-4">
-        <h2 className="text-xl font-bold text-slate-200">Your Cart is Empty</h2>
-        <button onClick={() => setPage('home')} className="bg-orange-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs">Return to Shop</button>
+        <h2 className="text-xl font-bold text-ivory">Your Cart is Empty</h2>
+        <button onClick={() => setPage('home')} className="btn-purchase px-5 py-2.5 rounded-xl text-xs">Return to Shop</button>
       </div>
     );
   }
 
   return (
-    <div className="py-8 sm:py-12 min-h-screen bg-gradient-to-br from-slate-950 via-orange-950/40 to-orange-950/30 relative z-10">
+    <div className="py-8 sm:py-12 min-h-screen bg-gradient-to-br from-obsidian via-brand-950/40 to-brand-950/30 relative z-10">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <button onClick={onBackToCart} className="inline-flex items-center space-x-2 text-xs font-bold text-slate-300 hover:text-white transition">
+        <button onClick={onBackToCart} className="inline-flex items-center space-x-2 text-xs font-bold text-silver hover:text-ivory transition">
             <ArrowLeft className="w-4 h-4" /><span>Back to Products</span>
           </button>
 
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-100 font-industrial tracking-tight">
-          Secure <span className="text-white">Checkout</span>
+        <h1 className="text-3xl sm:text-4xl font-black text-ivory font-industrial tracking-tight">
+          Secure <span className="text-ivory">Checkout</span>
         </h1>
 
         <div className="grid lg:grid-cols-12 gap-6 sm:gap-8">
-            <div className="lg:col-span-7 bg-slate-900/40 backdrop-blur-2xl border border-white/10 p-6 sm:p-8 rounded-[2rem] space-y-6 shadow-2xl">
-              <h2 className="text-lg font-black text-slate-100 flex items-center space-x-2 border-b border-white/10 pb-4">
-                <MapPin className="w-5 h-5 text-white" /><span>Delivery Details</span>
+            <div className="lg:col-span-7 bg-charcoal/40 backdrop-blur-2xl border border-gunmetal p-6 sm:p-8 rounded-[2rem] space-y-6 shadow-2xl">
+              <h2 className="text-lg font-black text-ivory flex items-center space-x-2 border-b border-gunmetal pb-4">
+                <MapPin className="w-5 h-5 text-ivory" /><span>Delivery Details</span>
               </h2>
               <form onSubmit={e => {
                 e.preventDefault();
@@ -75,47 +75,47 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
               }} className="space-y-5 text-xs sm:text-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="font-bold text-slate-300 block mb-1.5">Full Name *</label>
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="Contractor / Builder name" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                    <label className="font-bold text-silver block mb-1.5">Full Name *</label>
+                    <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="Contractor / Builder name" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-300 block mb-1.5">Mobile Number *</label>
-                    <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} required placeholder="10-digit number" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                    <label className="font-bold text-silver block mb-1.5">Mobile Number *</label>
+                    <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} required placeholder="10-digit number" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-300 block mb-1.5">Email</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Optional" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                    <label className="font-bold text-silver block mb-1.5">Email</label>
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Optional" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-300 block mb-1.5">Village / Town</label>
-                    <input type="text" value={village} onChange={e => setVillage(e.target.value)} placeholder="e.g., Kalikiri" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                    <label className="font-bold text-silver block mb-1.5">Village / Town</label>
+                    <input type="text" value={village} onChange={e => setVillage(e.target.value)} placeholder="e.g., Kalikiri" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-300 block mb-1.5">Mandal</label>
-                    <input type="text" value={mandal} onChange={e => setMandal(e.target.value)} placeholder="e.g., Kalikiri" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                    <label className="font-bold text-silver block mb-1.5">Mandal</label>
+                    <input type="text" value={mandal} onChange={e => setMandal(e.target.value)} placeholder="e.g., Kalikiri" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-300 block mb-1.5">Pincode</label>
-                    <input type="text" value={pincode} onChange={e => setPincode(e.target.value)} placeholder="517234" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                    <label className="font-bold text-silver block mb-1.5">Pincode</label>
+                    <input type="text" value={pincode} onChange={e => setPincode(e.target.value)} placeholder="517234" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                   </div>
                 </div>
                 <div>
-                  <label className="font-bold text-slate-300 block mb-1.5">Delivery Address *</label>
-                  <textarea value={address} onChange={e => setAddress(e.target.value)} required rows={2} placeholder="Full site address" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600 resize-none" />
+                  <label className="font-bold text-silver block mb-1.5">Delivery Address *</label>
+                  <textarea value={address} onChange={e => setAddress(e.target.value)} required rows={2} placeholder="Full site address" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600 resize-none" />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-300 block mb-1.5">Landmark *</label>
-                  <input type="text" value={landmark} onChange={e => setLandmark(e.target.value)} required placeholder="Near Water Tank / Panchayat Office" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                  <label className="font-bold text-silver block mb-1.5">Landmark *</label>
+                  <input type="text" value={landmark} onChange={e => setLandmark(e.target.value)} required placeholder="Near Water Tank / Panchayat Office" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                 </div>
 
                 {/* Delivery Method */}
                 <div className="pt-2">
-                  <label className="font-bold text-slate-200 block mb-2">Delivery Method</label>
+                  <label className="font-bold text-ivory block mb-2">Delivery Method</label>
                   <div className="grid grid-cols-2 gap-3">
-                    <button type="button" onClick={() => setDeliveryMethod('delivery')} className={`p-3 rounded-xl border text-xs font-bold transition ${deliveryMethod === 'delivery' ? 'bg-orange-500/20 text-white border-orange-400/50' : 'bg-slate-950/50 text-slate-400 border-slate-700/50'}`}>
+                    <button type="button" onClick={() => setDeliveryMethod('delivery')} className={`p-3 rounded-xl border text-xs font-bold transition ${deliveryMethod === 'delivery' ? 'bg-brand-500/20 text-ivory border-brand-400/50' : 'bg-obsidian/50 text-silver border-gunmetal/50'}`}>
                       <Truck className="w-4 h-4 inline mr-1.5" />Site Delivery
                     </button>
-                    <button type="button" onClick={() => setDeliveryMethod('pickup')} className={`p-3 rounded-xl border text-xs font-bold transition ${deliveryMethod === 'pickup' ? 'bg-orange-500/20 text-white border-orange-400/50' : 'bg-slate-950/50 text-slate-400 border-slate-700/50'}`}>
+                    <button type="button" onClick={() => setDeliveryMethod('pickup')} className={`p-3 rounded-xl border text-xs font-bold transition ${deliveryMethod === 'pickup' ? 'bg-brand-500/20 text-ivory border-brand-400/50' : 'bg-obsidian/50 text-silver border-gunmetal/50'}`}>
                       <MapPin className="w-4 h-4 inline mr-1.5" />Store Pickup
                     </button>
                   </div>
@@ -123,31 +123,31 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
 
                 {deliveryMethod === 'delivery' && (
                   <div>
-                    <label className="font-bold text-slate-300 block mb-1.5">Transport Zone</label>
-                    <select value={deliveryLocation} onChange={e => setDeliveryLocation(e.target.value)} className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition">
+                    <label className="font-bold text-silver block mb-1.5">Transport Zone</label>
+                    <select value={deliveryLocation} onChange={e => setDeliveryLocation(e.target.value)} className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition">
                       {transportZones.filter(z => z.charge > 0).map(z => (
-                        <option key={z.id} value={z.name} className="bg-slate-950">{z.name} - Rs.{z.charge} ({z.estimatedTime})</option>
+                        <option key={z.id} value={z.name} className="bg-obsidian">{z.name} - Rs.{z.charge} ({z.estimatedTime})</option>
                       ))}
                     </select>
                   </div>
                 )}
 
                 <div>
-                  <label className="font-bold text-slate-300 block mb-1.5">Additional Notes (Optional)</label>
-                  <input type="text" value={deliveryNote} onChange={e => setDeliveryNote(e.target.value)} placeholder="e.g., Unload near column foundation" className="w-full bg-slate-950/50 border border-slate-700/50 text-slate-100 p-3 rounded-2xl focus:outline-none focus:border-orange-400 transition placeholder-slate-600" />
+                  <label className="font-bold text-silver block mb-1.5">Additional Notes (Optional)</label>
+                  <input type="text" value={deliveryNote} onChange={e => setDeliveryNote(e.target.value)} placeholder="e.g., Unload near column foundation" className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory p-3 rounded-2xl focus:outline-none focus:border-brand-400 transition placeholder-slate-600" />
                 </div>
 
-                <div className="pt-4 border-t border-white/10">
-                  <label className="font-bold text-slate-200 block mb-3 flex items-center space-x-2">
-                    <CreditCard className="w-5 h-5 text-white" /><span>Payment Mode</span>
+                <div className="pt-4 border-t border-gunmetal">
+                  <label className="font-bold text-ivory block mb-3 flex items-center space-x-2">
+                    <CreditCard className="w-5 h-5 text-ivory" /><span>Payment Mode</span>
                   </label>
                   <div className="grid grid-cols-2 gap-3">
-                    <button type="button" onClick={() => setPaymentMode('Cash on Delivery')} className={`p-3 rounded-xl border text-xs font-bold transition ${paymentMode === 'Cash on Delivery' ? 'bg-orange-500/20 text-white border-orange-400/50' : 'bg-slate-950/50 text-slate-400 border-slate-700/50'}`}>Cash on Delivery</button>
-                    <button type="button" onClick={() => setPaymentMode('Online Payment (UPI)')} className={`p-3 rounded-xl border text-xs font-bold transition ${paymentMode === 'Online Payment (UPI)' ? 'bg-orange-500/20 text-white border-orange-400/50' : 'bg-slate-950/50 text-slate-400 border-slate-700/50'}`}>Online UPI</button>
+                    <button type="button" onClick={() => setPaymentMode('Cash on Delivery')} className={`p-3 rounded-xl border text-xs font-bold transition ${paymentMode === 'Cash on Delivery' ? 'bg-brand-500/20 text-ivory border-brand-400/50' : 'bg-obsidian/50 text-silver border-gunmetal/50'}`}>Cash on Delivery</button>
+                    <button type="button" onClick={() => setPaymentMode('Online Payment (UPI)')} className={`p-3 rounded-xl border text-xs font-bold transition ${paymentMode === 'Online Payment (UPI)' ? 'bg-brand-500/20 text-ivory border-brand-400/50' : 'bg-obsidian/50 text-silver border-gunmetal/50'}`}>Online UPI</button>
                   </div>
                 </div>
 
-                <button type="submit" className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-600 hover:from-orange-400 hover:via-orange-500 hover:to-orange-500 py-4 rounded-2xl font-black text-sm shadow-2xl mt-4 text-white transition">
+                <button type="submit" className="btn-purchase w-full py-4 rounded-2xl text-sm shadow-2xl mt-4">
                   CONFIRM & PLACE ORDER
                 </button>
               </form>
@@ -155,10 +155,10 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
 
             {/* Order Summary */}
             <div className="lg:col-span-5">
-              <div className="bg-slate-900/40 backdrop-blur-2xl border border-white/10 p-6 sm:p-8 rounded-[2rem] shadow-2xl sticky top-28">
-                <h3 className="text-lg font-black text-slate-100 border-b border-white/10 pb-4 flex justify-between items-center mb-4">
+              <div className="bg-charcoal/40 backdrop-blur-2xl border border-gunmetal p-6 sm:p-8 rounded-[2rem] shadow-2xl sticky top-28">
+                <h3 className="text-lg font-black text-ivory border-b border-gunmetal pb-4 flex justify-between items-center mb-4">
                   <span>Order Summary</span>
-                  <span className="bg-orange-500/20 text-white px-3 py-1 rounded-full text-xs">{cartCount} Items</span>
+                  <span className="bg-brand-500/20 text-ivory px-3 py-1 rounded-full text-xs">{cartCount} Items</span>
                 </h3>
                 <div className="space-y-3 max-h-60 overflow-y-auto pr-2 mb-4">
                   {cart.map((item, idx) => {
@@ -168,23 +168,23 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
                       if (s) price = s.price;
                     }
                     return (
-                      <div key={idx} className="flex justify-between items-center bg-slate-950/40 p-3 rounded-xl border border-white/5">
+                      <div key={idx} className="flex justify-between items-center bg-obsidian/40 p-3 rounded-xl border border-gunmetal">
                         <div className="flex-1 pr-3">
-                          <div className="font-bold text-slate-200 text-xs line-clamp-1">{item.product.name}</div>
-                          <div className="text-[10px] text-slate-400">Qty: {item.quantity} {item.selectedSize ? `(${item.selectedSize})` : ''}</div>
+                          <div className="font-bold text-ivory text-xs line-clamp-1">{item.product.name}</div>
+                          <div className="text-[10px] text-silver">Qty: {item.quantity} {item.selectedSize ? `(${item.selectedSize})` : ''}</div>
                         </div>
-                        <div className="font-black text-white text-xs whitespace-nowrap">Rs.{(price * item.quantity).toLocaleString('en-IN')}</div>
+                        <div className="font-black text-ivory text-xs whitespace-nowrap">Rs.{(price * item.quantity).toLocaleString('en-IN')}</div>
                       </div>
                     );
                   })}
                 </div>
-                <div className="border-t border-white/10 pt-4 space-y-2 text-xs">
-                  <div className="flex justify-between text-slate-300"><span>Subtotal</span><span className="font-bold">Rs.{cartTotal.toLocaleString('en-IN')}</span></div>
-                  <div className="flex justify-between text-slate-300"><span>Delivery</span><span className={deliveryCharge === 0 ? 'text-orange-400 font-bold' : 'text-slate-100'}>{deliveryCharge === 0 ? 'FREE' : `Rs.${deliveryCharge}`}</span></div>
-                  {handlingCharge > 0 && <div className="flex justify-between text-slate-300"><span>Handling</span><span>Rs.{handlingCharge}</span></div>}
-                  <div className="flex justify-between items-end pt-3 border-t border-white/10">
-                    <span className="font-bold text-slate-300">Total</span>
-                    <span className="text-xl font-black text-white">Rs.{totalPayable.toLocaleString('en-IN')}</span>
+                <div className="border-t border-gunmetal pt-4 space-y-2 text-xs">
+                  <div className="flex justify-between text-silver"><span>Subtotal</span><span className="font-bold">Rs.{cartTotal.toLocaleString('en-IN')}</span></div>
+                  <div className="flex justify-between text-silver"><span>Delivery</span><span className={deliveryCharge === 0 ? 'text-success-foreground font-bold' : 'text-ivory'}>{deliveryCharge === 0 ? 'FREE' : `Rs.${deliveryCharge}`}</span></div>
+                  {handlingCharge > 0 && <div className="flex justify-between text-silver"><span>Handling</span><span>Rs.{handlingCharge}</span></div>}
+                  <div className="flex justify-between items-end pt-3 border-t border-gunmetal">
+                    <span className="font-bold text-silver">Total</span>
+                    <span className="text-xl font-black text-ivory">Rs.{totalPayable.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
@@ -193,12 +193,12 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
       </div>
 
       {isProcessing && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-md">
-          <div className="bg-slate-900 border border-slate-700 p-12 rounded-3xl shadow-2xl flex flex-col items-center space-y-6">
-            <div className="w-20 h-20 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center shadow-[0_0_30px_rgba(255, 107, 0,0.3)]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-obsidian/80 backdrop-blur-md">
+          <div className="bg-charcoal border border-gunmetal p-12 rounded-3xl shadow-2xl flex flex-col items-center space-y-6">
+            <div className="w-20 h-20 rounded-full bg-charcoal border-2 border-gunmetal flex items-center justify-center shadow-[0_0_30px_rgba(198,168,117,0.3)]">
               <img src={bustedImageSrc('/windows-h-logo.png')} alt="Logo" className="w-14 h-14 object-contain" />
             </div>
-            <h3 className="text-lg font-bold text-slate-200 animate-pulse">Processing Order...</h3>
+            <h3 className="text-lg font-bold text-ivory animate-pulse">Processing Order...</h3>
           </div>
         </div>
       )}
