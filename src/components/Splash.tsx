@@ -133,11 +133,11 @@ export default function Splash() {
           {/* Badges */}
           <div className="splash-badges">
             <div className="splash-badge">
-              <Shield className="w-4 h-4 text-purple-300" />
+              <Shield className="w-4 h-4 text-orange-300" />
               <span>GSTIN Registered Dealer</span>
             </div>
             <div className="splash-badge">
-              <MapPin className="w-4 h-4 text-blue-300" />
+              <MapPin className="w-4 h-4 text-orange-300" />
               <span>Kalikiri, AP</span>
             </div>
           </div>

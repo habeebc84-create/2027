@@ -108,17 +108,17 @@ export default function AdminLogin() {
         <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl text-xs font-bold text-center">
+              <div className="bg-orange-500/10 border border-orange-500/30 text-orange-400 px-4 py-3 rounded-xl text-xs font-bold text-center">
                 {error}
               </div>
             )}
             {locked && (
-              <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-xl text-xs font-bold text-center space-y-1">
+              <div className="bg-orange-500/10 border border-orange-500/30 text-orange-300 px-4 py-3 rounded-xl text-xs font-bold text-center space-y-1">
                 <p className="flex items-center justify-center space-x-2">
                   <Timer className="w-4 h-4 animate-pulse" />
                   <span>Too many failed attempts. Try again in {remaining}s</span>
                 </p>
-                <p className="text-[10px] text-amber-400/80 font-semibold">Each further wrong attempt adds 10 seconds</p>
+                <p className="text-[10px] text-orange-400/80 font-semibold">Each further wrong attempt adds 10 seconds</p>
               </div>
             )}
             <div>
@@ -131,7 +131,7 @@ export default function AdminLogin() {
                   onChange={e => setEmail(e.target.value)}
                   disabled={locked}
                   placeholder="admin@hsncement.com"
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 pl-10 pr-4 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 pl-10 pr-4 py-3 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function AdminLogin() {
                   onChange={e => setPassword(e.target.value)}
                   disabled={locked}
                   placeholder="Enter admin password"
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 pl-10 pr-10 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 pl-10 pr-10 py-3 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -155,7 +155,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={locked}
-              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-black py-3 rounded-xl text-sm transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-500 disabled:hover:to-indigo-600"
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black py-3 rounded-xl text-sm transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-orange-500 disabled:hover:to-orange-600"
             >
               {locked ? `Locked — wait ${remaining}s` : submitting ? 'Verifying…' : 'Authenticate'}
             </button>

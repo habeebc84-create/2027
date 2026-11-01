@@ -8,7 +8,7 @@ export default function Terms() {
     <div className="py-12 bg-transparent min-h-screen relative z-10">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl sm:text-4xl font-black text-slate-100 font-industrial mb-8">
-          Terms & <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Conditions</span>
+          Terms & <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Conditions</span>
         </h1>
 
         <div className="bg-white/5 border border-slate-800 rounded-3xl p-6 sm:p-10 space-y-8 text-sm text-slate-300">
@@ -63,7 +63,7 @@ export default function Terms() {
           </div>
         </div>
 
-        <button onClick={() => setPage('home')} className="mt-8 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold px-6 py-3 rounded-xl text-sm transition">
+        <button onClick={() => setPage('home')} className="mt-8 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold px-6 py-3 rounded-xl text-sm transition">
           Back to Home
         </button>
       </div>

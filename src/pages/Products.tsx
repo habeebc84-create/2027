@@ -32,7 +32,7 @@ export default function Products() {
         <Reveal>
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-5xl font-black text-slate-100 font-industrial">
-            Our <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Product Catalog</span>
+            Our <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Product Catalog</span>
           </h1>
           <p className="text-slate-400 text-sm sm:text-base mt-2">Browse genuine construction materials at wholesale direct daily rates</p>
         </div>
@@ -49,7 +49,7 @@ export default function Products() {
                 placeholder="Search products, brands..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition"
+                className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition"
               />
             </div>
 
@@ -59,7 +59,7 @@ export default function Products() {
               <select
                 value={selectedCategory}
                 onChange={e => setSelectedCategory(e.target.value)}
-                className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition appearance-none"
+                className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition appearance-none"
               >
                 {allCategoryNames.map(cat => (
                   <option key={cat} value={cat}>{cat === 'All' ? 'All Categories' : cat}</option>
@@ -71,7 +71,7 @@ export default function Products() {
             <select
               value={selectedBrand}
               onChange={e => setSelectedBrand(e.target.value)}
-              className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition appearance-none"
+              className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 transition appearance-none"
             >
               {allBrandNames.map(brand => (
                 <option key={brand} value={brand}>{brand === 'All' ? 'All Brands' : brand}</option>
@@ -88,7 +88,7 @@ export default function Products() {
           {(selectedCategory !== 'All' || selectedBrand !== 'All' || search) && (
             <button
               onClick={() => { setSearch(''); setSelectedCategory('All'); setSelectedBrand('All'); }}
-              className="text-xs font-bold text-pink-400 hover:text-pink-300 transition"
+              className="text-xs font-bold text-orange-400 hover:text-orange-300 transition"
             >
               Clear Filters
             </button>
@@ -116,7 +116,7 @@ export default function Products() {
         <Reveal>
         <div className="mt-16 pt-12 border-t border-slate-800">
           <h2 className="text-xl font-black text-white font-industrial mb-6 text-center">
-            Shop by <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Category</span>
+            Shop by <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">Category</span>
           </h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
             {categories.map(cat => {
@@ -126,7 +126,7 @@ export default function Products() {
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.name)}
                   className={`bg-white/5 border rounded-2xl p-3 flex flex-col items-center space-y-2 transition group ${
-                    selectedCategory === cat.name ? 'border-blue-500/50 bg-blue-500/10' : 'border-white/10 hover:border-blue-500/30'
+                    selectedCategory === cat.name ? 'border-orange-500/50 bg-orange-500/10' : 'border-white/10 hover:border-orange-500/30'
                   }`}
                 >
                   <img src={cat.image} alt={cat.name} className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-xl group-hover:scale-110 transition" />

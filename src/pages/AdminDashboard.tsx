@@ -48,16 +48,16 @@ export default function AdminDashboard() {
           const Icon = item.icon;
           return (
             <button key={item.id} onClick={() => { setAdminPage(item.id); setSidebarOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition ${adminPage === item.id ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border border-purple-500/30' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'}`}>
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition ${adminPage === item.id ? 'bg-gradient-to-r from-orange-500/20 to-orange-500/20 text-white border border-orange-500/30' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'}`}>
               <Icon className="w-4 h-4" />
               <span className="flex-1 text-left">{item.label}</span>
-              {item.badge !== undefined && item.badge > 0 && <span className="bg-rose-500 text-white text-[9px] px-1.5 py-0.5 rounded-full">{item.badge}</span>}
+              {item.badge !== undefined && item.badge > 0 && <span className="bg-orange-500 text-white text-[9px] px-1.5 py-0.5 rounded-full">{item.badge}</span>}
             </button>
           );
         })}
       </nav>
       <div className="p-3 border-t border-white/10">
-        <button onClick={() => { logoutAdmin(); setPage('home'); }} className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition">
+        <button onClick={() => { logoutAdmin(); setPage('home'); }} className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 transition">
           <LogOut className="w-4 h-4" /><span>Secure Logout</span>
         </button>
       </div>
@@ -75,7 +75,7 @@ export default function AdminDashboard() {
           <Globe className="w-3.5 h-3.5" /><span>Sync Database</span>
         </button>
         <div className="flex items-center space-x-2 bg-white/5 border border-white/10 px-3 py-2 rounded-xl">
-          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
           <span className="text-xs font-bold text-slate-300">Admin Online</span>
         </div>
       </div>
@@ -106,17 +106,17 @@ export default function AdminDashboard() {
       <TopHeader title="Overview" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Revenue', value: `Rs.${totalRevenue.toLocaleString('en-IN')}`, sub: 'Live Tracking', icon: TrendingUp, color: 'from-emerald-500 to-teal-600', trend: true },
-          { label: 'Total Orders', value: orders.length, sub: `${orders.filter(o => new Date(o.date).toDateString() === new Date().toDateString()).length} Orders Today`, icon: ShoppingCart, color: 'from-blue-500 to-indigo-600' },
-          { label: 'Pending Dispatch', value: pendingOrders.length, sub: 'Requires Action', icon: Clock, color: 'from-amber-500 to-orange-600' },
-          { label: 'Delivered', value: deliveredOrders.length, sub: `${orders.filter(o => o.status === 'cancelled').length} Cancelled`, icon: CheckCircle, color: 'from-purple-500 to-pink-600' },
+          { label: 'Total Revenue', value: `Rs.${totalRevenue.toLocaleString('en-IN')}`, sub: 'Live Tracking', icon: TrendingUp, color: 'from-orange-500 to-orange-600', trend: true },
+          { label: 'Total Orders', value: orders.length, sub: `${orders.filter(o => new Date(o.date).toDateString() === new Date().toDateString()).length} Orders Today`, icon: ShoppingCart, color: 'from-orange-500 to-orange-600' },
+          { label: 'Pending Dispatch', value: pendingOrders.length, sub: 'Requires Action', icon: Clock, color: 'from-orange-500 to-orange-600' },
+          { label: 'Delivered', value: deliveredOrders.length, sub: `${orders.filter(o => o.status === 'cancelled').length} Cancelled`, icon: CheckCircle, color: 'from-orange-500 to-orange-600' },
         ].map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-blue-500/30 transition">
+            <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-orange-500/30 transition">
               <div className="flex items-center justify-between mb-3">
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}><Icon className="w-5 h-5 text-white" /></div>
-                {stat.trend && <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">↗ Live</span>}
+                {stat.trend && <span className="text-[10px] font-bold text-orange-400 bg-orange-500/15 px-2 py-0.5 rounded-full">↗ Live</span>}
               </div>
               <div className="text-2xl font-black text-white">{stat.value}</div>
               <div className="text-[10px] text-slate-400 mt-1">{stat.sub}</div>
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                 <div key={s.key} className="flex items-center justify-between py-2">
                   <span className="text-xs text-slate-300">{s.label}</span>
                   <div className="flex items-center space-x-3">
-                    <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-blue-500 rounded-full" style={{ width: `${pct}%` }} /></div>
+                    <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-orange-500 rounded-full" style={{ width: `${pct}%` }} /></div>
                     <span className="text-xs font-bold text-white w-6 text-right">{count}</span>
                   </div>
                 </div>
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
             {lowStock.length === 0 ? <p className="text-xs text-slate-500 text-center py-8">All products well stocked</p> : (
               <div className="space-y-3">
                 {lowStock.map(p => (
-                  <div key={p.id} className="flex items-center justify-between bg-amber-500/5 border border-amber-500/20 p-3 rounded-xl">
+                  <div key={p.id} className="flex items-center justify-between bg-orange-500/5 border border-orange-500/20 p-3 rounded-xl">
                     <div className="flex items-center space-x-3">
                       <img src={p.image} alt="" className="w-8 h-8 rounded-lg object-cover" />
                       <div>
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                         <div className="text-[10px] text-slate-400">{p.brand}</div>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-amber-400">{p.stock} left</span>
+                    <span className="text-xs font-bold text-orange-400">{p.stock} left</span>
                   </div>
                 ))}
               </div>
@@ -218,10 +218,10 @@ export default function AdminDashboard() {
                   const maxUnits = bestSelling[0][1] || 1;
                   return (
                     <div key={name} className="flex items-center space-x-3">
-                      <span className="w-5 h-5 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 text-[9px] font-black text-white flex items-center justify-center shrink-0">{i + 1}</span>
+                      <span className="w-5 h-5 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-[9px] font-black text-white flex items-center justify-center shrink-0">{i + 1}</span>
                       <span className="w-36 sm:w-44 text-xs font-bold text-slate-200 line-clamp-1">{name}</span>
                       <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all" style={{ width: `${(units / maxUnits) * 100}%` }} />
+                        <div className="h-full bg-gradient-to-r from-orange-500 to-orange-500 rounded-full transition-all" style={{ width: `${(units / maxUnits) * 100}%` }} />
                       </div>
                       <span className="text-xs font-black text-white w-16 text-right">{units} units</span>
                     </div>
@@ -270,31 +270,31 @@ export default function AdminDashboard() {
           <div className="relative flex-1 max-w-sm">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..."
-              className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+              className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
           </div>
-          <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); }} className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold">
+          <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); }} className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold">
             <Plus className="w-3.5 h-3.5" /><span>Add Product</span>
           </button>
         </div>
 
         {showAdd && (
-          <div className="bg-white/5 border border-blue-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-white/5 border border-orange-500/30 rounded-2xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-white">Add New Product</h3>
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Product Name" value={newProd.name} onChange={e => setNewProd({ ...newProd, name: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <select value={newProd.category} onChange={e => setNewProd({ ...newProd, category: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+              <input type="text" placeholder="Product Name" value={newProd.name} onChange={e => setNewProd({ ...newProd, name: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <select value={newProd.category} onChange={e => setNewProd({ ...newProd, category: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500">
                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
-              <input type="text" placeholder="Brand" value={newProd.brand} onChange={e => setNewProd({ ...newProd, brand: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="number" placeholder="Price" value={newProd.price || ''} onChange={e => setNewProd({ ...newProd, price: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="number" placeholder="Stock" value={newProd.stock || ''} onChange={e => setNewProd({ ...newProd, stock: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="text" placeholder="Grade" value={newProd.grade} onChange={e => setNewProd({ ...newProd, grade: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+              <input type="text" placeholder="Brand" value={newProd.brand} onChange={e => setNewProd({ ...newProd, brand: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="number" placeholder="Price" value={newProd.price || ''} onChange={e => setNewProd({ ...newProd, price: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="number" placeholder="Stock" value={newProd.stock || ''} onChange={e => setNewProd({ ...newProd, stock: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="text" placeholder="Grade" value={newProd.grade} onChange={e => setNewProd({ ...newProd, grade: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
             </div>
-            <textarea placeholder="Description" value={newProd.description} onChange={e => setNewProd({ ...newProd, description: e.target.value })} rows={2} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500 resize-none" />
+            <textarea placeholder="Description" value={newProd.description} onChange={e => setNewProd({ ...newProd, description: e.target.value })} rows={2} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 resize-none" />
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <label className="block text-xs font-bold text-slate-400 mb-1">Product Image</label>
-                <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+                <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-4 py-3 text-center transition">
                   <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newProd.image ? 'Change Image' : 'Upload Image'}</span></span>
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const file = e.target.files?.[0];
@@ -308,31 +308,31 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Product</button>
+              <button onClick={handleAdd} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Product</button>
               <button onClick={() => setShowAdd(false)} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
 
         {editingId && (
-          <div className="bg-white/5 border border-amber-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-white/5 border border-orange-500/30 rounded-2xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-white">Edit Product</h3>
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Product Name" value={editProd.name} onChange={e => setEditProd({ ...editProd, name: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
-              <select value={editProd.category} onChange={e => setEditProd({ ...editProd, category: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500">
+              <input type="text" placeholder="Product Name" value={editProd.name} onChange={e => setEditProd({ ...editProd, name: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <select value={editProd.category} onChange={e => setEditProd({ ...editProd, category: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500">
                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
-              <input type="text" placeholder="Brand" value={editProd.brand} onChange={e => setEditProd({ ...editProd, brand: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
-              <input type="text" placeholder="Unit" value={editProd.unit} onChange={e => setEditProd({ ...editProd, unit: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
-              <input type="number" placeholder="Price (Rs.)" value={editProd.price || ''} onChange={e => setEditProd({ ...editProd, price: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
-              <input type="number" placeholder="Stock" value={editProd.stock || ''} onChange={e => setEditProd({ ...editProd, stock: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
-              <input type="text" placeholder="Grade" value={editProd.grade} onChange={e => setEditProd({ ...editProd, grade: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
+              <input type="text" placeholder="Brand" value={editProd.brand} onChange={e => setEditProd({ ...editProd, brand: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="text" placeholder="Unit" value={editProd.unit} onChange={e => setEditProd({ ...editProd, unit: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="number" placeholder="Price (Rs.)" value={editProd.price || ''} onChange={e => setEditProd({ ...editProd, price: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="number" placeholder="Stock" value={editProd.stock || ''} onChange={e => setEditProd({ ...editProd, stock: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="text" placeholder="Grade" value={editProd.grade} onChange={e => setEditProd({ ...editProd, grade: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
             </div>
-            <textarea placeholder="Description" value={editProd.description} onChange={e => setEditProd({ ...editProd, description: e.target.value })} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500 resize-none" />
+            <textarea placeholder="Description" value={editProd.description} onChange={e => setEditProd({ ...editProd, description: e.target.value })} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 resize-none" />
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <label className="block text-xs font-bold text-slate-400 mb-1">Product Image</label>
-                <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-amber-500 rounded-xl px-4 py-3 text-center transition">
+                <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-4 py-3 text-center transition">
                   <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{editProd.image ? 'Change Image' : 'Upload Image'}</span></span>
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const file = e.target.files?.[0];
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex space-x-3">
-              <button onClick={saveEdit} className="bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
+              <button onClick={saveEdit} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
               <button onClick={() => setEditingId(null)} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
             </div>
           </div>
@@ -369,9 +369,9 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3"><div className="flex items-center space-x-3"><img src={p.image} alt="" className="w-9 h-9 rounded-lg object-cover" /><div><div className="font-bold text-slate-200 line-clamp-1 max-w-[200px]">{p.name}</div><div className="text-[10px] text-slate-500">{p.brand}</div></div></div></td>
                     <td className="px-4 py-3 text-slate-300 hidden sm:table-cell">{p.category}</td>
                     <td className="px-4 py-3 font-bold text-white">Rs.{p.price}</td>
-                    <td className="px-4 py-3"><span className={`font-bold ${p.stock < 50 ? 'text-amber-400' : 'text-slate-300'}`}>{p.stock}</span></td>
-                    <td className="px-4 py-3"><button onClick={() => toggleProduct(p.id)} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border transition ${p.enabled ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border-rose-500/30'}`}>{p.enabled ? 'Active' : 'Off'}</button></td>
-                    <td className="px-4 py-3"><div className="flex items-center space-x-2"><button onClick={() => startEdit(p)} className="text-slate-400 hover:text-amber-400 transition"><Edit className="w-3.5 h-3.5" /></button><button onClick={() => { if (window.confirm(`Delete "${p.name}"?`)) deleteProduct(p.id); }} className="text-slate-400 hover:text-rose-400 transition"><Trash2 className="w-3.5 h-3.5" /></button></div></td>
+                    <td className="px-4 py-3"><span className={`font-bold ${p.stock < 50 ? 'text-orange-400' : 'text-slate-300'}`}>{p.stock}</span></td>
+                    <td className="px-4 py-3"><button onClick={() => toggleProduct(p.id)} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border transition ${p.enabled ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-orange-500/20 text-orange-400 border-orange-500/30'}`}>{p.enabled ? 'Active' : 'Off'}</button></td>
+                    <td className="px-4 py-3"><div className="flex items-center space-x-2"><button onClick={() => startEdit(p)} className="text-slate-400 hover:text-orange-400 transition"><Edit className="w-3.5 h-3.5" /></button><button onClick={() => { if (window.confirm(`Delete "${p.name}"?`)) deleteProduct(p.id); }} className="text-slate-400 hover:text-orange-400 transition"><Trash2 className="w-3.5 h-3.5" /></button></div></td>
                   </tr>
                 ))}
               </tbody>
@@ -416,38 +416,38 @@ export default function AdminDashboard() {
           <h3 className="text-xs font-black text-white uppercase tracking-wider mb-3">Add New Category</h3>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 space-y-3">
-              <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Category name (e.g. TMT Steel Bars)" className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+              <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Category name (e.g. TMT Steel Bars)" className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-4 py-3 text-center transition">
                 <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newCatImage ? 'Change Image' : 'Upload Category Image'}</span></span>
                 <input type="file" accept="image/*" className="hidden" onChange={e => pickImage(e.target.files?.[0], setNewCatImage)} />
               </label>
             </div>
             <div className="flex sm:flex-col items-center justify-center gap-3">
               {newCatImage ? <img src={newCatImage} alt="Preview" className="w-20 h-20 object-cover rounded-xl border border-slate-700" /> : <div className="w-20 h-20 rounded-xl border border-dashed border-slate-700 flex items-center justify-center text-slate-600"><ImageIcon className="w-6 h-6" /></div>}
-              <button onClick={handleAdd} className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 self-stretch justify-center"><Plus className="w-3.5 h-3.5" /><span>Add</span></button>
+              <button onClick={handleAdd} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 self-stretch justify-center"><Plus className="w-3.5 h-3.5" /><span>Add</span></button>
             </div>
           </div>
         </div>
         {/* Category grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map(c => editingId === c.id ? (
-            <div key={c.id} className="bg-white/5 border border-blue-500/40 rounded-2xl p-4 space-y-3 sm:col-span-2 lg:col-span-1">
-              <input type="text" value={editCat.name} onChange={e => setEditCat({ ...editCat, name: e.target.value })} className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="text" value={editCat.description} onChange={e => setEditCat({ ...editCat, description: e.target.value })} placeholder="Short description (optional)" className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+            <div key={c.id} className="bg-white/5 border border-orange-500/40 rounded-2xl p-4 space-y-3 sm:col-span-2 lg:col-span-1">
+              <input type="text" value={editCat.name} onChange={e => setEditCat({ ...editCat, name: e.target.value })} className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="text" value={editCat.description} onChange={e => setEditCat({ ...editCat, description: e.target.value })} placeholder="Short description (optional)" className="w-full bg-slate-900/50 border border-slate-700/50 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
               <div className="flex items-center gap-3">
                 <img src={editCat.image} alt="" className="w-12 h-12 rounded-xl object-cover border border-slate-700" />
-                <label className="flex-1 cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-3 py-2.5 text-center transition">
+                <label className="flex-1 cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-3 py-2.5 text-center transition">
                   <span className="text-[10px] font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-3.5 h-3.5" /><span>Change Image</span></span>
                   <input type="file" accept="image/*" className="hidden" onChange={e => pickImage(e.target.files?.[0], img => setEditCat({ ...editCat, image: img }))} />
                 </label>
               </div>
               <div className="flex space-x-2">
-                <button onClick={() => saveEdit(c.id)} className="flex-1 bg-emerald-500 text-white px-3 py-2 rounded-xl text-[10px] font-bold">Save</button>
+                <button onClick={() => saveEdit(c.id)} className="flex-1 bg-orange-500 text-white px-3 py-2 rounded-xl text-[10px] font-bold">Save</button>
                 <button onClick={() => setEditingId(null)} className="flex-1 bg-slate-800 text-slate-300 px-3 py-2 rounded-xl text-[10px] font-bold">Cancel</button>
               </div>
             </div>
           ) : (
-            <div key={c.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:border-blue-500/30 transition">
+            <div key={c.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:border-orange-500/30 transition">
               <div className="flex items-center space-x-3">
                 <img src={c.image} alt="" className="w-10 h-10 rounded-xl object-cover" />
                 <div>
@@ -456,8 +456,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <button onClick={() => startEdit(c)} className="text-slate-400 hover:text-blue-400" title="Edit"><Edit className="w-3.5 h-3.5" /></button>
-                <button onClick={() => deleteCategory(c.id)} className="text-slate-400 hover:text-rose-400" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
+                <button onClick={() => startEdit(c)} className="text-slate-400 hover:text-orange-400" title="Edit"><Edit className="w-3.5 h-3.5" /></button>
+                <button onClick={() => deleteCategory(c.id)} className="text-slate-400 hover:text-orange-400" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>
           ))}
@@ -474,9 +474,9 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         <TopHeader title="Orders" />
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => setFilter('all')} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition ${filter === 'all' ? 'bg-blue-500/20 text-white border border-blue-500/30' : 'text-slate-400 border border-white/10'}`}>All ({orders.length})</button>
+          <button onClick={() => setFilter('all')} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition ${filter === 'all' ? 'bg-orange-500/20 text-white border border-orange-500/30' : 'text-slate-400 border border-white/10'}`}>All ({orders.length})</button>
           {ORDER_STATUSES.slice(0, 6).map(s => (
-            <button key={s.key} onClick={() => setFilter(s.key)} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition ${filter === s.key ? 'bg-blue-500/20 text-white border border-blue-500/30' : 'text-slate-400 border border-white/10'}`}>{s.label} ({orders.filter(o => o.status === s.key).length})</button>
+            <button key={s.key} onClick={() => setFilter(s.key)} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition ${filter === s.key ? 'bg-orange-500/20 text-white border border-orange-500/30' : 'text-slate-400 border border-white/10'}`}>{s.label} ({orders.filter(o => o.status === s.key).length})</button>
           ))}
         </div>
         {filtered.length === 0 ? <p className="text-xs text-slate-500 text-center py-12">No orders found</p> : (
@@ -497,16 +497,16 @@ export default function AdminDashboard() {
                   <div>Delivery: {o.deliveryLocation} | Payment: {o.paymentMode}</div>
                   <div>Address: {o.customer.address}, {o.customer.landmark}</div>
                   {o.customerLocation && (
-                    <div className="mt-2 bg-blue-500/10 border border-blue-500/25 rounded-xl p-2.5">
-                      <div className="text-[10px] font-bold text-blue-300 mb-1">📍 Customer-shared delivery location:</div>
-                      <a href={o.customerLocation} target="_blank" rel="noreferrer" className="text-[11px] text-blue-400 hover:text-blue-300 underline break-all line-clamp-1">Open on Google Maps →</a>
+                    <div className="mt-2 bg-orange-500/10 border border-orange-500/25 rounded-xl p-2.5">
+                      <div className="text-[10px] font-bold text-orange-300 mb-1">📍 Customer-shared delivery location:</div>
+                      <a href={o.customerLocation} target="_blank" rel="noreferrer" className="text-[11px] text-orange-400 hover:text-orange-300 underline break-all line-clamp-1">Open on Google Maps →</a>
                     </div>
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="flex items-center space-x-2">
                     <span className="text-[10px] font-bold text-slate-400">Update Status:</span>
-                    <select value={o.status} onChange={e => updateOrderStatus(o.orderId, e.target.value as OrderStatus)} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-blue-500">
+                    <select value={o.status} onChange={e => updateOrderStatus(o.orderId, e.target.value as OrderStatus)} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-orange-500">
                       {ORDER_STATUSES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
                     </select>
                   </div>
@@ -518,12 +518,12 @@ export default function AdminDashboard() {
                         defaultValue={o.finalDeliveryCharge ?? o.deliveryCharge}
                         key={`${o.orderId}-${o.finalDeliveryCharge ?? o.deliveryCharge}`}
                         onBlur={e => { const v = Number(e.target.value); if (!Number.isNaN(v) && v !== (o.finalDeliveryCharge ?? o.deliveryCharge)) setOrderFinalDeliveryCharge(o.orderId, v); }}
-                        className="w-24 bg-slate-900 border border-slate-700 text-slate-200 px-2 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-emerald-500"
+                        className="w-24 bg-slate-900 border border-slate-700 text-slate-200 px-2 py-1.5 rounded-lg text-[10px] font-bold focus:outline-none focus:border-orange-500"
                       />
                       <span className="text-[9px] text-slate-500">(original: Rs.{o.deliveryCharge})</span>
                     </div>
                   )}
-                  <button onClick={() => { if (window.confirm(`Delete order ${o.orderId}? This cannot be undone.`)) deleteOrder(o.orderId); }} className="flex items-center space-x-1 text-[10px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg transition ml-auto">
+                  <button onClick={() => { if (window.confirm(`Delete order ${o.orderId}? This cannot be undone.`)) deleteOrder(o.orderId); }} className="flex items-center space-x-1 text-[10px] font-bold text-orange-400 hover:text-orange-300 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-lg transition ml-auto">
                     <Trash2 className="w-3 h-3" /><span>Delete</span>
                   </button>
                 </div>
@@ -560,7 +560,7 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 font-bold text-white">Rs.{c.totalSpending.toLocaleString('en-IN')}</td>
                     <td className="px-4 py-3 text-slate-400 hidden sm:table-cell">{new Date(c.lastOrder).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-right">
-                      <button onClick={() => { if (window.confirm(`Delete customer ${c.name}?`)) deleteCustomer(c.id); }} className="text-slate-400 hover:text-rose-400 transition p-1.5 rounded-lg hover:bg-rose-500/10">
+                      <button onClick={() => { if (window.confirm(`Delete customer ${c.name}?`)) deleteCustomer(c.id); }} className="text-slate-400 hover:text-orange-400 transition p-1.5 rounded-lg hover:bg-orange-500/10">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
@@ -598,11 +598,11 @@ export default function AdminDashboard() {
                 <button onClick={() => {
                   const imgs = (siteContent.frontPageImages || []).filter((_: string, j: number) => j !== i);
                   updateSiteContent({ frontPageImages: imgs });
-                }} className="absolute top-1 right-1 bg-red-500/80 hover:bg-red-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+                }} className="absolute top-1 right-1 bg-orange-500/80 hover:bg-orange-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
-          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-4 py-3 text-center transition">
             <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Front Page Photo</span></span>
             <input type="file" accept="image/*" className="hidden" onChange={async e => {
               const file = e.target.files?.[0];
@@ -618,10 +618,10 @@ export default function AdminDashboard() {
             <h4 className="text-xs font-bold text-white">Homepage Hero Colour</h4>
             <p className="text-[10px] text-slate-400">The home hero behind the "HSN CEMENT AND STEEL" heading now uses a blue-pink fill instead of a photo — no image upload.</p>
             <div className="relative w-32 h-20 rounded-xl overflow-hidden border border-white/10 shrink-0">
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, #1d4ed8 0%, #6d28d9 48%, #db2777 100%)' }} />
-              <div className="absolute -top-6 -left-6 w-20 h-20 bg-blue-500/15 blur-[30px] rounded-full" />
-              <div className="absolute top-1/3 -right-6 w-20 h-20 bg-pink-500/15 blur-[30px] rounded-full" />
-              <span className="absolute bottom-1.5 left-2 text-[8px] font-bold text-white/80">Blue-pink fill</span>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, #FF8A2A 0%, #FF6B00 48%, #E85A00 100%)' }} />
+              <div className="absolute -top-6 -left-6 w-20 h-20 bg-orange-500/15 blur-[30px] rounded-full" />
+              <div className="absolute top-1/3 -right-6 w-20 h-20 bg-orange-500/15 blur-[30px] rounded-full" />
+              <span className="absolute bottom-1.5 left-2 text-[8px] font-bold text-white/80">Vibrant Orange fill</span>
             </div>
           </div>
         </div>
@@ -636,11 +636,11 @@ export default function AdminDashboard() {
                 <button onClick={() => {
                   const imgs = (siteContent.splashMobileImages || []).filter((_: string, j: number) => j !== i);
                   updateSiteContent({ splashMobileImages: imgs });
-                }} className="absolute top-1 right-1 bg-red-500/80 hover:bg-red-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+                }} className="absolute top-1 right-1 bg-orange-500/80 hover:bg-orange-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
-          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-4 py-3 text-center transition">
             <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Mobile Entry Photo</span></span>
             <input type="file" accept="image/*" className="hidden" onChange={async e => {
               const file = e.target.files?.[0];
@@ -664,11 +664,11 @@ export default function AdminDashboard() {
                 <button onClick={() => {
                   const imgs = (siteContent.splashLaptopImages || []).filter((_: string, j: number) => j !== i);
                   updateSiteContent({ splashLaptopImages: imgs });
-                }} className="absolute top-1 right-1 bg-red-500/80 hover:bg-red-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
+                }} className="absolute top-1 right-1 bg-orange-500/80 hover:bg-orange-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-3 h-3" /></button>
               </div>
             ))}
           </div>
-          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-3 text-center transition">
+          <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-4 py-3 text-center transition">
             <span className="text-xs font-bold text-slate-300 flex items-center justify-center space-x-2"><ImageIcon className="w-4 h-4" /><span>Add Laptop Entry Photo</span></span>
             <input type="file" accept="image/*" className="hidden" onChange={async e => {
               const file = e.target.files?.[0];
@@ -684,10 +684,10 @@ export default function AdminDashboard() {
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
           <h3 className="text-sm font-bold text-white">Homepage Hero</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">Business Name</label><input type="text" value={siteContent.businessName} onChange={e => updateSiteContent({ businessName: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" /></div>
-            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">Phone</label><input type="text" value={siteContent.phone} onChange={e => updateSiteContent({ phone: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" /></div>
-            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">WhatsApp</label><input type="text" value={siteContent.whatsapp} onChange={e => updateSiteContent({ whatsapp: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" /></div>
-            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">Address</label><input type="text" value={siteContent.address} onChange={e => updateSiteContent({ address: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" /></div>
+            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">Business Name</label><input type="text" value={siteContent.businessName} onChange={e => updateSiteContent({ businessName: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" /></div>
+            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">Phone</label><input type="text" value={siteContent.phone} onChange={e => updateSiteContent({ phone: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" /></div>
+            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">WhatsApp</label><input type="text" value={siteContent.whatsapp} onChange={e => updateSiteContent({ whatsapp: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" /></div>
+            <div><label className="text-[10px] font-bold text-slate-400 block mb-1">Address</label><input type="text" value={siteContent.address} onChange={e => updateSiteContent({ address: e.target.value })} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" /></div>
           </div>
         </div>
         {/* Achievements & Contracts (shows in public Gallery) */}
@@ -695,17 +695,17 @@ export default function AdminDashboard() {
           <h3 className="text-sm font-bold text-white">Achievements & Contracts (Public Gallery)</h3>
           <p className="text-[10px] text-slate-400">Upload completed project photos, government/contract awards, or contract documents. They appear in the Gallery page for all customers.</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <input type="text" placeholder="Title (e.g. Government School Supply Contract)" value={newAch.title} onChange={e => setNewAch({ ...newAch, title: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-            <select value={newAch.kind} onChange={e => setNewAch({ ...newAch, kind: e.target.value as Achievement['kind'] })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+            <input type="text" placeholder="Title (e.g. Government School Supply Contract)" value={newAch.title} onChange={e => setNewAch({ ...newAch, title: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+            <select value={newAch.kind} onChange={e => setNewAch({ ...newAch, kind: e.target.value as Achievement['kind'] })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500">
               <option value="achievement">🏆 Achievement</option>
               <option value="contract">📜 Contract</option>
               <option value="certificate">🎖️ Certificate</option>
             </select>
-            <input type="text" placeholder="Date (optional, e.g. Jan 2026)" value={newAch.date} onChange={e => setNewAch({ ...newAch, date: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+            <input type="text" placeholder="Date (optional, e.g. Jan 2026)" value={newAch.date} onChange={e => setNewAch({ ...newAch, date: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
           </div>
-          <textarea placeholder="Description (what was delivered, quantity, client name...)" value={newAch.description} onChange={e => setNewAch({ ...newAch, description: e.target.value })} rows={2} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-blue-500 resize-none" />
+          <textarea placeholder="Description (what was delivered, quantity, client name...)" value={newAch.description} onChange={e => setNewAch({ ...newAch, description: e.target.value })} rows={2} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 resize-none" />
           <div className="flex flex-wrap items-center gap-3">
-            <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-blue-500 rounded-xl px-4 py-2.5 text-center transition">
+            <label className="block cursor-pointer bg-slate-900 hover:bg-slate-800 border border-dashed border-slate-600 hover:border-orange-500 rounded-xl px-4 py-2.5 text-center transition">
               <span className="text-xs font-bold text-slate-300 flex items-center space-x-2"><ImageIcon className="w-4 h-4" /><span>{newAch.imageUrl ? 'Photo ✓ Change' : 'Add Photo (required)'}</span></span>
               <input type="file" accept="image/*" className="hidden" onChange={async e => {
                 const file = e.target.files?.[0];
@@ -720,7 +720,7 @@ export default function AdminDashboard() {
               if (!newAch.title.trim() || !newAch.imageUrl) return;
               ctx.addAchievement({ id: `ach-${Date.now()}`, title: newAch.title.trim(), description: newAch.description.trim(), imageUrl: newAch.imageUrl, kind: newAch.kind, date: newAch.date.trim() || undefined });
               setNewAch({ title: '', description: '', imageUrl: '', kind: 'achievement', date: '' });
-            }} className="bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold">Publish to Gallery</button>
+            }} className="bg-orange-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold">Publish to Gallery</button>
           </div>
           {achievements.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -731,7 +731,7 @@ export default function AdminDashboard() {
                     <div className="text-xs font-bold text-slate-200 line-clamp-1">{a.kind === 'contract' ? '📜' : a.kind === 'certificate' ? '🎖️' : '🏆'} {a.title}</div>
                     <div className="text-[10px] text-slate-500 line-clamp-1">{a.date || ''} {a.description}</div>
                   </div>
-                  <button onClick={() => deleteAchievement(a.id)} className="text-slate-400 hover:text-rose-400 shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => deleteAchievement(a.id)} className="text-slate-400 hover:text-orange-400 shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
             </div>
@@ -739,16 +739,16 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-white">Banners & Promotions</h3>
-          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Banner</span></button>
+          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Banner</span></button>
         </div>
         {showAdd && (
-          <div className="bg-white/5 border border-blue-500/30 rounded-2xl p-4 space-y-3">
+          <div className="bg-white/5 border border-orange-500/30 rounded-2xl p-4 space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <input type="text" placeholder="Title" value={newBlock.title} onChange={e => setNewBlock({ ...newBlock, title: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="text" placeholder="Subtitle" value={newBlock.subtitle || ''} onChange={e => setNewBlock({ ...newBlock, subtitle: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+              <input type="text" placeholder="Title" value={newBlock.title} onChange={e => setNewBlock({ ...newBlock, title: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="text" placeholder="Subtitle" value={newBlock.subtitle || ''} onChange={e => setNewBlock({ ...newBlock, subtitle: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
             </div>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save</button>
+              <button onClick={handleAdd} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save</button>
               <button onClick={() => setShowAdd(false)} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
             </div>
           </div>
@@ -758,8 +758,8 @@ export default function AdminDashboard() {
             <div key={b.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between">
               <div><div className="text-xs font-bold text-white">{b.title}</div><div className="text-[10px] text-slate-400">{b.subtitle} | {b.type}</div></div>
               <div className="flex items-center space-x-2">
-                <button onClick={() => ctx.toggleContentBlock(b.id)} className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${b.active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>{b.active ? 'Active' : 'Off'}</button>
-                <button onClick={() => deleteContentBlock(b.id)} className="text-slate-400 hover:text-rose-400"><Trash2 className="w-3.5 h-3.5" /></button>
+                <button onClick={() => ctx.toggleContentBlock(b.id)} className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${b.active ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-500/20 text-orange-400'}`}>{b.active ? 'Active' : 'Off'}</button>
+                <button onClick={() => deleteContentBlock(b.id)} className="text-slate-400 hover:text-orange-400"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>
           ))}
@@ -782,18 +782,18 @@ export default function AdminDashboard() {
         <TopHeader title="Transport Fares" />
         <div className="flex items-center justify-between">
           <p className="text-xs text-slate-400">Manage delivery zones and charges</p>
-          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Zone</span></button>
+          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold"><Plus className="w-3.5 h-3.5" /><span>Add Zone</span></button>
         </div>
         {showAdd && (
-          <div className="bg-white/5 border border-blue-500/30 rounded-2xl p-4 space-y-3">
+          <div className="bg-white/5 border border-orange-500/30 rounded-2xl p-4 space-y-3">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <input type="text" placeholder="Zone Name" value={newZone.name} onChange={e => setNewZone({ ...newZone, name: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="text" placeholder="Mandal" value={newZone.mandal} onChange={e => setNewZone({ ...newZone, mandal: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="number" placeholder="Charge (Rs.)" value={newZone.charge || ''} onChange={e => setNewZone({ ...newZone, charge: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
-              <input type="text" placeholder="Est. Time" value={newZone.estimatedTime} onChange={e => setNewZone({ ...newZone, estimatedTime: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500" />
+              <input type="text" placeholder="Zone Name" value={newZone.name} onChange={e => setNewZone({ ...newZone, name: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="text" placeholder="Mandal" value={newZone.mandal} onChange={e => setNewZone({ ...newZone, mandal: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="number" placeholder="Charge (Rs.)" value={newZone.charge || ''} onChange={e => setNewZone({ ...newZone, charge: Number(e.target.value) })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+              <input type="text" placeholder="Est. Time" value={newZone.estimatedTime} onChange={e => setNewZone({ ...newZone, estimatedTime: e.target.value })} className="bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
             </div>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save</button>
+              <button onClick={handleAdd} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save</button>
               <button onClick={() => setShowAdd(false)} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
             </div>
           </div>
@@ -814,7 +814,7 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 text-slate-300">{z.mandal}</td>
                   <td className="px-4 py-3 font-bold text-white">{z.charge === 0 ? 'FREE' : `Rs.${z.charge}`}</td>
                   <td className="px-4 py-3 text-slate-400 hidden sm:table-cell">{z.estimatedTime}</td>
-                  <td className="px-4 py-3"><button onClick={() => deleteTransportZone(z.id)} className="text-slate-400 hover:text-rose-400"><Trash2 className="w-3.5 h-3.5" /></button></td>
+                  <td className="px-4 py-3"><button onClick={() => deleteTransportZone(z.id)} className="text-slate-400 hover:text-orange-400"><Trash2 className="w-3.5 h-3.5" /></button></td>
                 </tr>
               ))}
             </tbody>
@@ -830,7 +830,7 @@ export default function AdminDashboard() {
       cement: ctx.marketPrices.cement.map(t => ({ ...t })),
       steel: ctx.marketPrices.steel.map(t => ({ ...t })),
     }));
-    const inputCls = "bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-blue-500 w-full";
+    const inputCls = "bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-orange-500 w-full";
     const setTier = (group: 'cement' | 'steel', idx: number, field: string, value: string) =>
       setDraft(d => ({ ...d, [group]: d[group].map((t, i) => i === idx ? { ...t, [field]: value } : t) }));
     const addTier = (group: 'cement' | 'steel') =>
@@ -859,7 +859,7 @@ export default function AdminDashboard() {
             <input type="text" placeholder="e.g. Standard Retail" value={tier.label} onChange={e => setTier(group, i, 'label', e.target.value)} className={inputCls} />
             <input type="text" placeholder="₹380" value={tier.price} onChange={e => setTier(group, i, 'price', e.target.value)} className={inputCls} />
             <input type="text" placeholder={unitHint} value={tier.unit} onChange={e => setTier(group, i, 'unit', e.target.value)} className={inputCls} />
-            <button onClick={() => removeTier(group, i)} className="text-slate-400 hover:text-rose-400 justify-self-end" aria-label="Delete price row"><Trash2 className="w-4 h-4" /></button>
+            <button onClick={() => removeTier(group, i)} className="text-slate-400 hover:text-orange-400 justify-self-end" aria-label="Delete price row"><Trash2 className="w-4 h-4" /></button>
           </div>
         ))}
         {draft[group].length === 0 && <p className="text-xs text-slate-500 text-center py-4">No prices — tap "Add Price" to add one</p>}
@@ -870,7 +870,7 @@ export default function AdminDashboard() {
         <TopHeader title="Market Prices" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-xs text-slate-400">These prices appear on the Home page in the <span className="text-slate-200 font-bold">Daily Market Price Index — Wholesale Tiered Pricing Table</span>. Saving stamps the "Rates Updated" date as today and syncs to all devices. Last updated: <span className="text-slate-200 font-bold">{lastUpdated}</span></p>
-          <button onClick={handleSave} className="shrink-0 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold">Save Prices</button>
+          <button onClick={handleSave} className="shrink-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold">Save Prices</button>
         </div>
         {renderGroup('cement', 'Cement Bags (OPC 53 / PPC 50kg)', '/ bag')}
         {renderGroup('steel', 'TMT Steel Bars (6mm - 32mm Fe 550D)', '/ kg')}
@@ -928,37 +928,37 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center space-x-2">
             <button onClick={() => ctx.clearNotifications()} className="text-xs font-bold text-slate-400 hover:text-white border border-white/10 px-3 py-1.5 rounded-lg transition">Mark All Read</button>
-            <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); setNewTitle(''); setNewContent(''); }} className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-4 py-2 rounded-xl text-xs font-bold">
+            <button onClick={() => { setShowAdd(!showAdd); setEditingId(null); setNewTitle(''); setNewContent(''); }} className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold">
               <Plus className="w-3.5 h-3.5" /><span>New Alert</span>
             </button>
           </div>
         </div>
 
         {showAdd && (
-          <div className="bg-white/5 border border-purple-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-white/5 border border-orange-500/30 rounded-2xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-white">Create Notification Alert</h3>
-            <input type="text" placeholder="Title (e.g. Flash Sale, Price Drop, Holiday Notice)" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-purple-500" />
-            <textarea placeholder="Message content for customers..." value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-purple-500 resize-none" />
-            <select value={newType} onChange={e => setNewType(e.target.value)} className="bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-purple-500">
+            <input type="text" placeholder="Title (e.g. Flash Sale, Price Drop, Holiday Notice)" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+            <textarea placeholder="Message content for customers..." value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 resize-none" />
+            <select value={newType} onChange={e => setNewType(e.target.value)} className="bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500">
               <option value="announcement">📢 Announcement</option>
               <option value="offer">🏷️ Offer / Sale</option>
               <option value="update">🔄 Price Update</option>
               <option value="alert">⚠️ Alert</option>
             </select>
             <div className="flex space-x-3">
-              <button onClick={handleAdd} className="bg-purple-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Publish Alert</button>
+              <button onClick={handleAdd} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Publish Alert</button>
               <button onClick={() => setShowAdd(false)} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
             </div>
           </div>
         )}
 
         {editingId && (
-          <div className="bg-white/5 border border-amber-500/30 rounded-2xl p-6 space-y-4">
+          <div className="bg-white/5 border border-orange-500/30 rounded-2xl p-6 space-y-4">
             <h3 className="text-sm font-bold text-white">Edit Notification</h3>
-            <input type="text" placeholder="Title" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500" />
-            <textarea placeholder="Message" value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-amber-500 resize-none" />
+            <input type="text" placeholder="Title" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500" />
+            <textarea placeholder="Message" value={newContent} onChange={e => setNewContent(e.target.value)} rows={3} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-orange-500 resize-none" />
             <div className="flex space-x-3">
-              <button onClick={handleSaveEdit} className="bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
+              <button onClick={handleSaveEdit} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
               <button onClick={() => { setEditingId(null); setNewTitle(''); setNewContent(''); }} className="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Cancel</button>
             </div>
           </div>
@@ -966,22 +966,22 @@ export default function AdminDashboard() {
 
         <div className="space-y-3">
           {notifications.length === 0 ? <p className="text-xs text-slate-500 text-center py-12">No notifications yet. Create your first alert above!</p> : notifications.map(n => (
-            <div key={n.id} className={`bg-white/5 border rounded-2xl p-4 transition hover:border-purple-500/30 ${n.read ? 'border-white/5' : 'border-blue-500/30'}`}>
+            <div key={n.id} className={`bg-white/5 border rounded-2xl p-4 transition hover:border-orange-500/30 ${n.read ? 'border-white/5' : 'border-orange-500/30'}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 cursor-pointer" onClick={() => ctx.markNotificationRead(n.id)}>
                   <div className="flex items-center space-x-2 mb-1">
-                    {!n.read && <div className="w-2 h-2 bg-blue-400 rounded-full shrink-0" />}
+                    {!n.read && <div className="w-2 h-2 bg-orange-400 rounded-full shrink-0" />}
                     <div className="text-xs font-bold text-white">{n.title}</div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-bold border border-purple-500/20">{n.type}</span>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${n.active !== false ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' : 'bg-slate-500/20 text-slate-400 border border-slate-500/20'}`}>{n.active !== false ? 'Active' : 'Hidden'}</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 font-bold border border-orange-500/20">{n.type}</span>
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${n.active !== false ? 'bg-orange-500/20 text-orange-400 border border-orange-500/20' : 'bg-slate-500/20 text-slate-400 border border-slate-500/20'}`}>{n.active !== false ? 'Active' : 'Hidden'}</span>
                   </div>
                   <div className="text-[10px] text-slate-400 pl-4">{n.content}</div>
                   {n.createdAt && <div className="text-[10px] text-slate-500 mt-1 pl-4">{new Date(n.createdAt).toLocaleString()}</div>}
                 </div>
                 <div className="flex items-center space-x-1 shrink-0">
-                  <button onClick={() => ctx.updateNotification(n.id, { active: n.active === false ? true : false })} className={`text-[10px] px-2 py-1 rounded-lg font-bold transition ${n.active !== false ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' : 'bg-slate-500/20 text-slate-400 hover:bg-slate-500/30'}`}>{n.active !== false ? 'Hide' : 'Show'}</button>
-                  <button onClick={() => handleEdit(n.id, n.title, n.content)} className="text-slate-400 hover:text-amber-400 transition p-1"><Edit className="w-3.5 h-3.5" /></button>
-                  <button onClick={() => { if (window.confirm(`Delete notification "${n.title}"?`)) ctx.deleteNotification(n.id); }} className="text-slate-400 hover:text-rose-400 transition p-1"><Trash2 className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => ctx.updateNotification(n.id, { active: n.active === false ? true : false })} className={`text-[10px] px-2 py-1 rounded-lg font-bold transition ${n.active !== false ? 'bg-orange-500/20 text-orange-400 hover:bg-orange-500/30' : 'bg-slate-500/20 text-slate-400 hover:bg-slate-500/30'}`}>{n.active !== false ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => handleEdit(n.id, n.title, n.content)} className="text-slate-400 hover:text-orange-400 transition p-1"><Edit className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => { if (window.confirm(`Delete notification "${n.title}"?`)) ctx.deleteNotification(n.id); }} className="text-slate-400 hover:text-orange-400 transition p-1"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
             </div>
@@ -1003,12 +1003,12 @@ export default function AdminDashboard() {
             <div key={t.id} className="bg-white/5 border border-white/10 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-white">{t.title}</h3>
-                <button onClick={() => { setEditing(editing === t.id ? null : t.id); setEditContent(t.content); }} className="text-xs font-bold text-blue-400 hover:text-blue-300">{editing === t.id ? 'Cancel' : 'Edit'}</button>
+                <button onClick={() => { setEditing(editing === t.id ? null : t.id); setEditContent(t.content); }} className="text-xs font-bold text-orange-400 hover:text-orange-300">{editing === t.id ? 'Cancel' : 'Edit'}</button>
               </div>
               {editing === t.id ? (
                 <div className="space-y-3">
-                  <textarea value={editContent} onChange={e => setEditContent(e.target.value)} rows={6} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-3 rounded-xl text-xs focus:outline-none focus:border-blue-500 resize-none" />
-                  <button onClick={() => { updateTermsContent(t.id, editContent); setEditing(null); }} className="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
+                  <textarea value={editContent} onChange={e => setEditContent(e.target.value)} rows={6} className="w-full bg-slate-900 border border-slate-700 text-slate-200 px-4 py-3 rounded-xl text-xs focus:outline-none focus:border-orange-500 resize-none" />
+                  <button onClick={() => { updateTermsContent(t.id, editContent); setEditing(null); }} className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Save Changes</button>
                 </div>
               ) : (
                 <p className="text-xs text-slate-400 leading-relaxed">{t.content}</p>
@@ -1039,7 +1039,7 @@ export default function AdminDashboard() {
           ].map(f => (
             <div key={f.key}>
               <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">{f.label}</label>
-              <input type="text" value={f.val} onChange={e => updateSiteSettings({ [f.key]: e.target.value })} className="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition" />
+              <input type="text" value={f.val} onChange={e => updateSiteSettings({ [f.key]: e.target.value })} className="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-orange-500 transition" />
             </div>
           ))}
         </div>
@@ -1055,7 +1055,7 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-xs text-amber-300">
+        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 text-xs text-orange-300">
           <p className="font-bold mb-1"><Lock className="w-3.5 h-3.5 inline mr-1" />Security Note</p>
           <p>Keep your credentials secure. Admin access controls the entire store management system.</p>
         </div>

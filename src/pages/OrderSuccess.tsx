@@ -14,12 +14,12 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 
 type SiteSettingsInfo = { businessName: string; address: string; gstNumber: string; phone: string };
 
-const NAVY: [number, number, number] = [10, 22, 40];
-const BLUE: [number, number, number] = [59, 130, 246];
-const GRAY: [number, number, number] = [90, 90, 105];
-const LIGHT: [number, number, number] = [235, 236, 242];
-const GREEN: [number, number, number] = [16, 185, 129];
-const ROSE: [number, number, number] = [244, 63, 94];
+// Single-colour theme: every PDF colour is a shade/tone of Vibrant Orange #FF6B00.
+const DARK: [number, number, number] = [38, 18, 4];
+const ORANGE: [number, number, number] = [234, 88, 0];
+const ORANGE_DEEP: [number, number, number] = [154, 60, 4];
+const GRAY: [number, number, number] = [110, 92, 76];
+const LIGHT: [number, number, number] = [245, 234, 222];
 const WHITE: [number, number, number] = [255, 255, 255];
 
 // GST HSN codes by product category (building materials).
@@ -109,9 +109,9 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   } catch { logo = null; }
 
   // ===== Header band with logo on BOTH sides =====
-  doc.setFillColor(...NAVY);
+  doc.setFillColor(...DARK);
   doc.rect(0, 0, W, 36, 'F');
-  doc.setFillColor(...BLUE);
+  doc.setFillColor(...ORANGE);
   doc.rect(0, 36, W, 1.2, 'F');
 
   const drawLogo = (x: number) => {
@@ -131,7 +131,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text(siteSettings.businessName.toUpperCase(), lx, 13.5, { align: 'left' });
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
-  doc.setTextColor(147, 197, 253);
+  doc.setTextColor(255, 173, 102);
   doc.text('P R E M I U M   B U I L D I N G   M A T E R I A L S', lx, 18.5, { align: 'left' });
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(8);
@@ -141,16 +141,16 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
 
   // ===== Title =====
   let y = 46;
-  doc.setTextColor(...BLUE);
+  doc.setTextColor(...ORANGE);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.text('TAX INVOICE', W / 2, y, { align: 'center' });
-  doc.setDrawColor(...BLUE);
+  doc.setDrawColor(...ORANGE);
   doc.setLineWidth(0.5);
   doc.line(80, y + 2, 130, y + 2);
   // Order status badge on the right of the title
   const statusLabel = (ORDER_STATUSES.find(s => s.key === order.status)?.label || order.status).toUpperCase();
-  const badgeFill = order.status === 'delivered' ? GREEN : order.status === 'cancelled' ? ROSE : BLUE;
+  const badgeFill = order.status === 'delivered' ? ORANGE : order.status === 'cancelled' ? ORANGE_DEEP : ORANGE;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
   const badgeW = doc.getTextWidth(statusLabel) + 7;
@@ -171,7 +171,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setFillColor(...LIGHT);
   doc.roundedRect(12, metaTop, 88, 32, 2, 2, 'F');
   doc.roundedRect(104, metaTop, 94, 32, 2, 2, 'F');
-  doc.setFillColor(...BLUE);
+  doc.setFillColor(...ORANGE);
   doc.roundedRect(12, metaTop, 2, 32, 1, 1, 'F');
 
   const metaLine = (label: string, value: string, ly: number) => {
@@ -180,7 +180,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.setTextColor(...GRAY);
     doc.text(label, 16, ly);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...NAVY);
+    doc.setTextColor(...DARK);
     doc.text(value, 40, ly);
   };
   metaLine('Invoice No', order.orderId, metaTop + 6);
@@ -195,7 +195,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text('BILL TO', 108, metaTop + 6);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(...NAVY);
+  doc.setTextColor(...DARK);
   doc.text(order.customer.name, 108, metaTop + 11.5);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
@@ -210,7 +210,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   // ===== Items table =====
   const cols = { no: 13, hsn: 24, product: 30, brand: 88, variant: 113, qty: 134, rate: 148, amount: 196 };
   const drawTableHeader = (ty: number) => {
-    doc.setFillColor(...BLUE);
+    doc.setFillColor(...ORANGE);
     doc.rect(12, ty, 186, 8, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
@@ -235,8 +235,8 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     const nameLines = doc.splitTextToSize(item.name, 56) as string[];
     const rowH = Math.max(8, nameLines.length * 4.5 + 3.5);
     if (y + rowH > 245) { doc.addPage(); y = 16; drawTableHeader(y); y += 8; }
-    if (idx % 2 === 1) { doc.setFillColor(246, 247, 250); doc.rect(12, y, 186, rowH, 'F'); }
-    doc.setTextColor(...NAVY);
+    if (idx % 2 === 1) { doc.setFillColor(250, 244, 238); doc.rect(12, y, 186, rowH, 'F'); }
+    doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.text(String(idx + 1), cols.no, y + 5.5);
@@ -251,7 +251,7 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
     doc.setFont('helvetica', 'bold');
     doc.text(inr(item.total), cols.amount, y + 5.5, { align: 'right' });
     y += rowH;
-    doc.setDrawColor(225, 226, 232);
+    doc.setDrawColor(232, 220, 206);
     doc.setLineWidth(0.2);
     doc.line(12, y, 198, y);
   });
@@ -261,12 +261,12 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   const totalRowsCount = 2 + (handling > 0 ? 1 : 0) + (Math.abs(adjustment) > 0.5 ? 1 : 0);
   const sumCardH = 9 + totalRowsCount * 6.5 + 10.5;
   const sumTop = Math.max(y, 0);
-  doc.setFillColor(250, 250, 252);
+  doc.setFillColor(253, 248, 243);
   doc.roundedRect(108, sumTop, 90, sumCardH, 2, 2, 'F');
-  doc.setDrawColor(226, 224, 240);
+  doc.setDrawColor(238, 222, 204);
   doc.setLineWidth(0.25);
   doc.roundedRect(108, sumTop, 90, sumCardH, 2, 2, 'S');
-  doc.setFillColor(...BLUE);
+  doc.setFillColor(...ORANGE);
   doc.roundedRect(108, sumTop, 1.2, sumCardH, 0.6, 0.6, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
@@ -274,12 +274,12 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.text('SUMMARY', 112, sumTop + 6);
   const ty0 = sumTop + 14;
   const totalRow = (label: string, value: string, rowY: number, bold = false, fill = false) => {
-    if (fill) { doc.setFillColor(...BLUE); doc.roundedRect(111, rowY - 4.2, 84, 8, 1.5, 1.5, 'F'); }
+    if (fill) { doc.setFillColor(...ORANGE); doc.roundedRect(111, rowY - 4.2, 84, 8, 1.5, 1.5, 'F'); }
     doc.setFont('helvetica', bold ? 'bold' : 'normal');
     doc.setFontSize(bold ? 10.5 : 8.5);
-    doc.setTextColor(...(fill ? WHITE : bold ? NAVY : GRAY));
+    doc.setTextColor(...(fill ? WHITE : bold ? DARK : GRAY));
     doc.text(label, 115, rowY);
-    doc.setTextColor(...(fill ? WHITE : NAVY));
+    doc.setTextColor(...(fill ? WHITE : DARK));
     doc.text(value, 192, rowY, { align: 'right' });
   };
   let ry = ty0;
@@ -291,33 +291,33 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
 
   // Amount in words (statutory on Indian tax invoices) — full width strip
   const wordsY = sumTop + sumCardH + 5;
-  doc.setDrawColor(...BLUE);
+  doc.setDrawColor(...ORANGE);
   doc.setLineWidth(0.3);
   doc.roundedRect(12, wordsY, 186, 9, 1.5, 1.5, 'S');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.setTextColor(...BLUE);
+  doc.setTextColor(...ORANGE);
   doc.text('Amount in Words:', 15, wordsY + 5.8);
   const wordsX = 15 + doc.getTextWidth('Amount in Words:') + 1.5;
   doc.setFont('helvetica', 'bolditalic');
-  doc.setTextColor(...NAVY);
+  doc.setTextColor(...DARK);
   doc.text(amountInWords(order.total), wordsX, wordsY + 5.8);
   y = wordsY + 9;
 
   // ===== GST breakup strip (Rule 46: tax rate + amount, CGST/SGST split) =====
   const gstGroups = [...taxGroups.entries()].sort((a, b) => a[0] - b[0]);
   const gstStripH = 14 + gstGroups.length * 5;
-  doc.setDrawColor(...BLUE);
+  doc.setDrawColor(...ORANGE);
   doc.setLineWidth(0.3);
   doc.roundedRect(12, y + 4, 186, gstStripH, 1.5, 1.5, 'S');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.setTextColor(...BLUE);
+  doc.setTextColor(...ORANGE);
   doc.text('GST BREAKUP (PRICES INCLUDE GST):', 15, y + 9.5);
   let gy = y + 15;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
-  doc.setTextColor(...NAVY);
+  doc.setTextColor(...DARK);
   gstGroups.forEach(([rate, g]) => {
     doc.text(`GST @${rate}%  |  Taxable Value: ${inr(g.taxable)}  |  CGST @${rate / 2}%: ${inr(g.tax / 2)}  |  SGST @${rate / 2}%: ${inr(g.tax / 2)}`, 15, gy);
     gy += 5;
@@ -346,22 +346,22 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   if (qrDataUrl) {
     const qx = 158;
     const qy = blockTop;
-    doc.setDrawColor(...NAVY);
+    doc.setDrawColor(...DARK);
     doc.setLineWidth(0.3);
     doc.roundedRect(qx, qy, 40, 47, 2, 2, 'S');
     doc.addImage(qrDataUrl, 'PNG', qx + 6, qy + 4, 28, 28);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6.5);
-    doc.setTextColor(...BLUE);
+    doc.setTextColor(...ORANGE);
     doc.text('SCAN TO TRACK ORDER', qx + 20, qy + 37, { align: 'center' });
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
-    doc.setTextColor(...NAVY);
+    doc.setTextColor(...DARK);
     doc.text(`#${order.orderId}`, qx + 20, qy + 43, { align: 'center' });
   }
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.setTextColor(...NAVY);
+  doc.setTextColor(...DARK);
   doc.text(`For ${siteSettings.businessName}`, 12, signY);
   doc.setDrawColor(180, 182, 192);
   doc.setLineWidth(0.3);
@@ -377,9 +377,9 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setFontSize(7);
   doc.setTextColor(...GRAY);
   doc.text(`Track online: ${trackingUrl}`, W / 2, footerY - 4, { align: 'center' });
-  doc.setFillColor(...NAVY);
+  doc.setFillColor(...DARK);
   doc.rect(0, footerY, W, 12, 'F');
-  doc.setFillColor(...BLUE);
+  doc.setFillColor(...ORANGE);
   doc.rect(0, footerY - 0.8, W, 0.8, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'normal');
@@ -436,11 +436,11 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
   if (!order) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050816] text-white">
+      <div className="min-h-screen flex items-center justify-center bg-[#140902] text-white">
         <div className="text-center space-y-4">
           {cloudFetching ? (
             <>
-              <Loader2 className="w-12 h-12 text-blue-400 mx-auto animate-spin" />
+              <Loader2 className="w-12 h-12 text-orange-400 mx-auto animate-spin" />
               <h2 className="text-xl font-bold">Fetching order #{orderId}…</h2>
               <p className="text-sm text-slate-400">Loading live order details from the store.</p>
             </>
@@ -451,7 +451,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
               <p className="text-sm text-slate-400">Order ID: {orderId}</p>
             </>
           )}
-          <button onClick={() => setPage('home')} className="bg-blue-500 text-white font-bold px-6 py-3 rounded-xl text-sm">Go to Home</button>
+          <button onClick={() => setPage('home')} className="bg-orange-500 text-white font-bold px-6 py-3 rounded-xl text-sm">Go to Home</button>
         </div>
       </div>
     );
@@ -483,7 +483,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#050816] relative overflow-hidden">
+    <div className="min-h-screen bg-[#140902] relative overflow-hidden">
       {/* Hidden high-res QR canvas used by the PDF invoice (must stay rendered, not display:none) */}
       <div aria-hidden="true" className="absolute -left-[9999px] top-0 opacity-0 pointer-events-none">
         <QRCodeCanvas ref={qrCanvasRef} value={trackingUrl} size={512} level="M" marginSize={4} />
@@ -491,8 +491,8 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
       {/* Background glow effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/8 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-orange-500/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-orange-500/8 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -500,18 +500,18 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
         <div className="text-center mb-8">
           <div className={`w-24 h-24 mx-auto mb-6 relative transition-all duration-700 ${animPhase >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
             {/* Glowing ring */}
-            <div className="absolute inset-0 rounded-full border-4 border-blue-500/50 animate-[spin_3s_linear_infinite]" style={{ borderTopColor: '#3b82f6', borderRightColor: '#38bdf8', borderBottomColor: '#3b82f6' }} />
-            <div className="absolute inset-1 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/20 backdrop-blur-sm" />
+            <div className="absolute inset-0 rounded-full border-4 border-orange-500/50 animate-[spin_3s_linear_infinite]" style={{ borderTopColor: '#FF6B00', borderRightColor: '#FF8A2A', borderBottomColor: '#FF6B00' }} />
+            <div className="absolute inset-1 rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/20 backdrop-blur-sm" />
             {/* Checkmark */}
             <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${animPhase >= 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}>
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.4)]">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-[0_0_30px_rgba(255, 107, 0,0.4)]">
                 <Check className="w-8 h-8 text-white" strokeWidth={3} />
               </div>
             </div>
             {/* Particles */}
             {[...Array(6)].map((_, i) => (
               <div key={i} className={`absolute w-1.5 h-1.5 rounded-full transition-all duration-700 ${animPhase >= 3 ? 'opacity-100' : 'opacity-0'}`}
-                style={{ background: ['#3b82f6', '#38bdf8', '#3b82f6', '#f59e0b', '#10b981', '#8b5cf6'][i], top: '50%', left: '50%', transform: `translate(${Math.cos(i * 60 * Math.PI / 180) * 45}px, ${Math.sin(i * 60 * Math.PI / 180) * 45}px)` }} />
+                style={{ background: ['#FF6B00', '#FF8A2A', '#FF6B00', '#FF6B00', '#FF6B00', '#FF6B00'][i], top: '50%', left: '50%', transform: `translate(${Math.cos(i * 60 * Math.PI / 180) * 45}px, ${Math.sin(i * 60 * Math.PI / 180) * 45}px)` }} />
             ))}
           </div>
 
@@ -526,38 +526,38 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
         </div>
 
         {/* Order Reference ID */}
-        <div className={`bg-white/5 border border-blue-500/20 rounded-2xl p-5 text-center mb-6 transition-all duration-500 ${animPhase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={`bg-white/5 border border-orange-500/20 rounded-2xl p-5 text-center mb-6 transition-all duration-500 ${animPhase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Order Reference ID</div>
           <div className="text-xl sm:text-2xl font-black text-white font-industrial">#{order.orderId}</div>
           <button onClick={copyOrderId} className="mt-3 inline-flex items-center space-x-1.5 bg-white/10 border border-white/10 px-4 py-2 rounded-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/15 transition">
-            {copied ? <><Check className="w-3.5 h-3.5 text-emerald-400" /><span className="text-emerald-400">Order ID copied!</span></> : <><Copy className="w-3.5 h-3.5" /><span>Copy Order ID</span></>}
+            {copied ? <><Check className="w-3.5 h-3.5 text-orange-400" /><span className="text-orange-400">Order ID copied!</span></> : <><Copy className="w-3.5 h-3.5" /><span>Copy Order ID</span></>}
           </button>
         </div>
 
         {/* Action Buttons */}
         <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 transition-all duration-500 ${animPhase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <button onClick={handleDownloadInvoice} disabled={invoiceBusy} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-500/30 disabled:opacity-60 transition group">
-            {invoiceBusy ? <Loader2 className="w-5 h-5 text-blue-400 animate-spin" /> : <Download className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />}
+          <button onClick={handleDownloadInvoice} disabled={invoiceBusy} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-orange-500/30 disabled:opacity-60 transition group">
+            {invoiceBusy ? <Loader2 className="w-5 h-5 text-orange-400 animate-spin" /> : <Download className="w-5 h-5 text-orange-400 group-hover:scale-110 transition" />}
             <span className="text-[10px] font-bold text-slate-300">{invoiceBusy ? 'Preparing PDF…' : 'Download Invoice'}</span>
           </button>
           <a href={waHref(siteContent.whatsapp, `Hello HSN Cement & Steel, I have placed an order. Order ID: #${order.orderId}. Please confirm my order and delivery details.`)}
-            target="_blank" rel="noreferrer" className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-[#25D366]/30 transition group">
-            <WhatsAppIcon className="w-5 h-5 text-[#25D366] group-hover:scale-110 transition" />
+            target="_blank" rel="noreferrer" className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-[#FF6B00]/30 transition group">
+            <WhatsAppIcon className="w-5 h-5 text-[#FF6B00] group-hover:scale-110 transition" />
             <span className="text-[10px] font-bold text-slate-300">WhatsApp Store</span>
           </a>
-          <a href={telHref(siteContent.phone)} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-500/30 transition group">
-            <Phone className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />
+          <a href={telHref(siteContent.phone)} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-orange-500/30 transition group">
+            <Phone className="w-5 h-5 text-orange-400 group-hover:scale-110 transition" />
             <span className="text-[10px] font-bold text-slate-300">Call Store</span>
           </a>
-          <button onClick={() => setPage('products')} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-500/30 transition group">
-            <ShoppingCart className="w-5 h-5 text-blue-400 group-hover:scale-110 transition" />
+          <button onClick={() => setPage('products')} className="flex flex-col items-center space-y-2 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-orange-500/30 transition group">
+            <ShoppingCart className="w-5 h-5 text-orange-400 group-hover:scale-110 transition" />
             <span className="text-[10px] font-bold text-slate-300">Continue Shopping</span>
           </button>
         </div>
 
         {/* Track Order Button */}
         <button onClick={() => setPage('order-tracking', order.orderId)}
-          className={`w-full bg-gradient-to-r from-blue-500 via-indigo-600 to-indigo-600 text-white font-black py-4 rounded-2xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:from-blue-400 hover:via-indigo-500 hover:to-blue-500 transition mb-8 ${animPhase >= 6 ? 'opacity-100' : 'opacity-0'}`}>
+          className={`w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-600 text-white font-black py-4 rounded-2xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:from-orange-400 hover:via-orange-500 hover:to-orange-500 transition mb-8 ${animPhase >= 6 ? 'opacity-100' : 'opacity-0'}`}>
           <MapPin className="w-5 h-5" /><span>TRACK MY ORDER</span>
         </button>
 
@@ -574,22 +574,22 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
                   const description = ['Order Placed', 'Store will confirm your order', 'Products are being prepared', 'Order is ready for delivery', 'Driver is on the way', 'Order successfully delivered'][idx] || '';
                   return (
                     <div key={status.key} className="flex items-start space-x-4 relative">
-                      {idx < 5 && <div className={`absolute left-4 top-8 w-0.5 h-8 transition-all duration-500 ${isCompleted ? 'bg-gradient-to-b from-blue-500 to-blue-500' : 'bg-white/10'}`} />}
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 transition-all duration-500 ${isCurrent ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.4)]' : isCompleted ? 'bg-blue-500/20 border border-blue-500/50' : 'bg-white/5 border border-white/10'}`}>
+                      {idx < 5 && <div className={`absolute left-4 top-8 w-0.5 h-8 transition-all duration-500 ${isCompleted ? 'bg-gradient-to-b from-orange-500 to-orange-500' : 'bg-white/10'}`} />}
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 transition-all duration-500 ${isCurrent ? 'bg-gradient-to-br from-orange-500 to-orange-600 shadow-[0_0_15px_rgba(255, 107, 0,0.4)]' : isCompleted ? 'bg-orange-500/20 border border-orange-500/50' : 'bg-white/5 border border-white/10'}`}>
                         {isCompleted ? <Check className="w-3.5 h-3.5 text-white" /> : <div className="w-2 h-2 rounded-full bg-white/20" />}
                       </div>
                       <div className="pb-6">
                         <div className={`text-xs font-bold ${isCurrent ? 'text-white' : isCompleted ? 'text-slate-300' : 'text-slate-600'}`}>{status.label}</div>
-                        <div className={`text-[10px] mt-0.5 ${isCurrent ? 'text-blue-400' : isCompleted ? 'text-slate-500' : 'text-slate-700'}`}>{description}</div>
-                        {isCurrent && <div className="text-[9px] text-blue-400 font-bold mt-0.5 uppercase tracking-wider">Current</div>}
+                        <div className={`text-[10px] mt-0.5 ${isCurrent ? 'text-orange-400' : isCompleted ? 'text-slate-500' : 'text-slate-700'}`}>{description}</div>
+                        {isCurrent && <div className="text-[9px] text-orange-400 font-bold mt-0.5 uppercase tracking-wider">Current</div>}
                       </div>
                     </div>
                   );
                 })}
               </div>
               {isCancelled && (
-                <div className="mt-4 bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 text-center">
-                  <div className="text-sm font-bold text-rose-400">ORDER CANCELLED</div>
+                <div className="mt-4 bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 text-center">
+                  <div className="text-sm font-bold text-orange-400">ORDER CANCELLED</div>
                   <div className="text-[10px] text-slate-400 mt-1">This order has been cancelled.</div>
                 </div>
               )}
@@ -614,9 +614,9 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
               {/* Price Breakdown */}
               <div className="mt-4 pt-4 border-t border-white/5 space-y-2 text-xs">
                 <div className="flex justify-between text-slate-400"><span>Subtotal</span><span className="font-bold text-slate-300">Rs.{subtotal.toLocaleString('en-IN')}</span></div>
-                <div className="flex justify-between text-slate-400"><span>Transport / Delivery</span><span className={`font-bold ${order.deliveryCharge === 0 ? 'text-emerald-400' : 'text-slate-300'}`}>{order.deliveryCharge === 0 ? 'FREE' : `Rs.${order.deliveryCharge.toLocaleString('en-IN')}`}</span></div>
+                <div className="flex justify-between text-slate-400"><span>Transport / Delivery</span><span className={`font-bold ${order.deliveryCharge === 0 ? 'text-orange-400' : 'text-slate-300'}`}>{order.deliveryCharge === 0 ? 'FREE' : `Rs.${order.deliveryCharge.toLocaleString('en-IN')}`}</span></div>
                 {order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge && (
-                  <div className="flex justify-between text-slate-300 bg-blue-500/5 rounded-lg px-2 py-1.5"><span>Final Delivery (confirmed by store)</span><span className="font-bold text-blue-300">Rs.{order.finalDeliveryCharge.toLocaleString('en-IN')}</span></div>
+                  <div className="flex justify-between text-slate-300 bg-orange-500/5 rounded-lg px-2 py-1.5"><span>Final Delivery (confirmed by store)</span><span className="font-bold text-orange-300">Rs.{order.finalDeliveryCharge.toLocaleString('en-IN')}</span></div>
                 )}
                 {order.handlingCharge > 0 && <div className="flex justify-between text-slate-400"><span>Handling</span><span className="font-bold text-slate-300">Rs.{order.handlingCharge.toLocaleString('en-IN')}</span></div>}
                 <div className="flex justify-between items-end pt-3 border-t border-white/10">
@@ -631,7 +631,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
           <div className="lg:col-span-5 space-y-6">
             {/* Delivery Ticket */}
             <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-orange-500 to-orange-500" />
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">HSN CEMENT &amp; STEEL</div>
@@ -657,7 +657,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
             {/* Delivery Info */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-              <h4 className="text-xs font-black text-white flex items-center space-x-2 mb-3"><Truck className="w-4 h-4 text-blue-400" /><span>SITE DELIVERY</span></h4>
+              <h4 className="text-xs font-black text-white flex items-center space-x-2 mb-3"><Truck className="w-4 h-4 text-orange-400" /><span>SITE DELIVERY</span></h4>
               <div className="text-xs text-slate-400 space-y-1.5">
                 <p>{order.deliveryLocation || 'Kalikiri Site Delivery'}</p>
                 <p>Estimated: <span className="text-white font-bold">{zone?.estimatedTime || 'Same-day or next morning'}</span></p>
@@ -666,9 +666,9 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
             </div>
 
             {/* Payment Card */}
-            <div className={`rounded-2xl p-5 border ${order.paymentMode.includes('Cash') ? 'bg-amber-500/5 border-amber-500/20' : 'bg-emerald-500/5 border-emerald-500/20'}`}>
+            <div className={`rounded-2xl p-5 border ${order.paymentMode.includes('Cash') ? 'bg-orange-500/5 border-orange-500/20' : 'bg-orange-500/5 border-orange-500/20'}`}>
               <h4 className="text-xs font-black text-white flex items-center space-x-2 mb-2">
-                {order.paymentMode.includes('Cash') ? <><CreditCard className="w-4 h-4 text-amber-400" /><span>CASH ON DELIVERY</span></> : <><Check className="w-4 h-4 text-emerald-400" /><span>PAYMENT RECEIVED</span></>}
+                {order.paymentMode.includes('Cash') ? <><CreditCard className="w-4 h-4 text-orange-400" /><span>CASH ON DELIVERY</span></> : <><Check className="w-4 h-4 text-orange-400" /><span>PAYMENT RECEIVED</span></>}
               </h4>
               <p className="text-xs text-slate-400">{order.paymentMode.includes('Cash') ? 'Please keep the payable amount ready at the time of delivery.' : 'Online payment has been completed.'}</p>
               <div className="mt-2 text-sm font-black text-white">Amount: Rs.{order.total.toLocaleString('en-IN')}</div>
@@ -680,7 +680,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
                 <QRCodeSVG value={trackingUrl} size={112} level="M" marginSize={2} />
               </div>
               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Scan to Track Order #{order.orderId}</div>
-              <a href={trackingUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center space-x-1 text-[10px] font-bold text-blue-400 hover:text-blue-300 hover:underline transition">Track this order online <ExternalLink className="w-3 h-3" /></a>
+              <a href={trackingUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center space-x-1 text-[10px] font-bold text-orange-400 hover:text-orange-300 hover:underline transition">Track this order online <ExternalLink className="w-3 h-3" /></a>
             </div>
 
             {/* Customer Support */}
@@ -689,10 +689,10 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
               <p className="text-[10px] text-slate-400 mb-3">Our store team is available to assist you.</p>
               <div className="grid grid-cols-2 gap-2">
                 <a href={waHref(siteContent.whatsapp, `Hello, I need help with order #${order.orderId}`)}
-                  target="_blank" rel="noreferrer" className="flex items-center justify-center space-x-1.5 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-bold py-2.5 rounded-xl text-[10px] hover:bg-[#25D366]/20 transition">
+                  target="_blank" rel="noreferrer" className="flex items-center justify-center space-x-1.5 bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] font-bold py-2.5 rounded-xl text-[10px] hover:bg-[#FF6B00]/20 transition">
                   <WhatsAppIcon className="w-3.5 h-3.5" /><span>WhatsApp Store</span>
                 </a>
-                <a href={telHref(siteContent.phone)} className="flex items-center justify-center space-x-1.5 bg-blue-500/10 border border-blue-500/30 text-blue-400 font-bold py-2.5 rounded-xl text-[10px] hover:bg-blue-500/20 transition">
+                <a href={telHref(siteContent.phone)} className="flex items-center justify-center space-x-1.5 bg-orange-500/10 border border-orange-500/30 text-orange-400 font-bold py-2.5 rounded-xl text-[10px] hover:bg-orange-500/20 transition">
                   <Phone className="w-3.5 h-3.5" /><span>Call Store</span>
                 </a>
               </div>
@@ -704,8 +704,8 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
       {/* Floating buttons */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col space-y-3">
-        <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="w-12 h-12 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"><WhatsAppIcon className="w-6 h-6 text-white" /></a>
-        <a href={telHref(siteContent.phone)} className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"><Phone className="w-5 h-5 text-white" /></a>
+        <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="w-12 h-12 bg-[#FF6B00] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"><WhatsAppIcon className="w-6 h-6 text-white" /></a>
+        <a href={telHref(siteContent.phone)} className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"><Phone className="w-5 h-5 text-white" /></a>
       </div>
     </div>
   );

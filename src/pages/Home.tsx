@@ -17,17 +17,17 @@ export default function Home() {
     <div className="relative z-10">
       {/* Hero Section */}
       <section className="home-hero relative flex items-center overflow-hidden">
-        {/* Blue-pink fill (on request — the hero photo was removed): a
-            blue-to-pink gradient that suits the website, with a dark
+        {/* Vibrant Orange fill (single-colour theme — the hero photo
+            was removed): a #FF6B00 orange gradient, with a dark
             scrim over it so the white heading stays readable, fading
             into the page at the bottom so the price-index card below
             blends. */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, #1d4ed8 0%, #6d28d9 48%, #db2777 100%)' }} />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, rgba(4,8,20,0.72) 0%, rgba(4,8,20,0.55) 45%, rgba(4,8,20,0.85) 100%)' }} />
-          <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/15 blur-[120px] rounded-full" />
-          <div className="absolute top-1/3 -right-24 w-96 h-96 bg-indigo-500/10 blur-[120px] rounded-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#040814] via-transparent to-transparent" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, #FF8A2A 0%, #FF6B00 48%, #E85A00 100%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, rgba(20, 9, 2,0.72) 0%, rgba(20, 9, 2,0.55) 45%, rgba(20, 9, 2,0.85) 100%)' }} />
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-500/15 blur-[120px] rounded-full" />
+          <div className="absolute top-1/3 -right-24 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#140902] via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 w-full">
@@ -41,7 +41,7 @@ export default function Home() {
               boxShadow:
                 'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 24px -14px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
             }}>
-              <Shield className="w-4 h-4 text-emerald-400" />
+              <Shield className="w-4 h-4 text-orange-400" />
               <span>GSTIN: {siteSettings.gstNumber}</span>
             </span>
             <span className="rounded-full text-xs font-bold text-white border border-white/18 px-4 py-2 flex items-center space-x-2 backdrop-blur-md" style={{

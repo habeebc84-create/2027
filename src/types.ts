@@ -233,13 +233,13 @@ export interface Toast {
 }
 
 export const ORDER_STATUSES: { key: OrderStatus; label: string; color: string }[] = [
-  { key: 'placed', label: 'Order Placed', color: 'text-blue-400 bg-blue-500/20 border-blue-500/30' },
-  { key: 'confirmed', label: 'Order Confirmed', color: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30' },
-  { key: 'processing', label: 'Processing', color: 'text-amber-400 bg-amber-500/20 border-amber-500/30' },
+  { key: 'placed', label: 'Order Placed', color: 'text-orange-400 bg-orange-500/20 border-orange-500/30' },
+  { key: 'confirmed', label: 'Order Confirmed', color: 'text-orange-400 bg-orange-500/20 border-orange-500/30' },
+  { key: 'processing', label: 'Processing', color: 'text-orange-400 bg-orange-500/20 border-orange-500/30' },
   { key: 'ready_dispatch', label: 'Ready for Dispatch', color: 'text-orange-400 bg-orange-500/20 border-orange-500/30' },
-  { key: 'out_delivery', label: 'Out for Delivery', color: 'text-purple-400 bg-purple-500/20 border-purple-500/30' },
-  { key: 'delivered', label: 'Delivered', color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30' },
-  { key: 'cancelled', label: 'Cancelled', color: 'text-rose-400 bg-rose-500/20 border-rose-500/30' },
+  { key: 'out_delivery', label: 'Out for Delivery', color: 'text-orange-400 bg-orange-500/20 border-orange-500/30' },
+  { key: 'delivered', label: 'Delivered', color: 'text-orange-400 bg-orange-500/20 border-orange-500/30' },
+  { key: 'cancelled', label: 'Cancelled', color: 'text-orange-400 bg-orange-500/20 border-orange-500/30' },
   { key: 'returned', label: 'Returned', color: 'text-slate-400 bg-slate-500/20 border-slate-500/30' },
 ];
 

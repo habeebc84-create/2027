@@ -30,7 +30,7 @@ export default function Contact() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h1 className="text-3xl sm:text-5xl font-black text-slate-100 font-industrial">
-            Contact <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">HSN CEMENT AND STEEL</span>
+            Contact <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">HSN CEMENT AND STEEL</span>
           </h1>
           <p className="text-slate-400 text-sm sm:text-base mt-2">Get instant price quotes, structural material estimates, or schedule site delivery.</p>
         </div>
@@ -48,28 +48,28 @@ export default function Contact() {
             <h3 className="text-xl font-bold text-slate-100 border-b border-slate-800 pb-3">Store Details</h3>
             <div className="space-y-4 text-sm">
               <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-blue-400 shrink-0 mt-1" />
+                <MapPin className="w-5 h-5 text-orange-400 shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">Address</div>
                   <div className="text-slate-200 font-semibold">{siteContent.address}</div>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <PhoneIcon className="w-5 h-5 text-blue-400 shrink-0 mt-1" />
+                <PhoneIcon className="w-5 h-5 text-orange-400 shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">Phone Number</div>
                   <a href={telHref(siteContent.phone)} className="text-white font-bold hover:underline">{siteContent.phone}</a>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <WhatsAppIcon className="w-5 h-5 text-[#25D366] shrink-0 mt-1" />
+                <WhatsAppIcon className="w-5 h-5 text-[#FF6B00] shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">WhatsApp Number</div>
-                  <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="text-[#25D366] font-bold hover:underline">{siteContent.whatsapp}</a>
+                  <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="text-[#FF6B00] font-bold hover:underline">{siteContent.whatsapp}</a>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <Clock className="w-5 h-5 text-blue-400 shrink-0 mt-1" />
+                <Clock className="w-5 h-5 text-orange-400 shrink-0 mt-1" />
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase">Business Hours</div>
                   <div className="text-slate-200 font-semibold">{siteContent.businessHours}</div>
@@ -77,8 +77,8 @@ export default function Contact() {
               </div>
             </div>
             <div className="pt-4 flex space-x-3 border-t border-white/10">
-              <a href={telHref(siteContent.phone)} className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold py-3 rounded-xl text-xs text-center transition">Call Store</a>
-              <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
+              <a href={telHref(siteContent.phone)} className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-bold py-3 rounded-xl text-xs text-center transition">Call Store</a>
+              <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-[#FF6B00] hover:bg-[#E85A00] text-white font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
             </div>
           </div>
 
@@ -101,26 +101,26 @@ export default function Contact() {
                 boxShadow:
                   'inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 26px -16px rgba(0,0,0,0.7), 0 6px 14px -10px rgba(0,0,0,0.45)',
               }}>
-                <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto" />
+                <CheckCircle className="w-12 h-12 text-orange-400 mx-auto" />
                 <h4 className="text-lg font-bold">Thank You! Your Inquiry Has Been Received.</h4>
                 <p className="text-xs text-slate-300">Our store manager will contact you on <strong>{form.mobile}</strong> shortly with pricing and delivery terms.</p>
-                <button onClick={() => { setSubmitted(false); setForm({ name: '', mobile: '', materialNeeded: 'Cement & Steel', message: '' }); }} className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition">Send Another Inquiry</button>
+                <button onClick={() => { setSubmitted(false); setForm({ name: '', mobile: '', materialNeeded: 'Cement & Steel', message: '' }); }} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition">Send Another Inquiry</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-bold text-slate-300 block mb-1">Your Full Name *</label>
-                    <input type="text" required placeholder="e.g. K. Venkat Reddy" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500" />
+                    <input type="text" required placeholder="e.g. K. Venkat Reddy" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-orange-500" />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-slate-300 block mb-1">Mobile Number *</label>
-                    <input type="tel" required placeholder="e.g. 9848022334" value={form.mobile} onChange={e => setForm({...form, mobile: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500" />
+                    <input type="tel" required placeholder="e.g. 9848022334" value={form.mobile} onChange={e => setForm({...form, mobile: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-orange-500" />
                   </div>
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Materials Requirement</label>
-                  <select value={form.materialNeeded} onChange={e => setForm({...form, materialNeeded: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500">
+                  <select value={form.materialNeeded} onChange={e => setForm({...form, materialNeeded: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-orange-500">
                     <option value="Cement & Steel">Cement & Steel (Bulk Order)</option>
                     <option value="Cement Only">Cement Bags Only (JSW, ACC, Dalmia, Bharathi)</option>
                     <option value="Steel Only">Tata Tiscon & Vizag Steel TMT Bars</option>
@@ -130,9 +130,9 @@ export default function Contact() {
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Site Location & Quantity Notes</label>
-                  <textarea rows={4} placeholder="Enter site location in Kalikiri / nearby mandals and estimated quantities..." value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 resize-none" />
+                  <textarea rows={4} placeholder="Enter site location in Kalikiri / nearby mandals and estimated quantities..." value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="w-full bg-slate-950 border border-slate-800 text-slate-100 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-orange-500 resize-none" />
                 </div>
-                <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-black py-3.5 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center space-x-2 text-sm transition">
+                <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black py-3.5 rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center space-x-2 text-sm transition">
                   <Send className="w-4 h-4" />
                   <span>Submit Inquiry</span>
                 </button>
@@ -162,14 +162,14 @@ export default function Contact() {
                 />
                 <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-900/40">
                   <p className="text-[11px] text-slate-400">
-                    <MapPin className="w-3 h-3 inline mr-1 text-blue-400" />
+                    <MapPin className="w-3 h-3 inline mr-1 text-orange-400" />
                     {store.label} — {store.plusCode} Kalikiri, AP
                   </p>
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${query}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center space-x-1.5 bg-blue-500 hover:bg-blue-400 text-slate-950 px-3 py-1.5 rounded-lg text-[11px] font-bold transition"
+                    className="inline-flex items-center space-x-1.5 bg-orange-500 hover:bg-orange-400 text-slate-950 px-3 py-1.5 rounded-lg text-[11px] font-bold transition"
                   >
                     <MapPin className="w-3 h-3" />
                     <span>Get Directions</span>

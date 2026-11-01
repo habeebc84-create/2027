@@ -67,14 +67,14 @@ class PageErrorBoundary extends React.Component<
         <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
           <h1 style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>Something went wrong on this page</h1>
           {this.state.message && (
-            <p style={{ color: '#fbbf24', maxWidth: 520, fontSize: 13, wordBreak: 'break-word' }}>{this.state.message}</p>
+            <p style={{ color: '#FF8A2A', maxWidth: 520, fontSize: 13, wordBreak: 'break-word' }}>{this.state.message}</p>
           )}
-          <p style={{ color: '#94a3b8', maxWidth: 420 }}>Your cart and orders are safe — go back to the home page or reload.</p>
+          <p style={{ color: '#BFA188', maxWidth: 420 }}>Your cart and orders are safe — go back to the home page or reload.</p>
           <div style={{ display: 'flex', gap: 12 }}>
-            <button type="button" onClick={() => { this.setState({ failed: false, message: '' }); window.location.href = '/'; }} style={{ background: '#f59e0b', color: '#000', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
+            <button type="button" onClick={() => { this.setState({ failed: false, message: '' }); window.location.href = '/'; }} style={{ background: '#FF6B00', color: '#000', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
               Go to Home
             </button>
-            <button type="button" onClick={() => window.location.reload()} style={{ background: '#334155', color: '#fff', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
+            <button type="button" onClick={() => window.location.reload()} style={{ background: '#4E3A2A', color: '#fff', fontWeight: 800, padding: '12px 24px', borderRadius: 12, border: 'none', cursor: 'pointer' }}>
               Reload
             </button>
           </div>
@@ -205,10 +205,10 @@ function AppContent() {
     <PageErrorBoundary>
     <div className="min-h-screen">
       {globalError && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, background: '#7f1d1d', color: '#fff', padding: '10px 16px', fontSize: 13, display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, background: '#7A3108', color: '#fff', padding: '10px 16px', fontSize: 13, display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ wordBreak: 'break-word' }}>Site error: {globalError}</span>
           <span style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-            <button type="button" onClick={() => window.location.reload()} style={{ background: '#fff', color: '#7f1d1d', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer' }}>Reload</button>
+            <button type="button" onClick={() => window.location.reload()} style={{ background: '#fff', color: '#7A3108', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer' }}>Reload</button>
             <button type="button" onClick={() => setGlobalError(null)} style={{ background: 'transparent', color: '#fff', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: '1px solid #fff', cursor: 'pointer' }}>Dismiss</button>
           </span>
         </div>

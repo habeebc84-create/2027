@@ -1,8 +1,76 @@
 @import "tailwindcss";
 
+/* ============================================================
+   SINGLE-COLOUR THEME — Vibrant Orange #FF6B00 (whole website)
+   ------------------------------------------------------------
+   ONE colour everywhere: buttons, gradients, headings, icons,
+   badges, borders, glows, links, splash, admin, PDF invoice.
+   Every accent shade below is a tint/shade/tone of #FF6B00.
+   Neutrals (slate) are the warm, desaturated tones of the same
+   orange, so even backgrounds/cards belong to the one colour.
+   To change the entire site colour in future, edit ONLY this
+   @theme block — every utility class follows it.
+   ============================================================ */
+@theme {
+  /* --- Vibrant Orange ramp (500 = the brand colour #FF6B00) --- */
+  --color-orange-50: #FFF5EB;
+  --color-orange-100: #FFE8D1;
+  --color-orange-200: #FFD2A3;
+  --color-orange-300: #FFAD66;
+  --color-orange-400: #FF8A2A;
+  --color-orange-500: #FF6B00;
+  --color-orange-600: #E85A00;
+  --color-orange-700: #C24B00;
+  --color-orange-800: #993C04;
+  --color-orange-900: #7A3108;
+  --color-orange-950: #431A02;
+  /* brand alias: bg-brand, text-brand-400 … (same Vibrant Orange) */
+  --color-brand-50: #FFF5EB; --color-brand-100: #FFE8D1; --color-brand-200: #FFD2A3; --color-brand-300: #FFAD66; --color-brand-400: #FF8A2A; --color-brand-500: #FF6B00; --color-brand-600: #E85A00; --color-brand-700: #C24B00; --color-brand-800: #993C04; --color-brand-900: #7A3108; --color-brand-950: #431A02;
+
+  /* --- Warm orange-tone neutrals (dark bg #140902 -> warm white) --- */
+  --color-slate-50: #FAF5F0;
+  --color-slate-100: #F4EBE2;
+  --color-slate-200: #E9DCCB;
+  --color-slate-300: #D8C3AC;
+  --color-slate-400: #BFA188;
+  --color-slate-500: #A07E61;
+  --color-slate-600: #7D5F49;
+  --color-slate-700: #4E3A2A;
+  --color-slate-800: #2E1D11;
+  --color-slate-850: #26170D;
+  --color-slate-900: #20140A;
+  --color-slate-950: #140902;
+
+  /* --- Single-colour safety net ------------------------------------
+     Every other hue name resolves to the SAME Vibrant Orange ramp,
+     so no other colour can appear anywhere on the site — including
+     dynamic / admin-entered class strings.                        */
+  --color-blue-50: #FFF5EB; --color-blue-100: #FFE8D1; --color-blue-200: #FFD2A3; --color-blue-300: #FFAD66; --color-blue-400: #FF8A2A; --color-blue-500: #FF6B00; --color-blue-600: #E85A00; --color-blue-700: #C24B00; --color-blue-800: #993C04; --color-blue-900: #7A3108; --color-blue-950: #431A02;
+  --color-indigo-50: #FFF5EB; --color-indigo-100: #FFE8D1; --color-indigo-200: #FFD2A3; --color-indigo-300: #FFAD66; --color-indigo-400: #FF8A2A; --color-indigo-500: #FF6B00; --color-indigo-600: #E85A00; --color-indigo-700: #C24B00; --color-indigo-800: #993C04; --color-indigo-900: #7A3108; --color-indigo-950: #431A02;
+  --color-purple-50: #FFF5EB; --color-purple-100: #FFE8D1; --color-purple-200: #FFD2A3; --color-purple-300: #FFAD66; --color-purple-400: #FF8A2A; --color-purple-500: #FF6B00; --color-purple-600: #E85A00; --color-purple-700: #C24B00; --color-purple-800: #993C04; --color-purple-900: #7A3108; --color-purple-950: #431A02;
+  --color-violet-50: #FFF5EB; --color-violet-100: #FFE8D1; --color-violet-200: #FFD2A3; --color-violet-300: #FFAD66; --color-violet-400: #FF8A2A; --color-violet-500: #FF6B00; --color-violet-600: #E85A00; --color-violet-700: #C24B00; --color-violet-800: #993C04; --color-violet-900: #7A3108; --color-violet-950: #431A02;
+  --color-pink-50: #FFF5EB; --color-pink-100: #FFE8D1; --color-pink-200: #FFD2A3; --color-pink-300: #FFAD66; --color-pink-400: #FF8A2A; --color-pink-500: #FF6B00; --color-pink-600: #E85A00; --color-pink-700: #C24B00; --color-pink-800: #993C04; --color-pink-900: #7A3108; --color-pink-950: #431A02;
+  --color-fuchsia-50: #FFF5EB; --color-fuchsia-100: #FFE8D1; --color-fuchsia-200: #FFD2A3; --color-fuchsia-300: #FFAD66; --color-fuchsia-400: #FF8A2A; --color-fuchsia-500: #FF6B00; --color-fuchsia-600: #E85A00; --color-fuchsia-700: #C24B00; --color-fuchsia-800: #993C04; --color-fuchsia-900: #7A3108; --color-fuchsia-950: #431A02;
+  --color-rose-50: #FFF5EB; --color-rose-100: #FFE8D1; --color-rose-200: #FFD2A3; --color-rose-300: #FFAD66; --color-rose-400: #FF8A2A; --color-rose-500: #FF6B00; --color-rose-600: #E85A00; --color-rose-700: #C24B00; --color-rose-800: #993C04; --color-rose-900: #7A3108; --color-rose-950: #431A02;
+  --color-red-50: #FFF5EB; --color-red-100: #FFE8D1; --color-red-200: #FFD2A3; --color-red-300: #FFAD66; --color-red-400: #FF8A2A; --color-red-500: #FF6B00; --color-red-600: #E85A00; --color-red-700: #C24B00; --color-red-800: #993C04; --color-red-900: #7A3108; --color-red-950: #431A02;
+  --color-emerald-50: #FFF5EB; --color-emerald-100: #FFE8D1; --color-emerald-200: #FFD2A3; --color-emerald-300: #FFAD66; --color-emerald-400: #FF8A2A; --color-emerald-500: #FF6B00; --color-emerald-600: #E85A00; --color-emerald-700: #C24B00; --color-emerald-800: #993C04; --color-emerald-900: #7A3108; --color-emerald-950: #431A02;
+  --color-teal-50: #FFF5EB; --color-teal-100: #FFE8D1; --color-teal-200: #FFD2A3; --color-teal-300: #FFAD66; --color-teal-400: #FF8A2A; --color-teal-500: #FF6B00; --color-teal-600: #E85A00; --color-teal-700: #C24B00; --color-teal-800: #993C04; --color-teal-900: #7A3108; --color-teal-950: #431A02;
+  --color-green-50: #FFF5EB; --color-green-100: #FFE8D1; --color-green-200: #FFD2A3; --color-green-300: #FFAD66; --color-green-400: #FF8A2A; --color-green-500: #FF6B00; --color-green-600: #E85A00; --color-green-700: #C24B00; --color-green-800: #993C04; --color-green-900: #7A3108; --color-green-950: #431A02;
+  --color-cyan-50: #FFF5EB; --color-cyan-100: #FFE8D1; --color-cyan-200: #FFD2A3; --color-cyan-300: #FFAD66; --color-cyan-400: #FF8A2A; --color-cyan-500: #FF6B00; --color-cyan-600: #E85A00; --color-cyan-700: #C24B00; --color-cyan-800: #993C04; --color-cyan-900: #7A3108; --color-cyan-950: #431A02;
+  --color-sky-50: #FFF5EB; --color-sky-100: #FFE8D1; --color-sky-200: #FFD2A3; --color-sky-300: #FFAD66; --color-sky-400: #FF8A2A; --color-sky-500: #FF6B00; --color-sky-600: #E85A00; --color-sky-700: #C24B00; --color-sky-800: #993C04; --color-sky-900: #7A3108; --color-sky-950: #431A02;
+  --color-amber-50: #FFF5EB; --color-amber-100: #FFE8D1; --color-amber-200: #FFD2A3; --color-amber-300: #FFAD66; --color-amber-400: #FF8A2A; --color-amber-500: #FF6B00; --color-amber-600: #E85A00; --color-amber-700: #C24B00; --color-amber-800: #993C04; --color-amber-900: #7A3108; --color-amber-950: #431A02;
+  --color-yellow-50: #FFF5EB; --color-yellow-100: #FFE8D1; --color-yellow-200: #FFD2A3; --color-yellow-300: #FFAD66; --color-yellow-400: #FF8A2A; --color-yellow-500: #FF6B00; --color-yellow-600: #E85A00; --color-yellow-700: #C24B00; --color-yellow-800: #993C04; --color-yellow-900: #7A3108; --color-yellow-950: #431A02;
+  --color-lime-50: #FFF5EB; --color-lime-100: #FFE8D1; --color-lime-200: #FFD2A3; --color-lime-300: #FFAD66; --color-lime-400: #FF8A2A; --color-lime-500: #FF6B00; --color-lime-600: #E85A00; --color-lime-700: #C24B00; --color-lime-800: #993C04; --color-lime-900: #7A3108; --color-lime-950: #431A02;
+  /* other neutral names -> warm orange-tone neutrals */
+  --color-gray-50: #FAF5F0; --color-gray-100: #F4EBE2; --color-gray-200: #E9DCCB; --color-gray-300: #D8C3AC; --color-gray-400: #BFA188; --color-gray-500: #A07E61; --color-gray-600: #7D5F49; --color-gray-700: #4E3A2A; --color-gray-800: #2E1D11; --color-gray-900: #20140A; --color-gray-950: #140902;
+  --color-zinc-50: #FAF5F0; --color-zinc-100: #F4EBE2; --color-zinc-200: #E9DCCB; --color-zinc-300: #D8C3AC; --color-zinc-400: #BFA188; --color-zinc-500: #A07E61; --color-zinc-600: #7D5F49; --color-zinc-700: #4E3A2A; --color-zinc-800: #2E1D11; --color-zinc-900: #20140A; --color-zinc-950: #140902;
+  --color-neutral-50: #FAF5F0; --color-neutral-100: #F4EBE2; --color-neutral-200: #E9DCCB; --color-neutral-300: #D8C3AC; --color-neutral-400: #BFA188; --color-neutral-500: #A07E61; --color-neutral-600: #7D5F49; --color-neutral-700: #4E3A2A; --color-neutral-800: #2E1D11; --color-neutral-900: #20140A; --color-neutral-950: #140902;
+  --color-stone-50: #FAF5F0; --color-stone-100: #F4EBE2; --color-stone-200: #E9DCCB; --color-stone-300: #D8C3AC; --color-stone-400: #BFA188; --color-stone-500: #A07E61; --color-stone-600: #7D5F49; --color-stone-700: #4E3A2A; --color-stone-800: #2E1D11; --color-stone-900: #20140A; --color-stone-950: #140902;
+}
+
 @layer base {
   :root {
-    --color-slate-850: #121a3a;
+    --color-slate-850: #26170D;
   }
 
   body {
@@ -11,7 +79,7 @@
     color: var(--color-slate-100, #fff);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #040814;
+    background-color: #140902;
     position: relative;
     overflow-x: hidden;
   }
@@ -184,7 +252,7 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-color: #050816;
+  background-color: #140902;
 }
 
 .splash-bg img {
@@ -210,7 +278,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(0,0,0,0.22), transparent 55%, rgba(255,180,0,0.05));
+  background: linear-gradient(90deg, rgba(0,0,0,0.22), transparent 55%, rgba(255, 107, 0,0.05));
   z-index: 1;
 }
 
@@ -248,7 +316,7 @@
   justify-content: space-between;
   padding: 0 25px;
   border-radius: 999px;
-  background: rgba(16, 21, 33, 0.35);
+  background: rgba(33, 19, 8, 0.35);
   border: 1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -275,7 +343,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #171717, #020202);
+  background: linear-gradient(145deg, #211409, #090401);
   border: 4px solid rgba(255,255,255,0.08);
   box-shadow: 0 4px 12px rgba(0,0,0,0.45), inset 0 1px 2px rgba(255,255,255,0.15);
   overflow: hidden;
@@ -330,8 +398,8 @@
 }
 
 .splash-whatsapp {
-  background: linear-gradient(135deg, #25D366, #1faa53);
-  box-shadow: 0 7px 20px rgba(37, 211, 102, 0.35);
+  background: linear-gradient(135deg, #FF6B00, #E85A00);
+  box-shadow: 0 7px 20px rgba(255, 107, 0, 0.35);
 }
 
 .splash-nav-btn:hover {
@@ -371,7 +439,7 @@
   gap: 8px;
   padding: 8px 17px;
   border-radius: 25px;
-  background: rgba(16,21,33,0.45);
+  background: rgba(33, 19, 8,0.45);
   border: 1px solid rgba(255,255,255,0.20);
   backdrop-filter: blur(10px);
   font-size: 13px;
@@ -461,7 +529,7 @@
   width: 0.3em;
 }
 .gate-letter-gradient {
-  background: linear-gradient(to right, #fbbf24, #fb923c);
+  background: linear-gradient(to right, #FFAD66, #FF6B00);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -504,7 +572,7 @@
   max-width: 100%;
   padding: 0 27px;
   justify-content: space-between;
-  background: rgba(16,21,33,0.45);
+  background: rgba(33, 19, 8,0.45);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05);
@@ -531,7 +599,7 @@
   max-width: 100%;
   justify-content: center;
   gap: 10px;
-  background: rgba(16,21,33,0.45);
+  background: rgba(33, 19, 8,0.45);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.18);
@@ -546,11 +614,11 @@
   box-shadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
-/* ENTER button blink: a soft amber pulse that draws the eye to ENTER
+/* ENTER button blink: a soft orange pulse that draws the eye to ENTER
    until it is tapped. Reduced-motion users get a steady button. */
 @keyframes splash-enter-blink {
-  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 0 rgba(245,158,11,0.45); }
-  50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 14px rgba(245,158,11,0); }
+  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 0 rgba(255, 107, 0,0.45); }
+  50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 14px rgba(255, 107, 0,0); }
 }
 .splash-primary-btn {
   animation: splash-enter-blink 2s ease-in-out infinite;
@@ -572,7 +640,7 @@
   border-radius: 13px;
   /* Clear liquid glass (same treatment as the bottom dock): no white
      fill, no warm tint — the splash photo shows through the glass. */
-  background: rgba(16,21,33,0.30);
+  background: rgba(33, 19, 8,0.30);
   border: 1px solid rgba(255,255,255,0.14);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
@@ -612,7 +680,7 @@
   border-radius: 19px;
   /* Clear liquid glass (same treatment as the bottom dock): the dark
      purple opaque fill is gone — the splash photo shows through. */
-  background: rgba(16,21,33,0.28);
+  background: rgba(33, 19, 8,0.28);
   border: 1px solid rgba(255,255,255,0.14);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
@@ -638,10 +706,10 @@
   color: white;
 }
 
-.card-1-icon { background: linear-gradient(135deg, #4169ff, #633cff); }
-.card-2-icon { background: linear-gradient(135deg, #db39dc, #6e6de9); }
-.card-3-icon { background: linear-gradient(135deg, #119bff, #00aeb8); }
-.card-4-icon { background: linear-gradient(135deg, #e439d5, #9e36ef); }
+.card-1-icon { background: linear-gradient(135deg, #FFAD66, #FF8A2A); }
+.card-2-icon { background: linear-gradient(135deg, #FF8A2A, #FF6B00); }
+.card-3-icon { background: linear-gradient(135deg, #FF6B00, #E85A00); }
+.card-4-icon { background: linear-gradient(135deg, #FF6B00, #C24B00); }
 
 /* Feature Text */
 .splash-feature-text {
@@ -893,7 +961,7 @@
   padding: 8px;
   list-style: none;
   border-radius: 999px;
-  background: rgba(13, 18, 30, 0.34);
+  background: rgba(33, 19, 8, 0.34);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
     0 18px 45px rgba(0, 0, 0, 0.28),
@@ -908,12 +976,12 @@
 /* Graceful fallback when backdrop filters are unavailable */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .floating-bottom-nav-list {
-    background: rgba(13, 18, 30, 0.72);
+    background: rgba(33, 19, 8, 0.72);
   }
 }
 
 .floating-bottom-nav.is-scrolled .floating-bottom-nav-list {
-  background: rgba(13, 18, 30, 0.46);
+  background: rgba(33, 19, 8, 0.46);
 }
 
 .floating-bottom-nav-indicator {
@@ -922,8 +990,8 @@
   bottom: 8px;
   left: 0;
   border-radius: 999px;
-  background: #111827;
-  box-shadow: 0 6px 16px rgba(17, 24, 39, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  background: linear-gradient(135deg, #FF8A2A, #FF6B00);
+  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   transition: transform 0.55s cubic-bezier(0.22, 1.4, 0.36, 1), width 0.55s cubic-bezier(0.22, 1.4, 0.36, 1);
   pointer-events: none;
 }
@@ -1014,8 +1082,8 @@
 }
 
 @keyframes logoGlowPulse {
-  0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 0 0 rgba(6, 182, 212, 0.45), inset 0 1px 2px rgba(255,255,255,0.15); }
-  50% { box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 10px rgba(6, 182, 212, 0), inset 0 1px 2px rgba(255,255,255,0.15); }
+  0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 0 0 rgba(255, 107, 0, 0.45), inset 0 1px 2px rgba(255,255,255,0.15); }
+  50% { box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 10px rgba(255, 107, 0, 0), inset 0 1px 2px rgba(255,255,255,0.15); }
 }
 
 @keyframes logoImgIn {

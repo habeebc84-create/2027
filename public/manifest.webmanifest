@@ -1,5 +1,5 @@
 {
-  "background_color": "#040814",
+  "background_color": "#140902",
   "description": "HSN CEMENT AND STEEL - Kalikiri's premier building material supplier with wholesale direct daily rates.",
   "display": "standalone",
   "icons": [
@@ -41,5 +41,5 @@
   "scope": "/",
   "short_name": "HSN",
   "start_url": "/",
-  "theme_color": "#040814"
+  "theme_color": "#140902"
 }

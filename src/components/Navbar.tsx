@@ -67,14 +67,14 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
 
           {/* Right actions */}
           <div className="flex items-center space-x-2 shrink-0">
-            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3.5 py-2 rounded-lg text-xs xl:text-sm font-bold transition shadow-md shadow-green-500/20">
+            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-[#FF6B00] hover:bg-[#E85A00] text-white px-3.5 py-2 rounded-lg text-xs xl:text-sm font-bold transition shadow-md shadow-orange-500/20">
               <WhatsAppIcon className="w-4 h-4" />
               <span>WhatsApp</span>
             </a>
             <button onClick={onCartClick} className="relative bg-slate-800/60 hover:bg-slate-700/60 border border-white/10 text-white p-2.5 rounded-lg transition shadow-md" aria-label="Open cart">
               <ShoppingCart className="w-6 h-6" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-lg">
+                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-lg">
                   {cartCount}
                 </span>
               )}

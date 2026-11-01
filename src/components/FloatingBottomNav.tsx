@@ -23,11 +23,10 @@ interface FloatingBottomNavProps {
 }
 
 // Apple-style bottom bar (iOS liquid-glass dock): a floating capsule of
-// CLEAR neutral glass — no white fill and no warm/brown tint anywhere.
-// The glass is a cool charcoal (blue >= red, so it can never read brown),
-// heavily blurred with restrained saturation so the colours of photos
-// behind it do not bleed through and tint the bar. Only the selected
-// item carries a glass pill; every other item sits directly on the glass.
+// CLEAR warm-dark glass — a deep tone of the site's single Vibrant
+// Orange theme, heavily blurred with restrained saturation so photos
+// behind it stay muted. Only the selected item carries the vibrant
+// orange pill; every other item sits directly on the glass.
 export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
   const { currentPage, setPage } = useApp();
   const shouldReduceMotion = useReducedMotion();
@@ -62,7 +61,7 @@ export default function FloatingBottomNav({ visible }: FloatingBottomNavProps) {
           pointerEvents: 'auto',
           maxWidth: 'calc(100vw - 16px)',
           background:
-            'linear-gradient(180deg, rgba(16,21,33,0.44) 0%, rgba(16,21,33,0.34) 55%, rgba(16,21,33,0.28) 100%)',
+            'linear-gradient(180deg, rgba(33, 19, 8,0.44) 0%, rgba(33, 19, 8,0.34) 55%, rgba(33, 19, 8,0.28) 100%)',
           backdropFilter: 'blur(28px) saturate(135%)',
           WebkitBackdropFilter: 'blur(28px) saturate(135%)',
           boxShadow:

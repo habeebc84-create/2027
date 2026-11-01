@@ -2,8 +2,8 @@
   <defs>
     <!-- Background Gradient -->
     <radialGradient id="bgGrad" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#1e293b"/>
-      <stop offset="100%" stop-color="#090d16"/>
+      <stop offset="0%" stop-color="#2E1D11"/>
+      <stop offset="100%" stop-color="#140902"/>
     </radialGradient>
 
     <!-- CPVC Pipe Cream Gradient -->
@@ -56,7 +56,7 @@
   <rect width="1000" height="600" fill="url(#bgGrad)"/>
   
   <!-- Subtle Studio Floor Grid Light -->
-  <ellipse cx="500" cy="480" rx="420" ry="80" fill="#06b6d4" opacity="0.08" filter="url(#glow)"/>
+  <ellipse cx="500" cy="480" rx="420" ry="80" fill="#FF6B00" opacity="0.10" filter="url(#glow)"/>
 
   <!-- Pipe Group with 3D Depth Shadow -->
   <g filter="url(#shadow)">
@@ -119,20 +119,20 @@
   <!-- Product Badges & Lighting Highlights -->
   <!-- Brand Badge Top Left -->
   <g transform="translate(60, 50)">
-    <rect width="210" height="42" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" opacity="0.9"/>
-    <text x="15" y="26" font-family="sans-serif" font-weight="900" font-size="14" fill="#38bdf8" letter-spacing="1">SUPREME PIPES</text>
-    <text x="145" y="26" font-family="sans-serif" font-weight="800" font-size="10" fill="#34d399">ORIGINAL</text>
+    <rect width="210" height="42" rx="12" fill="#20140A" stroke="#FF6B00" stroke-width="1.5" opacity="0.9"/>
+    <text x="15" y="26" font-family="sans-serif" font-weight="900" font-size="14" fill="#FF8A2A" letter-spacing="1">SUPREME PIPES</text>
+    <text x="145" y="26" font-family="sans-serif" font-weight="800" font-size="10" fill="#FFAD66">ORIGINAL</text>
   </g>
 
   <!-- Spec Tag Top Right -->
   <g transform="translate(730, 50)">
-    <rect width="210" height="42" rx="12" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" opacity="0.9"/>
+    <rect width="210" height="42" rx="12" fill="#20140A" stroke="#FF6B00" stroke-width="1.5" opacity="0.9"/>
     <text x="20" y="26" font-family="sans-serif" font-weight="900" font-size="13" fill="#ffffff" letter-spacing="1">CPVC &amp; UPVC PIPES</text>
   </g>
 
   <!-- Bottom Quality Seal -->
   <g transform="translate(60, 500)">
-    <rect width="320" height="46" rx="14" fill="#0284c7" opacity="0.95"/>
+    <rect width="320" height="46" rx="14" fill="#E85A00" opacity="0.95"/>
     <text x="20" y="28" font-family="sans-serif" font-weight="900" font-size="13" fill="#ffffff" letter-spacing="1">100% LEAD FREE • SDR 11 HEAVY DUTY</text>
   </g>
 

@@ -24,10 +24,10 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050816]">
+      <div className="min-h-screen flex items-center justify-center bg-[#140902]">
         <div className="text-center space-y-4">
           <h2 className="text-xl font-bold text-slate-200">Product not found</h2>
-          <button onClick={() => setPage('products')} className="bg-blue-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs">Back to Products</button>
+          <button onClick={() => setPage('products')} className="bg-orange-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs">Back to Products</button>
         </div>
       </div>
     );
@@ -46,9 +46,9 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050816] relative">
+    <div className="min-h-screen bg-[#140902] relative">
       {/* Top mini-bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#050816]/90 backdrop-blur-xl border-b border-white/5">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#140902]/90 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-12">
           <button onClick={() => setPage('products')} className="flex items-center space-x-2 text-xs font-bold text-slate-300 hover:text-white transition">
             <ArrowLeft className="w-4 h-4" /><span>Back</span>
@@ -58,7 +58,7 @@ export default function ProductDetail() {
           </div>
           <button onClick={() => setPage('checkout')} className="relative p-2 text-slate-300 hover:text-white">
             <ShoppingCart className="w-5 h-5" />
-            {cartCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-pink-500 text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>}
+            {cartCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>}
           </button>
         </div>
       </div>
@@ -87,11 +87,11 @@ export default function ProductDetail() {
             </div>
             {/* Trust badges below image */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
-                <Shield className="w-3.5 h-3.5 text-emerald-400" /><span className="text-[10px] font-bold text-emerald-400">100% Genuine</span>
+              <div className="flex items-center space-x-1.5 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-full">
+                <Shield className="w-3.5 h-3.5 text-orange-400" /><span className="text-[10px] font-bold text-orange-400">100% Genuine</span>
               </div>
-              <div className="flex items-center space-x-1.5 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-full">
-                <Truck className="w-3.5 h-3.5 text-blue-400" /><span className="text-[10px] font-bold text-blue-400">Kalikiri Site Delivery</span>
+              <div className="flex items-center space-x-1.5 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-full">
+                <Truck className="w-3.5 h-3.5 text-orange-400" /><span className="text-[10px] font-bold text-orange-400">Kalikiri Site Delivery</span>
               </div>
             </div>
           </div>
@@ -100,9 +100,9 @@ export default function ProductDetail() {
           <div className="space-y-5">
             {/* Category + Brand */}
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-bold text-blue-400 bg-blue-500/15 border border-blue-500/30 px-2.5 py-1 rounded-full uppercase tracking-wider">{product.category}</span>
+              <span className="text-[10px] font-bold text-orange-400 bg-orange-500/15 border border-orange-500/30 px-2.5 py-1 rounded-full uppercase tracking-wider">{product.category}</span>
               <span className="text-[10px] font-bold text-slate-400 bg-slate-500/10 border border-slate-500/20 px-2.5 py-1 rounded-full">{product.brand}</span>
-              {product.featured && <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full flex items-center space-x-1"><Star className="w-3 h-3" /><span>Featured</span></span>}
+              {product.featured && <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1 rounded-full flex items-center space-x-1"><Star className="w-3 h-3" /><span>Featured</span></span>}
             </div>
 
             {/* Name */}
@@ -115,14 +115,14 @@ export default function ProductDetail() {
             <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Wholesale Price Rate</div>
-                <div className="flex items-center space-x-1.5 text-[10px] text-blue-400 font-bold"><Clock className="w-3 h-3" /><span>Rate Updated Today</span></div>
+                <div className="flex items-center space-x-1.5 text-[10px] text-orange-400 font-bold"><Clock className="w-3 h-3" /><span>Rate Updated Today</span></div>
               </div>
               <div className="flex items-end justify-between">
                 <div>
                   <span className="text-3xl sm:text-4xl font-black text-white">Rs.{currentPrice}</span>
                   <span className="text-sm text-slate-400 ml-1">/ {unit}</span>
                 </div>
-                <div className={`text-xs font-bold px-3 py-1.5 rounded-full border ${inStock ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-rose-400 bg-rose-500/10 border-rose-500/30'}`}>
+                <div className={`text-xs font-bold px-3 py-1.5 rounded-full border ${inStock ? 'text-orange-400 bg-orange-500/10 border-orange-500/30' : 'text-orange-400 bg-orange-500/10 border-orange-500/30'}`}>
                   {inStock ? <><Check className="w-3 h-3 inline mr-1" />In Stock ({currentStock} available)</> : 'OUT OF STOCK'}
                 </div>
               </div>
@@ -138,10 +138,10 @@ export default function ProductDetail() {
                     const outOfStock = s.stock <= 0;
                     return (
                       <button key={s.size} onClick={() => { if (!outOfStock) { setSelectedSize(s.size); setQuantity(1); } }} disabled={outOfStock}
-                        className={`relative p-3 rounded-xl border text-center transition ${isActive ? 'bg-blue-500/20 text-white border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : outOfStock ? 'bg-white/[0.02] text-slate-600 border-white/5 cursor-not-allowed' : 'bg-white/5 text-slate-300 border-white/10 hover:border-blue-500/30 hover:bg-blue-500/5'}`}>
+                        className={`relative p-3 rounded-xl border text-center transition ${isActive ? 'bg-orange-500/20 text-white border-orange-500/50 shadow-[0_0_15px_rgba(255, 107, 0,0.15)]' : outOfStock ? 'bg-white/[0.02] text-slate-600 border-white/5 cursor-not-allowed' : 'bg-white/5 text-slate-300 border-white/10 hover:border-orange-500/30 hover:bg-orange-500/5'}`}>
                         <div className="text-xs font-bold">{s.size}</div>
-                        <div className={`text-[10px] mt-0.5 ${isActive ? 'text-blue-300' : 'text-slate-500'}`}>Rs.{s.price}</div>
-                        {outOfStock && <div className="text-[8px] text-rose-400 mt-0.5">Out of Stock</div>}
+                        <div className={`text-[10px] mt-0.5 ${isActive ? 'text-orange-300' : 'text-slate-500'}`}>Rs.{s.price}</div>
+                        {outOfStock && <div className="text-[8px] text-orange-400 mt-0.5">Out of Stock</div>}
                       </button>
                     );
                   })}
@@ -165,22 +165,22 @@ export default function ProductDetail() {
             {/* Action Buttons */}
             <div className="space-y-3">
               <button onClick={handleAddToCart} disabled={!inStock}
-                className={`w-full flex items-center justify-center space-x-2.5 py-4 rounded-2xl font-black text-sm transition shadow-lg ${inStock ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
+                className={`w-full flex items-center justify-center space-x-2.5 py-4 rounded-2xl font-black text-sm transition shadow-lg ${inStock ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
                 <ShoppingCart className="w-5 h-5" />
                 <span>Add to Cart (Rs.{(currentPrice * quantity).toLocaleString('en-IN')})</span>
               </button>
               <button onClick={handleBuyNow} disabled={!inStock}
-                className={`w-full flex items-center justify-center space-x-2.5 py-4 rounded-2xl font-black text-sm transition ${inStock ? 'bg-gradient-to-r from-fuchsia-500 to-pink-600 hover:from-fuchsia-400 hover:to-pink-500 text-white shadow-lg' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
+                className={`w-full flex items-center justify-center space-x-2.5 py-4 rounded-2xl font-black text-sm transition ${inStock ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white shadow-lg' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
                 <span>Buy Now</span>
               </button>
             </div>
 
             {/* WhatsApp + Call */}
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={handleWhatsApp} className="flex items-center justify-center space-x-2 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-bold py-3 rounded-2xl text-xs hover:bg-[#25D366]/20 transition">
+              <button onClick={handleWhatsApp} className="flex items-center justify-center space-x-2 bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] font-bold py-3 rounded-2xl text-xs hover:bg-[#FF6B00]/20 transition">
                 <WhatsAppIcon className="w-4 h-4" /><span>Inquire on WhatsApp</span>
               </button>
-              <a href={telHref(siteContent.phone)} className="flex items-center justify-center space-x-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 font-bold py-3 rounded-2xl text-xs hover:bg-blue-500/20 transition">
+              <a href={telHref(siteContent.phone)} className="flex items-center justify-center space-x-2 bg-orange-500/10 border border-orange-500/30 text-orange-400 font-bold py-3 rounded-2xl text-xs hover:bg-orange-500/20 transition">
                 <Phone className="w-4 h-4" /><span>Call for Bulk Quote</span>
               </a>
             </div>
@@ -190,7 +190,7 @@ export default function ProductDetail() {
         {/* Specifications */}
         {(product.specifications || product.grade) && (
           <div className="mt-10 bg-white/5 border border-white/10 rounded-2xl p-6">
-            <h3 className="text-sm font-black text-white font-industrial mb-4 flex items-center space-x-2"><Package className="w-4 h-4 text-blue-400" /><span>Product Specifications</span></h3>
+            <h3 className="text-sm font-black text-white font-industrial mb-4 flex items-center space-x-2"><Package className="w-4 h-4 text-orange-400" /><span>Product Specifications</span></h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div className="flex justify-between text-xs bg-white/[0.03] px-3 py-2 rounded-lg"><span className="text-slate-500">Brand</span><span className="text-slate-200 font-bold">{product.brand}</span></div>
               <div className="flex justify-between text-xs bg-white/[0.03] px-3 py-2 rounded-lg"><span className="text-slate-500">Category</span><span className="text-slate-200 font-bold">{product.category}</span></div>
@@ -206,18 +206,18 @@ export default function ProductDetail() {
 
         {/* Delivery Information */}
         <div className="mt-6 bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h3 className="text-sm font-black text-white font-industrial mb-4 flex items-center space-x-2"><Truck className="w-4 h-4 text-blue-400" /><span>Delivery Information</span></h3>
+          <h3 className="text-sm font-black text-white font-industrial mb-4 flex items-center space-x-2"><Truck className="w-4 h-4 text-orange-400" /><span>Delivery Information</span></h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div className="flex items-start space-x-3 bg-white/[0.03] px-4 py-3 rounded-xl">
-              <MapPin className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+              <MapPin className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
               <div><div className="text-xs font-bold text-white">Kalikiri Site Delivery</div><div className="text-[10px] text-slate-400 mt-0.5">Same-day or next morning</div></div>
             </div>
             <div className="flex items-start space-x-3 bg-white/[0.03] px-4 py-3 rounded-xl">
-              <Truck className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+              <Truck className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
               <div><div className="text-xs font-bold text-white">Nearby Mandals</div><div className="text-[10px] text-slate-400 mt-0.5">1-2 business days</div></div>
             </div>
             <div className="flex items-start space-x-3 bg-white/[0.03] px-4 py-3 rounded-xl">
-              <Clock className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
+              <Clock className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
               <div><div className="text-xs font-bold text-white">Express Delivery</div><div className="text-[10px] text-slate-400 mt-0.5">Orders before 2 PM dispatched same day</div></div>
             </div>
           </div>
@@ -240,7 +240,7 @@ export default function ProductDetail() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {relatedProducts.map(rp => (
                 <button key={rp.id} onClick={() => { setSelectedProductId(rp.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-blue-500/30 transition group text-left">
+                  className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-orange-500/30 transition group text-left">
                   <img src={rp.image} alt={rp.name} className="w-full h-32 object-cover group-hover:scale-105 transition duration-500" />
                   <div className="p-3">
                     <div className="text-[10px] text-slate-500 font-bold">{rp.brand}</div>
@@ -263,14 +263,14 @@ export default function ProductDetail() {
       )}
 
       {/* Floating mini-cart for mobile */}
-      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-[#050816]/95 backdrop-blur-xl border-t border-white/10 p-3 z-40">
+      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-[#140902]/95 backdrop-blur-xl border-t border-white/10 p-3 z-40">
         <div className="flex items-center space-x-3">
           <div className="flex-1">
             <div className="text-sm font-black text-white">Rs.{currentPrice}<span className="text-[10px] text-slate-500 font-normal"> / {unit}</span></div>
-            <div className={`text-[10px] font-bold ${inStock ? 'text-emerald-400' : 'text-rose-400'}`}>{inStock ? `${currentStock} in stock` : 'Out of stock'}</div>
+            <div className={`text-[10px] font-bold ${inStock ? 'text-orange-400' : 'text-orange-400'}`}>{inStock ? `${currentStock} in stock` : 'Out of stock'}</div>
           </div>
           <button onClick={handleAddToCart} disabled={!inStock}
-            className={`flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl font-bold text-xs transition ${inStock ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white' : 'bg-slate-800 text-slate-500'}`}>
+            className={`flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl font-bold text-xs transition ${inStock ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white' : 'bg-slate-800 text-slate-500'}`}>
             <ShoppingCart className="w-4 h-4" /><span>Add to Cart</span>
           </button>
         </div>
