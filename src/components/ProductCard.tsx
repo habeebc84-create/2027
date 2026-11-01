@@ -33,16 +33,19 @@ export default function ProductCard({ product }: { product: Product }) {
       {/* Image */}
       <div className="relative overflow-hidden cursor-pointer" onClick={handleViewDetail}>
         <img src={product.image} alt={product.name} className="w-full h-32 sm:h-48 object-cover group-hover:scale-105 transition duration-500" />
-        {product.featured && (
-          <div className="absolute top-3 left-3 bg-amber-500/90 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center space-x-1">
-            <Star className="w-3 h-3" /><span>FEATURED</span>
-          </div>
-        )}            <div className="absolute top-3 right-3 rounded-lg px-2 py-1 text-[10px] text-slate-200 font-bold border border-white/18 bg-slate-950/35 backdrop-blur-md" style={{
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
+          {product.featured ? (
+            <div className="bg-amber-500/90 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black flex items-center space-x-1 shrink-0">
+              <Star className="w-3 h-3" /><span>FEATURED</span>
+            </div>
+          ) : <span />}
+          <div className="rounded-lg px-2 py-1 text-[10px] text-slate-200 font-bold border border-white/18 bg-slate-950/35 backdrop-blur-md truncate min-w-0" style={{
               background:
                 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%)',
               boxShadow:
                 'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 14px -10px rgba(0,0,0,0.5)',
             }}>{product.grade}</div>
+        </div>
       </div>
       {/* Content */}        <div className="p-3 sm:p-4 flex-1 flex flex-col" style={{
           background:

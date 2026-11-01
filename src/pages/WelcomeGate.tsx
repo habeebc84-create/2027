@@ -40,6 +40,12 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
     'Bricks & Blocks': '📦',
   };
 
+  // Gate heading, letter by letter with a DIFFERENT animation from the
+  // splash letters: each letter pops in blurred and small, sharpening
+  // into place. Words stay whole so the heading still wraps on phones.
+  const gateWords: [string, boolean][] = [['What', false], ['Are', false], ['You', false], ['Looking', true], ['For?', true]];
+  let gateLetterIndex = 0;
+
   return (
     <div className="min-h-screen bg-slate-950 relative overflow-hidden">
       {/* Glassy background with animated gradient orbs */}
@@ -82,8 +88,21 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
             <Package className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-[10px] sm:text-xs font-bold text-amber-300 uppercase tracking-wider">Browse Our Complete Catalog</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white font-industrial tracking-tight mb-3">
-            What Are You <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">Looking For?</span>
+          <h2 className="gate-heading-in text-3xl sm:text-5xl lg:text-6xl font-black text-white font-industrial tracking-tight mb-3">
+            {gateWords.map(([word, gradient], wi) => {
+              const start = gateLetterIndex;
+              gateLetterIndex += word.length;
+              return (
+                <span key={wi} className="whitespace-nowrap">
+                  {[...word].map((ch, i) => (
+                    <span key={i} className={`gate-letter${gradient ? ' gate-letter-gradient' : ''}`} style={{ animationDelay: `${(start + i) * 0.05}s` }}>
+                      {ch}
+                    </span>
+                  ))}
+                  {wi < gateWords.length - 1 && <span className="gate-letter-space" />}
+                </span>
+              );
+            })}
           </h2>
           <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
             Choose a category to explore our premium building materials, or continue to the full website.
