@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
@@ -6,10 +6,17 @@ import Reveal from '../components/Reveal';
 import VectorWordmark from '../components/VectorWordmark';
 import { telHref } from '../lib/phone';
 
+// Code-split: the burst is a decorative hero background and pulls in
+// three.js, so it loads as its own chunk after first paint instead of
+// blocking the catalogue on it. The hero's gradient/glow canvas below
+// is the fallback while the chunk is in flight (and if WebGL is absent).
+const GlowingParticles = lazy(() => import('../components/GlowingParticles'));
+
 export default function Home() {
   const { siteContent, products, setPage, categories, marketPrices, siteSettings } = useApp();
-  // Phone tuning for the vector wordmark band below: its rig distances are
-  // absolute CSS pixels, so desktop values would swamp a 390px screen.
+  // Phone tuning for the two WebGL pieces on this page (hero particle
+  // density, closing wordmark rig): their sizes are tuned for desktop
+  // frames, so desktop values would swamp a 390px screen.
   const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches);
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 640px)');
@@ -36,6 +43,32 @@ export default function Home() {
           <div className="absolute top-1/3 -right-24 w-96 h-96 bg-champagne/5 blur-[120px] rounded-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
         </div>
+
+        {/* Glowing particle burst filling the hero — the stretch from the
+            top bar down to the Daily Market Price Index panel (which
+            overlaps this section's foot). Seated right so the headline
+            keeps the left; champagne sparks off an ivory-hot core are the
+            palette's brand accent (COLOR_PALETTE.md), melting into the
+            existing champagne glow. Purely decorative, hence aria-hidden,
+            and pointer-events-none so it can never sit on a CTA tap.
+            Phones get a sparser cloud (density is squared into the ray
+            count, so 12 is roughly half the points of 16). */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
+          <div className="absolute left-1/2 top-[54%] aspect-square w-[440px] max-w-none -translate-y-1/2 translate-x-[-16%] opacity-80 sm:w-[600px] sm:translate-x-[-14%] lg:left-auto lg:right-[-140px] lg:w-[720px] lg:translate-x-0">
+            <Suspense fallback={null}>
+              <GlowingParticles
+                color="#C6A875"
+                hot="#F7F5F0"
+                density={isPhone ? 12 : 16}
+                sizePercent={95}
+                style={{ minWidth: 0, minHeight: 0, width: '100%', height: '100%' }}
+              />
+            </Suspense>
+          </div>
+        </div>
+        {/* Readability veil: keeps the headline/CTAs on a calm ground
+            while the burst stays bright on the right. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-obsidian/80 via-obsidian/30 to-transparent" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 w-full">
           {/* Badges */}
