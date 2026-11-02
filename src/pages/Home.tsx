@@ -1,11 +1,22 @@
+import { useEffect, useState } from 'react';
 import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
+import VectorWordmark from '../components/VectorWordmark';
 import { telHref } from '../lib/phone';
 
 export default function Home() {
   const { siteContent, products, setPage, categories, marketPrices, siteSettings } = useApp();
+  // Phone tuning for the vector wordmark band below: its rig distances are
+  // absolute CSS pixels, so desktop values would swamp a 390px screen.
+  const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const update = () => setIsPhone(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
   const featuredProducts = (Array.isArray(products) ? products : []).filter(p => p && p.featured && p.enabled).slice(0, 6);
   // "Rates Updated" stamp for the price index: the date the admin last
   // saved prices in the portal (defaults to today before the first save).
@@ -240,6 +251,51 @@ export default function Home() {
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
+      </section>
+
+      {/* Vector wordmark closer — decorative WebGL brand band that ends the
+          home page right above the footer. The business name is already the
+          hero H1 and repeats in the footer, and the canvas coordinate
+          readouts change every frame, so the whole band is hidden from
+          assistive tech. Colors are the production tokens (COLOR_PALETTE.md):
+          obsidian ground so it melts into the page/footer, ivory-to-silver
+          glyph gradient, champagne vector rig and labels (the accent alpha
+          is the rig intensity). The font size is quoted at the component's
+          1200px reference width and scales with the band; the component
+          caps the displayed wordmark at 96% of the band width, so at 128px
+          the full 17-letter name sits edge-to-edge without ever cropping
+          the H or the l, whatever font the device ends up using. Handle boxes are
+          smaller than the 1200x800 source frame's 109px because this band
+          is much shorter, and on phones the reach/handle geometry shrinks
+          further (see isPhone above) so the rig stays in proportion.
+          minWidth/minHeight override the component's Framer floor so
+          phones are not forced into a 1200px box. */}
+      <section aria-hidden="true" className="relative w-full">
+        <Reveal>
+          <VectorWordmark
+            text="HsnCementAndSteel"
+            font={{
+              fontFamily: 'Inter',
+              fontWeight: 800,
+              fontSize: '128px',
+              lineHeight: '1em',
+              letterSpacing: '-0.02em',
+              textAlign: 'left',
+            }}
+            background="#0B0C0E"
+            textColor="#F7F5F0"
+            shade="#C2C1BD"
+            accent="rgba(198, 168, 117, 0.7)"
+            reach={isPhone ? 150 : 290}
+            handles={isPhone ? { size: 48, spread: 44, labels: true } : { size: 72, spread: 27, labels: true }}
+            style={{
+              minWidth: 0,
+              minHeight: 0,
+              width: '100%',
+              height: 'clamp(190px, 30vw, 430px)',
+            }}
+          />
+        </Reveal>
       </section>
 
     </div>
