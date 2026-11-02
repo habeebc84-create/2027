@@ -1433,8 +1433,29 @@ svg {
   100% { transform: translate3d(-20px, 26px, 0) scale(0.98); }
 }
 
+/* Give the closing home wordmark its own gentle top-to-bottom entrance as
+   it scrolls into view. Keep the canvas inside the viewport so the final
+   letters never get clipped by the reveal motion. */
+.home-wordmark-reveal .vector-wordmark,
+.home-wordmark-reveal > div {
+  max-width: 100%;
+}
+
+.home-wordmark-reveal.reveal-visible canvas {
+  animation: home-wordmark-drop 900ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+@keyframes home-wordmark-drop {
+  0% { opacity: 0; transform: translateY(-150px) scale(0.92); }
+  70% { opacity: 1; transform: translateY(8px) scale(1.015); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 /* Respect reduced motion across the dock, the logo, and the liquid bead */
 @media (prefers-reduced-motion: reduce) {
+  .home-wordmark-reveal.reveal-visible canvas {
+    animation: none !important;
+  }
   .admin-login-orb {
     animation: none !important;
   }
