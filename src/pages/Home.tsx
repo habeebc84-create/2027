@@ -1,9 +1,8 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
-import VectorWordmark from '../components/VectorWordmark';
 import { telHref } from '../lib/phone';
 
 // Code-split: the burst is a decorative hero background and pulls in
@@ -24,6 +23,33 @@ export default function Home() {
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
+  const wordmarkSectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const section = wordmarkSectionRef.current;
+    if (!section) return;
+    let frame = 0;
+    const updateProgress = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const top = section.getBoundingClientRect().top;
+        // Progress from just below the viewport until the wordmark reaches
+        // the lower-middle of the screen as the visitor scrolls past Services.
+        const distance = Math.max(1, window.innerHeight * 0.72);
+        const progress = Math.max(0, Math.min(1, (window.innerHeight - top) / distance));
+        section.style.setProperty('--home-wordmark-y', `${-120 * (1 - progress)}px`);
+        section.style.setProperty('--home-wordmark-opacity', String(progress));
+      });
+    };
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
+    };
+  }, []);
+
   const featuredProducts = (Array.isArray(products) ? products : []).filter(p => p && p.featured && p.enabled).slice(0, 6);
   // "Rates Updated" stamp for the price index: the date the admin last
   // saved prices in the portal (defaults to today before the first save).
@@ -286,51 +312,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Vector wordmark closer — decorative WebGL brand band that ends the
-          home page right above the footer. The business name is already the
-          hero H1 and repeats in the footer, and the canvas coordinate
-          readouts change every frame, so the whole band is hidden from
-          assistive tech. Colors are the production tokens (COLOR_PALETTE.md):
-          obsidian ground so it melts into the page/footer, ivory-to-silver
-          glyph gradient, champagne vector rig and labels (the accent alpha
-          is the rig intensity). The font size is quoted at the component's
-          1200px reference width and scales with the band; the component
-          caps the displayed wordmark at 96% of the band width, so at 128px
-          the full 17-letter name sits edge-to-edge without ever cropping
-          the H or the l, whatever font the device ends up using. Handle boxes are
-          smaller than the 1200x800 source frame's 109px because this band
-          is much shorter, and on phones the reach/handle geometry shrinks
-          further (see isPhone above) so the rig stays in proportion.
-          minWidth/minHeight override the component's Framer floor so
-          phones are not forced into a 1200px box. */}
-      <section aria-hidden="true" className="relative w-full">
+      {/* Closing home wordmark. The final "eel" slides down into place as
+          the visitor scrolls past Services; responsive typography keeps the
+          complete name readable without clipping on small screens. */}
+      <section ref={wordmarkSectionRef} aria-hidden="true" className="relative w-full">
         <Reveal className="home-wordmark-reveal">
-          <VectorWordmark
-            text="HsnCementAndSteel"
-            font={{
-              fontFamily: 'Inter',
-              fontWeight: 800,
-              // Larger reference glyphs make the closing brand mark easy to
-              // read on laptop and phone; the canvas fitting logic scales it
-              // down only when the full name needs to fit its available width.
-              fontSize: '165px',
-              lineHeight: '1em',
-              letterSpacing: '-0.02em',
-              textAlign: 'left',
-            }}
-            background="#0B0C0E"
-            textColor="#F7F5F0"
-            shade="#C2C1BD"
-            accent="rgba(198, 168, 117, 0.7)"
-            reach={isPhone ? 150 : 290}
-            handles={isPhone ? { size: 48, spread: 44, labels: true } : { size: 72, spread: 27, labels: true }}
-            style={{
-              minWidth: 0,
-              minHeight: 0,
-              width: '100%',
-              height: 'clamp(260px, 38vw, 500px)',
-            }}
-          />
+          <div className="home-end-mark" aria-hidden="true">
+            <span>HsnCementAndSt</span>
+            <span className="home-end-mark-last">eel</span>
+          </div>
         </Reveal>
       </section>
 
