@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Package, TrendingUp, Award, Building2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
@@ -23,33 +23,6 @@ export default function Home() {
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
-  const wordmarkSectionRef = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const section = wordmarkSectionRef.current;
-    if (!section) return;
-    let frame = 0;
-    const updateProgress = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const top = section.getBoundingClientRect().top;
-        // Progress from just below the viewport until the wordmark reaches
-        // the lower-middle of the screen as the visitor scrolls past Services.
-        const distance = Math.max(1, window.innerHeight * 0.72);
-        const progress = Math.max(0, Math.min(1, (window.innerHeight - top) / distance));
-        section.style.setProperty('--home-wordmark-y', `${-120 * (1 - progress)}px`);
-        section.style.setProperty('--home-wordmark-opacity', String(progress));
-      });
-    };
-    updateProgress();
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    window.addEventListener('resize', updateProgress);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', updateProgress);
-      window.removeEventListener('resize', updateProgress);
-    };
-  }, []);
-
   const featuredProducts = (Array.isArray(products) ? products : []).filter(p => p && p.featured && p.enabled).slice(0, 6);
   // "Rates Updated" stamp for the price index: the date the admin last
   // saved prices in the portal (defaults to today before the first save).
@@ -315,11 +288,13 @@ export default function Home() {
       {/* Closing home wordmark. The final "eel" slides down into place as
           the visitor scrolls past Services; responsive typography keeps the
           complete name readable without clipping on small screens. */}
-      <section ref={wordmarkSectionRef} aria-hidden="true" className="relative w-full">
+      <section aria-hidden="true" className="relative w-full">
         <Reveal className="home-wordmark-reveal">
           <div className="home-end-mark" aria-hidden="true">
             <span>HsnCementAndSt</span>
-            <span className="home-end-mark-last">eel</span>
+            <span className="home-end-mark-last" aria-hidden="true">
+              <span>e</span><span>e</span><span>l</span>
+            </span>
           </div>
         </Reveal>
       </section>
