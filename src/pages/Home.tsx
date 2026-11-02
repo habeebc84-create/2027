@@ -3,7 +3,6 @@ import { ArrowRight, Phone, Shield, Truck, MapPin, Clock, ChevronRight, Eye, Pac
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
-import VectorWordmark from '../components/VectorWordmark';
 import { telHref } from '../lib/phone';
 
 // Code-split: the burst is a decorative hero background and pulls in
@@ -286,59 +285,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Vector wordmark closer — decorative WebGL brand band that ends the
-          home page right above the footer. The business name is already the
-          hero H1 and repeats in the footer, and the canvas coordinate
-          readouts change every frame, so the whole band is hidden from
-          assistive tech. Colors are the production tokens (COLOR_PALETTE.md):
-          obsidian ground so it melts into the page/footer, ivory-to-silver
-          glyph gradient, champagne vector rig and labels (the accent alpha
-          is the rig intensity). The closing mark is set in ALL CAPS at a
-          larger reference size (260px) and a taller band so it reads as a
-          bold, full-width sign-off; the component caps the displayed
-          wordmark at 96% of the band width, so the full 17-letter name sits
-          edge-to-edge without ever cropping the H or the l, whatever font
-          the device ends up using. Handle boxes are smaller than the
-          1200x800 source frame's 109px because this band is much shorter,
-          and on phones the reach/handle geometry shrinks further (see
-          isPhone above) so the rig stays in proportion.
-          minWidth/minHeight override the component's Framer floor so
-          phones are not forced into a 1200px box. */}
-      <h2 className="sr-only">HSNCEMENTANDSTEEL</h2>
-      <section aria-hidden="true" className="relative w-full">
-        <Reveal className="home-wordmark-reveal">
-          <VectorWordmark
-            text="HSNCEMENTANDSTEEL"
-            font={{
-              // Oswald is the site's industrial display face (see the
-              // .font-industrial token). Its condensed caps let the full
-              // 17-letter name render noticeably larger than the old
-              // mixed-case Inter mark while still fitting edge-to-edge.
-              fontFamily: 'Oswald',
-              fontWeight: 700,
-              // Larger reference glyphs make the closing brand mark easy to
-              // read on laptop and phone; the canvas fitting logic scales it
-              // down only when the full name needs to fit its available width.
-              fontSize: '260px',
-              lineHeight: '1em',
-              letterSpacing: '-0.01em',
-              textAlign: 'left',
-            }}
-            background="#0B0C0E"
-            textColor="#F7F5F0"
-            shade="#C2C1BD"
-            accent="rgba(198, 168, 117, 0.7)"
-            reach={isPhone ? 150 : 290}
-            handles={isPhone ? { size: 48, spread: 44, labels: true } : { size: 72, spread: 27, labels: true }}
+      {/* Closing brand mark — the business name in big all-caps at the very
+          end of the home page. This is plain HTML text rather than the old
+          canvas band: it is always visible (no WebGL/font-loading
+          dependency), selectable, readable by assistive tech, and cannot be
+          silently shrunk by a fallback font. Oswald is self-hosted in
+          main.tsx, and the viewport-based size makes the 17-letter name span
+          the full width on phones and desktops alike. */}
+      <Reveal>
+        <div className="relative w-full overflow-hidden bg-obsidian pt-8 pb-28 sm:pt-12 lg:pb-12">
+          <div className="absolute inset-0 bg-gradient-to-b from-obsidian via-charcoal/30 to-obsidian" />
+          <div className="absolute left-1/2 top-1/2 h-32 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-champagne/10 blur-[90px] pointer-events-none" />
+          <h2
+            className="relative z-10 font-industrial font-bold text-ivory text-center leading-none whitespace-nowrap select-none"
             style={{
-              minWidth: 0,
-              minHeight: 0,
-              width: '100%',
-              height: 'clamp(200px, 44vw, 580px)',
+              fontSize: 'clamp(2.25rem, 10.6vw, 11rem)',
+              letterSpacing: '-0.01em',
+              textShadow: '0 0 32px rgba(198, 168, 117, 0.28)',
             }}
-          />
-        </Reveal>
-      </section>
+          >
+            HSNCEMENTANDSTEEL
+          </h2>
+        </div>
+      </Reveal>
 
     </div>
   );

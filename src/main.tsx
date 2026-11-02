@@ -1,5 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Self-host the display face used by the closing home-page wordmark. Without
+// a local @font-face the big all-caps mark would silently fall back to a
+// wider system font and shrink (or wrap) on narrow screens.
+import '@fontsource/oswald/700.css'
 import './index.css'
 import App from './App.tsx'
 
