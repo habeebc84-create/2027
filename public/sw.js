@@ -1,5 +1,5 @@
-const CACHE_NAME = 'hsn-pwa-v18';
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/windows-h-logo.png', '/icons/icon.svg', '/icons/icon-maskable.svg', '/favicon.svg'];
+const CACHE_NAME = 'hsn-pwa-v19';
+const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/windows-h-logo.png', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-maskable-192.png', '/icons/icon-maskable-512.png', '/icons/apple-touch-icon.png', '/icons/favicon-32.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

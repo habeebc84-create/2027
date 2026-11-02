@@ -609,10 +609,17 @@
 
 .splash-welcome-line {
   display: block;
-  /* The welcome lines must never split: on phones "HSN CEMENT AND
-     STEEL" used to wrap mid-word (the L of STEEL dropped to its own
-     line). Each line stays whole; the fluid font sizes below shrink
-     it to fit instead. */
+  white-space: nowrap;
+}
+
+.splash-welcome-brand {
+  display: flex;
+  flex-wrap: nowrap;
+  column-gap: 0.24em;
+}
+
+.splash-brand-phrase {
+  display: block;
   white-space: nowrap;
 }
 
@@ -1025,11 +1032,22 @@
     flex-wrap: wrap;
   }
   .splash-heading {
-    /* Fluid no-wrap fit, measured: the second line is ~11.9x the
-       font size, hero content is 86.6vw, so 7vw fits at 320px
-       (266px of text in 277px) where 9vw clipped "STEEL". */
-    font-size: clamp(20px, 7vw, 50px);
-    margin-bottom: 24px;
+    /* Phones get a large stacked headline instead of shrinking the
+       whole business name onto one line. Each phrase stays intact. */
+    font-size: clamp(38px, 11vw, 60px);
+    line-height: 0.96;
+    letter-spacing: -0.5px;
+    margin-bottom: 28px;
+  }
+  .splash-welcome-intro {
+    font-size: clamp(23px, 6.2vw, 34px);
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+  .splash-welcome-brand {
+    flex-direction: column;
+    row-gap: 2px;
   }
   .splash-primary-btn {
     height: 64px;
