@@ -340,19 +340,6 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* STEEL finale — the last word at the end of Home, on its own.
-          It starts oversized and settles into its final position when
-          it scrolls into view (see home-steel-settle in index.css).
-          Only STEEL is animated here; the full wordmark above is
-          unchanged, and the footer stays off Home. */}
-      <section className="relative w-full overflow-hidden pb-28 lg:pb-16">
-        <Reveal className="home-steel-reveal">
-          <div className="home-steel-settle font-industrial font-black text-champagne text-center leading-none tracking-tight select-none">
-            STEEL
-          </div>
-        </Reveal>
-      </section>
-
     </div>
   );
 }
