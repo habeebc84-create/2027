@@ -293,29 +293,35 @@ export default function Home() {
           assistive tech. Colors are the production tokens (COLOR_PALETTE.md):
           obsidian ground so it melts into the page/footer, ivory-to-silver
           glyph gradient, champagne vector rig and labels (the accent alpha
-          is the rig intensity). The font size is quoted at the component's
-          1200px reference width and scales with the band; the component
-          caps the displayed wordmark at 96% of the band width, so at 128px
-          the full 17-letter name sits edge-to-edge without ever cropping
-          the H or the l, whatever font the device ends up using. Handle boxes are
-          smaller than the 1200x800 source frame's 109px because this band
-          is much shorter, and on phones the reach/handle geometry shrinks
-          further (see isPhone above) so the rig stays in proportion.
+          is the rig intensity). The closing mark is set in ALL CAPS at a
+          larger reference size (260px) and a taller band so it reads as a
+          bold, full-width sign-off; the component caps the displayed
+          wordmark at 96% of the band width, so the full 17-letter name sits
+          edge-to-edge without ever cropping the H or the l, whatever font
+          the device ends up using. Handle boxes are smaller than the
+          1200x800 source frame's 109px because this band is much shorter,
+          and on phones the reach/handle geometry shrinks further (see
+          isPhone above) so the rig stays in proportion.
           minWidth/minHeight override the component's Framer floor so
           phones are not forced into a 1200px box. */}
+      <h2 className="sr-only">HSNCEMENTANDSTEEL</h2>
       <section aria-hidden="true" className="relative w-full">
         <Reveal className="home-wordmark-reveal">
           <VectorWordmark
-            text="HsnCementAndSteel"
+            text="HSNCEMENTANDSTEEL"
             font={{
-              fontFamily: 'Inter',
-              fontWeight: 800,
+              // Oswald is the site's industrial display face (see the
+              // .font-industrial token). Its condensed caps let the full
+              // 17-letter name render noticeably larger than the old
+              // mixed-case Inter mark while still fitting edge-to-edge.
+              fontFamily: 'Oswald',
+              fontWeight: 700,
               // Larger reference glyphs make the closing brand mark easy to
               // read on laptop and phone; the canvas fitting logic scales it
               // down only when the full name needs to fit its available width.
-              fontSize: '165px',
+              fontSize: '260px',
               lineHeight: '1em',
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.01em',
               textAlign: 'left',
             }}
             background="#0B0C0E"
@@ -328,7 +334,7 @@ export default function Home() {
               minWidth: 0,
               minHeight: 0,
               width: '100%',
-              height: 'clamp(260px, 38vw, 500px)',
+              height: 'clamp(200px, 44vw, 580px)',
             }}
           />
         </Reveal>
