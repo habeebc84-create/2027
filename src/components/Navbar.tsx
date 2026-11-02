@@ -67,7 +67,7 @@ export default function Navbar({ onCartClick }: { onCartClick: () => void }) {
 
           {/* Right actions */}
           <div className="flex items-center space-x-2 shrink-0">
-            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-brand hover:bg-brand-300 text-obsidian px-3.5 py-2 rounded-lg text-xs xl:text-sm font-bold transition shadow-md shadow-brand-500/20">
+            <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="hidden sm:flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#1DA851] text-white px-3.5 py-2 rounded-lg text-xs xl:text-sm font-bold transition shadow-md shadow-green-500/20">
               <WhatsAppIcon className="w-4 h-4" />
               <span>WhatsApp</span>
             </a>

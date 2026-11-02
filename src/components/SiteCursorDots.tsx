@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useApp } from '../context/AppContext';
 
 interface Dot {
   x: number;
@@ -25,12 +26,18 @@ function rgba([r, g, b]: [number, number, number], a: number) {
 }
 
 /**
- * Site-wide decorative dot field. The canvas is fixed over the viewport,
- * never captures pointer events, and gently shifts/glows as the cursor moves.
+ * Decorative dot field, admin-portal only. The canvas is fixed over the
+ * viewport, never captures pointer events, and gently shifts/glows as
+ * the cursor moves. Normal user pages (splash, gate, home, products,
+ * ...) render no canvas, so their colours stay exactly as designed.
  * Reduced-motion users get a static field instead of continuous animation.
  */
 export default function SiteCursorDots() {
+  const { currentPage } = useApp();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // Admin portal only; the effect re-runs when this flips so the
+  // canvas initialises when entering admin pages and stops on exit.
+  const isAdminPage = currentPage === 'admin' || currentPage === 'admin-login';
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -215,7 +222,10 @@ export default function SiteCursorDots() {
       document.removeEventListener('visibilitychange', onVisibility);
       motionQuery.removeEventListener('change', onMotionChange);
     };
-  }, []);
+  }, [isAdminPage]);
+
+  // Admin portal only: no glow dots for normal users.
+  if (!isAdminPage) return null;
 
   return (
     <div className="site-cursor-dots" aria-hidden="true">

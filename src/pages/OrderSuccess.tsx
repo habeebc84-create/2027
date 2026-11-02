@@ -705,7 +705,7 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
 
       {/* Floating buttons */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col space-y-3">
-        <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="w-12 h-12 bg-brand rounded-full text-obsidian flex items-center justify-center shadow-lg hover:scale-110 transition"><WhatsAppIcon className="w-6 h-6" /></a>
+        <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="w-12 h-12 bg-[#25D366] rounded-full text-white flex items-center justify-center shadow-lg hover:scale-110 transition"><WhatsAppIcon className="w-6 h-6" /></a>
         <a href={telHref(siteContent.phone)} className="w-12 h-12 btn-secondary rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"><Phone className="w-5 h-5 text-ivory" /></a>
       </div>
     </div>

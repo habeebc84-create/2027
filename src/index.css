@@ -435,8 +435,8 @@
 
 /* ====== TOP NAVBAR ====== */
 .splash-navbar {
-  /* Floating pill dock around the logo, title and WhatsApp: it sits
-     inset from the screen edges, centred, and scrolls with the page
+  /* Rectangular entrance dock around the logo, title and WhatsApp: it
+     sits inset from the screen edges, centred, and scrolls with the page
      on all sizes, so it never sits on top of the contents below it.
      No slide-down entrance: the dock just sits at the top. */
   position: absolute;
@@ -540,9 +540,9 @@
 
 .splash-whatsapp {
   border-radius: 0;
-  background: var(--color-champagne);
+  background: #25D366;
   color: var(--color-obsidian);
-  box-shadow: 0 7px 20px rgba(198, 168, 117, 0.35);
+  box-shadow: 0 7px 20px rgba(37, 211, 102, 0.35);
 }
 
 .splash-nav-btn:hover {

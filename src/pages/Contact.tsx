@@ -78,7 +78,7 @@ export default function Contact() {
             </div>
             <div className="pt-4 flex space-x-3 border-t border-gunmetal">
               <a href={telHref(siteContent.phone)} className="flex-1 btn-brand font-bold py-3 rounded-xl text-xs text-center transition">Call Store</a>
-              <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-brand hover:bg-brand-300 text-obsidian font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
+              <a href={waHref(siteContent.whatsapp)} target="_blank" rel="noreferrer" className="flex-1 bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-3 rounded-xl text-xs text-center transition">WhatsApp Us</a>
             </div>
           </div>
 
