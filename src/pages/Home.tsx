@@ -334,7 +334,7 @@ export default function Home() {
               minWidth: 0,
               minHeight: 0,
               width: '100%',
-              height: 'clamp(320px, 44vw, 580px)',
+              height: 'clamp(200px, 44vw, 580px)',
             }}
           />
         </Reveal>
