@@ -304,13 +304,16 @@ export default function Home() {
           minWidth/minHeight override the component's Framer floor so
           phones are not forced into a 1200px box. */}
       <section aria-hidden="true" className="relative w-full">
-        <Reveal>
+        <Reveal className="home-wordmark-reveal">
           <VectorWordmark
             text="HsnCementAndSteel"
             font={{
               fontFamily: 'Inter',
               fontWeight: 800,
-              fontSize: '128px',
+              // Larger reference glyphs make the closing brand mark easy to
+              // read on laptop and phone; the canvas fitting logic scales it
+              // down only when the full name needs to fit its available width.
+              fontSize: '165px',
               lineHeight: '1em',
               letterSpacing: '-0.02em',
               textAlign: 'left',
@@ -325,7 +328,7 @@ export default function Home() {
               minWidth: 0,
               minHeight: 0,
               width: '100%',
-              height: 'clamp(190px, 30vw, 430px)',
+              height: 'clamp(260px, 38vw, 500px)',
             }}
           />
         </Reveal>
