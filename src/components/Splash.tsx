@@ -63,7 +63,6 @@ export default function Splash() {
   // Letter-by-letter welcome: each character gets its own span with a
   // growing animation delay, so the text writes itself one letter at
   // a time. Spaces render as non-breaking spaces so they keep their slot.
-  const welcomeLines = ['WELCOME TO', 'HSN CEMENT AND STEEL'];
   let welcomeLetterIndex = 0;
   const welcomeLetterSpans = (line: string) => {
     const start = welcomeLetterIndex;
@@ -143,9 +142,14 @@ export default function Splash() {
           </div>
 
           {/* Heading — writes itself letter by letter */}
-          <h1 className="splash-heading">
-            <span className="splash-welcome-line">{welcomeLetterSpans(welcomeLines[0])}</span>
-            <span className="splash-welcome-line">{welcomeLetterSpans(welcomeLines[1])}</span>
+          <h1 className="splash-heading" aria-label="Welcome to HSN Cement and Steel">
+            <span className="splash-welcome-line splash-welcome-intro" aria-hidden="true">
+              {welcomeLetterSpans('WELCOME TO')}
+            </span>
+            <span className="splash-welcome-line splash-welcome-brand" aria-hidden="true">
+              <span className="splash-brand-phrase">{welcomeLetterSpans('HSN CEMENT')}</span>
+              <span className="splash-brand-phrase">{welcomeLetterSpans('AND STEEL')}</span>
+            </span>
           </h1>
 
           {/* CTA Buttons */}
@@ -163,7 +167,7 @@ export default function Splash() {
             </button>
           </div>
 
-          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 49</div>
+          <div style={{ marginTop: 16, fontSize: 11, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>HSN BUILD 50</div>
           {/* Info Pills */}
           <div className="splash-info-row">
             <div className="splash-info-pill">

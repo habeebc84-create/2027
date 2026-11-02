@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HSN Cement & Steel – Premium Building Materials</title>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -47,6 +47,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
 .hero{position:absolute;left:6.7%;top:178px;width:760px}
 .badges{display:flex;gap:10px;margin-bottom:34px;animation:fadeInUp .6s ease .4s both}
 .badge{display:flex;align-items:center;gap:8px;padding:8px 17px;border-radius:25px;background:rgba(255,255,255,.30);border:1px solid rgba(255,255,255,.20);backdrop-filter:blur(10px);font-size:13px;font-weight:700;box-shadow:0 5px 15px rgba(0,0,0,.08)}
+.legacy-welcome-intro,.legacy-welcome-brand{display:block}.legacy-welcome-brand{display:flex;gap:.24em}.legacy-welcome-brand span{white-space:nowrap}
 .hero h1{font-family:"Barlow Condensed",sans-serif;font-size:clamp(65px,5.2vw,88px);line-height:.91;font-weight:900;letter-spacing:-1px;color:#F7F5F0;text-transform:uppercase;text-shadow:0 3px 10px rgba(0,0,0,.22);margin-bottom:43px;animation:fadeInUp .7s ease .5s both}
 
 /* ====== CTA ====== */
@@ -114,7 +115,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
   .nav-btn{flex:1;justify-content:center}
   .hero{margin-top:45px}
   .badges{flex-wrap:wrap}
-  .hero h1{font-size:55px;margin-bottom:30px}
+  .hero h1{font-size:clamp(38px,11vw,60px);line-height:.96;letter-spacing:-.5px;margin-bottom:28px}.legacy-welcome-intro{font-size:clamp(23px,6.2vw,34px);line-height:1.1;letter-spacing:.04em;margin-bottom:10px}.legacy-welcome-brand{flex-direction:column;gap:2px}
   .primary-btn{height:72px;font-size:15px}
   .secondary-btn{height:65px}
   .info-row{flex-wrap:wrap}
@@ -162,7 +163,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:li
       </div>
     </div>
 
-    <h1>WELCOME TO<br>HSN CEMENT AND STEEL</h1>
+    <h1 aria-label="Welcome to HSN Cement and Steel"><span class="legacy-welcome-intro">WELCOME TO</span><span class="legacy-welcome-brand"><span>HSN CEMENT</span><span>AND STEEL</span></span></h1>
 
     <div class="cta-row">
       <button class="primary-btn" onclick="enterWebsite()" aria-label="Enter website and shop catalog">
