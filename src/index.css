@@ -1355,22 +1355,6 @@ svg {
   height: 100%;
 }
 
-/* Admin-only Cursor Ring Field background: same overlay slot the old
-   glow dots used — fixed, above page backgrounds, below overlays,
-   never blocks clicks. The field itself is transparent. */
-.admin-ring-field {
-  position: fixed;
-  inset: 0;
-  z-index: 55;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.admin-ring-field canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
 
 /* ============================================================
    ADMIN PORTAL — rounded command-center panels + login light field
