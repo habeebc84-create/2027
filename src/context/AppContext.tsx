@@ -5,6 +5,7 @@ import { products as defaultProducts, categories as defaultCategories, brands as
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
 import { fetchOrdersDb, insertOrderDb, updateOrderDb, deleteOrderDb, mergeDbOrders } from '../lib/ordersDb';
+import { DEFAULT_LAUNCH_DATE_TIME } from '../lib/launch';
 import { verifyAdminPassword, changeAdminPassword } from '../lib/password';
 
 interface AppContextType {
@@ -80,6 +81,9 @@ interface AppContextType {
   /** Launching-soon poster flag: true = normal pages are covered by the poster. */
   launchingSoon: boolean;
   setLaunchingSoon: (value: boolean) => void;
+  /** Opening date/time for the poster countdown (ISO string, IST offset). */
+  launchDateTime: string;
+  setLaunchDateTime: (value: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -142,6 +146,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localEditRef.current = true; // push the flag to the cloud copy for all devices
     setLaunchingSoonState(value);
   }, []);
+  const [launchDateTime, setLaunchDateTimeState] = useState<string>(() => load<string>('hsn_launch_date_time', DEFAULT_LAUNCH_DATE_TIME));
+  const setLaunchDateTime = useCallback((value: string) => {
+    localEditRef.current = true; // push the new opening date/time to all devices
+    setLaunchDateTimeState(value);
+  }, []);
   // Current orders, for the Postgres backfill (orders already on this device
   // are upserted into hsn_orders once the table exists).
   const ordersRef = useRef<Order[]>([]);
@@ -166,6 +175,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => { save('hsn_launching_soon', launchingSoon); }, [launchingSoon]);
+  useEffect(() => { save('hsn_launch_date_time', launchDateTime); }, [launchDateTime]);
   useEffect(() => { save('hsn_cart', cart); }, [cart]);
   useEffect(() => { save('hsn_orders', orders); }, [orders]);
   useEffect(() => { save('hsn_products', products); }, [products]);
@@ -202,6 +212,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       orders,  // orders included so the owner sees location-shared orders on all devices
       deletedOrders: [...deletedOrderIdsRef.current], // tombstones: every device removes these for good
       launchingSoon, // launching-soon poster flag, so removing it opens every device
+      launchDateTime, // opening date/time for the poster countdown
     };
     void pushRemoteContent(snapshot).then(version => {
       if (version) {
@@ -211,7 +222,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         showToast('Cloud sync failed — change stays on this device only', 'error');
       }
     });
-  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, showToast]);
+  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, showToast]);
 
   const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
@@ -224,6 +235,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     if (json.v === 2) {
       if (typeof json.launchingSoon === 'boolean') setLaunchingSoonState(json.launchingSoon);
+      if (typeof json.launchDateTime === 'string' && Number.isFinite(Date.parse(json.launchDateTime))) setLaunchDateTimeState(json.launchDateTime);
       if (json.siteSettings && typeof json.siteSettings === 'object') setSiteSettings(json.siteSettings as SiteSettings);
       if (Array.isArray(json.products)) setProducts(json.products as Product[]);
       if (Array.isArray(json.categories)) setCategories(json.categories as Category[]);
@@ -661,6 +673,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       isAdmin, loginAdmin, logoutAdmin, adminPage, setAdminPage,
       toasts, showToast, splashDismissed, dismissSplash,
       launchingSoon, setLaunchingSoon,
+      launchDateTime, setLaunchDateTime,
     }}>
       {children}
     </AppContext.Provider>

@@ -23,7 +23,7 @@ import Terms from './pages/Terms';
 import WelcomeGate from './pages/WelcomeGate';
 import Splash from './components/Splash';
 import LaunchingSoon from './components/LaunchingSoon';
-import { isLaunchPending } from './lib/launch';
+import { isLaunchPending, parseLaunchTime } from './lib/launch';
 import SiteCursorDots from './components/SiteCursorDots';
 import type { Page } from './types';
 
@@ -89,7 +89,7 @@ class PageErrorBoundary extends React.Component<
 }
 
 function AppContent() {
-  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash, launchingSoon, setLaunchingSoon } = useApp();
+  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash, launchingSoon, setLaunchingSoon, launchDateTime } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   useEffect(() => {
@@ -183,8 +183,8 @@ function AppContent() {
   // and a signed-in admin on a normal page sees only a Remove button on
   // the poster itself. After launch day the gate switches itself off.
   const isAdminPage = currentPage === 'admin' || currentPage === 'admin-login' || isLoginPage;
-  if (launchingSoon && isLaunchPending() && !isAdminPage) {
-    return (<PageErrorBoundary><LaunchingSoon isAdmin={isAdmin} onRemove={() => setLaunchingSoon(false)} /></PageErrorBoundary>);
+  if (launchingSoon && isLaunchPending(parseLaunchTime(launchDateTime)) && !isAdminPage) {
+    return (<PageErrorBoundary><LaunchingSoon isAdmin={isAdmin} onRemove={() => setLaunchingSoon(false)} launchDateTime={launchDateTime} /></PageErrorBoundary>);
   }
   if (!splashDismissed && !isLoginPage && !deepLink) return (<PageErrorBoundary><Splash /></PageErrorBoundary>);
 
