@@ -37,6 +37,10 @@ export function isCloudConfigured(): boolean {
 }
 
 let client: SupabaseClient | null = null;
+/** Shared Supabase client, also used by the Postgres orders store (ordersDb.ts). */
+export function getSupabaseClient(): SupabaseClient | null {
+  return getClient();
+}
 function getClient(): SupabaseClient | null {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
   if (!client) {
