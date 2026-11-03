@@ -127,14 +127,10 @@ async function downloadInvoice(order: Order, siteSettings: SiteSettingsInfo, log
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
   doc.text(siteSettings.businessName.toUpperCase(), lx, 13.5, { align: 'left' });
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7.5);
-  doc.setTextColor(...BRAND_INK);
-  doc.text('P R E M I U M   B U I L D I N G   M A T E R I A L S', lx, 18.5, { align: 'left' });
   doc.setTextColor(...WHITE);
   doc.setFontSize(8);
   const headerLines = doc.splitTextToSize(`${siteSettings.address}  |  GSTIN: ${siteSettings.gstNumber}  |  Ph: ${siteSettings.phone}`, 136) as string[];
-  let hy = 23.5;
+  let hy = 19.5;
   headerLines.slice(0, 2).forEach(l => { doc.text(l, lx, hy, { align: 'left' }); hy += 4.2; });
 
   // ===== Title =====
@@ -636,7 +632,6 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-[10px] text-silver font-bold uppercase tracking-wider">HSN CEMENT &amp; STEEL</div>
-                  <div className="text-[9px] text-silver">Premium Building Materials</div>
                 </div>
                 <span className={`text-[10px] font-black px-3 py-1 rounded-full border ${ORDER_STATUSES.find(s => s.key === order.status)?.color || 'text-silver bg-charcoal border-gunmetal'}`}>
                   {ORDER_STATUSES.find(s => s.key === order.status)?.label || order.status}
