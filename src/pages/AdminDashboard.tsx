@@ -136,7 +136,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-black text-ivory">Rs.{o.total.toLocaleString('en-IN')}</div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ORDER_STATUSES.find(s => s.key === o.status)?.color || ''}`}>{o.status}</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ORDER_STATUSES.find(s => s.key === o.status)?.color || ''}`}>{ORDER_STATUSES.find(s => s.key === o.status)?.label || o.status}</span>
                 </div>
               </div>
             ))}
@@ -473,11 +473,15 @@ export default function AdminDashboard() {
     return (
       <div className="space-y-6">
         <TopHeader title="Orders" />
+        <p className="text-sm font-bold text-ivory">{orders.length} order{orders.length === 1 ? '' : 's'} in total{filter !== 'all' ? ` — showing ${filtered.length} ${ORDER_STATUSES.find(s => s.key === filter)?.label || filter}` : ''}</p>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => setFilter('all')} className={`px-3 py-1.5 rounded-2xl text-[10px] font-bold transition ${filter === 'all' ? 'bg-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver border border-gunmetal'}`}>All ({orders.length})</button>
-          {ORDER_STATUSES.slice(0, 6).map(s => (
-            <button key={s.key} onClick={() => setFilter(s.key)} className={`px-3 py-1.5 rounded-2xl text-[10px] font-bold transition ${filter === s.key ? 'bg-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver border border-gunmetal'}`}>{s.label} ({orders.filter(o => o.status === s.key).length})</button>
-          ))}
+          <button onClick={() => setFilter('all')} className={`px-4 py-2 rounded-2xl text-xs font-bold transition ${filter === 'all' ? 'bg-brand-500 text-obsidian border border-brand-500' : 'text-ivory border border-gunmetal bg-charcoal'}`}>All <span className="font-black">{orders.length}</span></button>
+          {ORDER_STATUSES.slice(0, 6).map(s => {
+            const count = orders.filter(o => o.status === s.key).length;
+            return (
+              <button key={s.key} onClick={() => setFilter(s.key)} className={`px-4 py-2 rounded-2xl text-xs font-bold transition ${filter === s.key ? 'bg-brand-500 text-obsidian border border-brand-500' : 'text-ivory border border-gunmetal bg-charcoal'}`}>{s.label} <span className="font-black">{count}</span></button>
+            );
+          })}
         </div>
         {filtered.length === 0 ? <p className="text-xs text-silver text-center py-12">No orders found</p> : (
           <div className="space-y-4">
@@ -504,6 +508,7 @@ export default function AdminDashboard() {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full border ${ORDER_STATUSES.find(s => s.key === o.status)?.color || ''}`}>Current: {ORDER_STATUSES.find(s => s.key === o.status)?.label || o.status}</span>
                   <div className="flex items-center space-x-2">
                     <span className="text-[10px] font-bold text-silver">Update Status:</span>
                     <select value={o.status} onChange={e => updateOrderStatus(o.orderId, e.target.value as OrderStatus)} className="bg-charcoal border border-gunmetal text-ivory px-3 py-1.5 rounded-xl text-[10px] font-bold focus:outline-none focus:border-brand-500">

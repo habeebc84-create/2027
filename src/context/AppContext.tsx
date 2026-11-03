@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, ContentBlock, Notification, Banner, SiteContent, Category, Brand, TermsContent, SiteSettings, OrderStatus, AdminPage, Achievement, MarketPrices } from '../types';
+import { ORDER_STATUSES } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms, defaultMarketPrices } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
@@ -213,21 +214,43 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (Array.isArray(json.contentBlocks)) setContentBlocks(json.contentBlocks as ContentBlock[]);
       if (Array.isArray(json.terms)) setTermsContent(json.terms as TermsContent[]);
       if (Array.isArray(json.achievements)) setAchievements(json.achievements as Achievement[]);
-      // Orders: merge cloud orders this device doesn't have — except ones the
-      // admin deleted (tombstoned in deletedOrders), which are removed for good.
+      // Orders: merge cloud orders — except ones the admin deleted
+      // (tombstoned in deletedOrders), which are removed for good.
+      // BUG FIX (was: only NEW cloud orders were added): an order that
+      // already existed on this device kept its old status forever, so a
+      // customer who had already placed/tracked an order never saw the
+      // admin's status change. Now a cloud copy with a longer timeline
+      // (a newer status) overwrites the local copy, so the tracking
+      // page updates on the next 10s poll / focus pull.
       if (Array.isArray(json.orders)) {
         const cloudOrders = json.orders as Order[];
         const deletedIds = new Set(Array.isArray(json.deletedOrders) ? json.deletedOrders as string[] : []);
         setOrders(prev => {
           // Drop tombstoned orders locally so deletions win on every device.
           const survivors = prev.filter(o => !deletedIds.has(o.orderId));
-          if (survivors.length !== prev.length) { localEditRef.current = true; save('hsn_orders', survivors); }
-          const ids = new Set(survivors.map(o => o.id));
-          const missing = cloudOrders.filter(o => !ids.has(o.id) && !deletedIds.has(o.orderId));
-          if (missing.length === 0) return survivors.length !== prev.length ? survivors : prev;
-          const merged = [...survivors, ...missing].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          let changed = survivors.length !== prev.length;
+          if (changed) { localEditRef.current = true; }
+          const cloudById = new Map<string, Order>();
+          const cloudByOrderId = new Map<string, Order>();
+          for (const o of cloudOrders) { cloudById.set(o.id, o); cloudByOrderId.set(o.orderId, o); }
+          const updated = survivors.map(local => {
+            const cloud = cloudById.get(local.id) || cloudByOrderId.get(local.orderId);
+            if (!cloud || deletedIds.has(cloud.orderId)) return local;
+            const localLast = local.timeline?.[local.timeline.length - 1]?.date || '';
+            const cloudLast = cloud.timeline?.[cloud.timeline.length - 1]?.date || '';
+            const cloudIsNewer = (cloud.timeline?.length || 0) > (local.timeline?.length || 0)
+              || (cloudLast && localLast && cloudLast > localLast);
+            if (cloudIsNewer) { changed = true; return cloud; }
+            return local;
+          });
+          const ids = new Set(updated.map(o => o.id));
+          const orderIds = new Set(updated.map(o => o.orderId));
+          const missing = cloudOrders.filter(o => !ids.has(o.id) && !orderIds.has(o.orderId) && !deletedIds.has(o.orderId));
+          if (missing.length > 0) changed = true;
+          if (!changed) return prev;
+          const merged = [...updated, ...missing].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           save('hsn_orders', merged);
- return merged;
+          return merged;
         });
       }
     }
@@ -405,12 +428,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [showToast]);
 
   const updateOrderStatus = useCallback((orderId: string, status: OrderStatus, note?: string) => {
+    // BUG FIX (was: status changes never left this device): unlike
+    // deleteOrder / setOrderFinalDeliveryCharge, this never set
+    // localEditRef, so the cloud-push effect below skipped it and the
+    // customer on another device never saw the new status. Setting the
+    // flag makes the change push to the shared cloud copy, which the
+    // customer's device polls every 10s (and on focus).
+    localEditRef.current = true;
     setOrders(prev => {
       const updated = prev.map(o => o.orderId === orderId ? { ...o, status, timeline: [...o.timeline, { status, date: new Date().toISOString(), note }] } : o);
       save('hsn_orders', updated);
       return updated;
     });
-    showToast(`Order ${orderId} updated to ${status}`);
+    showToast(`Order ${orderId} updated to ${ORDER_STATUSES.find(s => s.key === status)?.label || status}`);
   }, [showToast]);
 
   const deleteOrder = useCallback((orderId: string) => {
