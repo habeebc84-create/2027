@@ -4,6 +4,7 @@ import { ORDER_STATUSES } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms, defaultMarketPrices } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
+import { fetchOrdersDb, insertOrderDb, updateOrderDb, deleteOrderDb, mergeDbOrders } from '../lib/ordersDb';
 import { verifyAdminPassword, changeAdminPassword } from '../lib/password';
 
 interface AppContextType {
@@ -131,6 +132,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Orders intentionally deleted by the admin. Sent with every cloud snapshot
   // so other devices drop them too instead of re-merging them from stale cloud data.
   const deletedOrderIdsRef = useRef<Set<string>>(new Set());
+  // Current orders, for the Postgres backfill (orders already on this device
+  // are upserted into hsn_orders once the table exists).
+  const ordersRef = useRef<Order[]>([]);
+  useEffect(() => { ordersRef.current = orders; }, [orders]);
   const [banners] = useState<Banner[]>(() => { const v = load<Banner[]>('hsn_banners', defaultBanners); return Array.isArray(v) ? v : defaultBanners; });
   const [transportZones, setTransportZones] = useState<TransportZone[]>(() => { const v = load<TransportZone[]>('hsn_transportZones', defaultTransportZones); return Array.isArray(v) ? v : defaultTransportZones; });
   const [marketPrices, setMarketPrices] = useState<MarketPrices>(() => ({ ...defaultMarketPrices, ...load('hsn_marketPrices', {}) }));
@@ -255,6 +260,44 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     }
   }, []);
+
+  // Postgres orders: merge a fetched list into local orders, and upsert any
+  // local order Postgres does not have yet (pre-migration backfill + retry
+  // for an order whose first insert failed). A null fetch means the table
+  // is not there yet — in that case do nothing and the JSON cloud sync
+  // below keeps working exactly as before.
+  const applyDbOrders = useCallback(async () => {
+    const dbOrders = await fetchOrdersDb();
+    if (dbOrders === null) return;
+    const deletedIds = deletedOrderIdsRef.current;
+    setOrders(prev => {
+      const merged = mergeDbOrders(prev, dbOrders, deletedIds);
+      save('hsn_orders', merged);
+      return merged;
+    });
+    const dbIds = new Set(dbOrders.map(o => o.orderId));
+    const missing = ordersRef.current.filter(o => !dbIds.has(o.orderId) && !deletedIds.has(o.orderId));
+    if (missing.length > 0) {
+      await Promise.all(missing.map(o => insertOrderDb(o)));
+    }
+  }, []);
+
+  // Postgres poll: like the JSON version poll, but for orders only. Runs
+  // every 20s and on tab focus, so an admin status change reaches the
+  // customer's tracking page even if the JSON cloud copy is stale.
+  useEffect(() => {
+    if (!isCloudConfigured()) return;
+    void applyDbOrders();
+    const iv = setInterval(() => { void applyDbOrders(); }, 20000);
+    const onVisible = () => { if (document.visibilityState === 'visible') void applyDbOrders(); };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      clearInterval(iv);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
+  }, [applyDbOrders]);
 
   // First load: pull the latest shared content from the cloud.
   useEffect(() => {
@@ -384,6 +427,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       status: 'placed', timeline: [{ status: 'placed', date: new Date().toISOString() }],
     };
     setOrders(prev => { const u = [order, ...prev]; save('hsn_orders', u); return u; });
+    void insertOrderDb(order); // Postgres when the table exists; no-op otherwise
     const n: Notification = {
       id: `notif-${Date.now()}`, title: `New Order: ${orderId}`,
       content: `${data.customer.name} placed an order of Rs.${data.total.toLocaleString('en-IN')}`,
@@ -419,11 +463,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   /** Owner review: set the final delivery charge after seeing the shared location. */
   const setOrderFinalDeliveryCharge = useCallback((orderId: string, charge: number) => {
     localEditRef.current = true;
+    let dbOrder: Order | undefined;
     setOrders(prev => {
-      const u = prev.map(o => o.orderId === orderId ? { ...o, finalDeliveryCharge: charge } : o);
+      const u = prev.map(o => {
+        if (o.orderId !== orderId) return o;
+        const updated = { ...o, finalDeliveryCharge: charge };
+        dbOrder = updated;
+        return updated;
+      });
       save('hsn_orders', u);
       return u;
     });
+    if (dbOrder) void updateOrderDb(dbOrder);
     showToast(`Final delivery charge saved for ${orderId}`);
   }, [showToast]);
 
@@ -435,11 +486,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // flag makes the change push to the shared cloud copy, which the
     // customer's device polls every 10s (and on focus).
     localEditRef.current = true;
+    let dbOrder: Order | undefined;
     setOrders(prev => {
-      const updated = prev.map(o => o.orderId === orderId ? { ...o, status, timeline: [...o.timeline, { status, date: new Date().toISOString(), note }] } : o);
+      const updated = prev.map(o => {
+        if (o.orderId !== orderId) return o;
+        const changed = { ...o, status, timeline: [...o.timeline, { status, date: new Date().toISOString(), note }] };
+        dbOrder = changed;
+        return changed;
+      });
       save('hsn_orders', updated);
       return updated;
     });
+    if (dbOrder) void updateOrderDb(dbOrder);
     showToast(`Order ${orderId} updated to ${ORDER_STATUSES.find(s => s.key === status)?.label || status}`);
   }, [showToast]);
 
@@ -451,6 +509,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       save('hsn_orders', u);
       return u;
     });
+    void deleteOrderDb(orderId);
     showToast('Order deleted — removing from all devices…');
   }, [showToast]);
   const deleteCustomer = useCallback((customerId: string) => { setCustomers(prev => { const u = prev.filter(c => c.id !== customerId); save('hsn_customers', u); return u; }); showToast('Customer deleted'); }, [showToast]);
@@ -468,11 +527,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   /** Actively re-fetch the shared cloud copy so QR deep-links can load orders missing on this device. */
   const refreshFromCloud = useCallback(async () => {
     if (!isCloudConfigured()) return;
+    await applyDbOrders();
     const { content, fromCloud } = await pullRemoteContent();
     if (!fromCloud || !content) return;
     const raw = JSON.stringify(content);
     if (raw !== lastPulledRawRef.current) applyCloudSnapshot(content, raw);
-  }, [applyCloudSnapshot]);
+  }, [applyCloudSnapshot, applyDbOrders]);
 
   const addTransportZone = useCallback((z: TransportZone) => { localEditRef.current = true; setTransportZones(prev => [...prev, z]); showToast('Zone added'); }, [showToast]);
   const updateTransportZone = useCallback((id: string, updates: Partial<TransportZone>) => { localEditRef.current = true; setTransportZones(prev => prev.map(z => z.id === id ? { ...z, ...updates } : z)); showToast('Zone updated'); }, [showToast]);
