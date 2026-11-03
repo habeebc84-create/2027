@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, Edit, Trash2, Plus, Bell, FileText, Truck, Menu, Clock, Search, Filter, Globe, Lock, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import AdminDashboardBackground from '../components/AdminDashboardBackground';
 import type { AdminPage, Product, Category, ContentBlock, OrderStatus, Notification, Achievement } from '../types';
 import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile } from '../lib/images';
@@ -1065,9 +1066,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard min-h-screen relative z-10">
+      <AdminDashboardBackground />
       <Sidebar />
       {sidebarOpen && <div className="fixed inset-0 bg-obsidian/50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
-      <div className="lg:ml-[18rem] p-4 sm:p-6 lg:p-8">
+      <div className="relative z-10 lg:ml-[18rem] p-4 sm:p-6 lg:p-8">
         {renderContent()}
       </div>
     </div>
