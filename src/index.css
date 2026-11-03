@@ -1463,8 +1463,11 @@ svg {
 
 /* EEL overlay on the end wordmark: larger than the canvas letters
    (about 1.5x, scaling with viewport like the canvas), centred
-   vertically on the band and ending at its right edge. Starts from
-   above, oversized, and settles into its place on scroll into view. */
+   vertically on the band and ending at its right edge. On scroll into
+   view it comes from well above — translateY(-280px), scale 1.8 —
+   and settles into its original place over 1600ms. The wordmark
+   section is NOT overflow-hidden, so the drop from above is actually
+   visible over the section above, instead of being clipped to the band. */
 .home-eel-settle {
   font-size: clamp(64px, 17vw, 220px);
   letter-spacing: -0.01em;
@@ -1472,13 +1475,14 @@ svg {
   will-change: transform, opacity;
 }
 .home-eel-reveal.reveal-visible .home-eel-settle {
-  animation: home-eel-settle 1200ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  animation: home-eel-settle 1600ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 @keyframes home-eel-settle {
-  0% { opacity: 0; transform: translateY(-120px) scale(1.6); }
-  60% { opacity: 1; transform: translateY(6px) scale(1.05); }
+  0% { opacity: 0; transform: translateY(-280px) scale(1.8); }
+  60% { opacity: 1; transform: translateY(10px) scale(1.05); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
+
 
 
 /* On browsers with scroll-driven animations, let the closing brand mark

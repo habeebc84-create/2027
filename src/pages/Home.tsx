@@ -305,7 +305,7 @@ export default function Home() {
           minWidth/minHeight override the component's Framer floor so
           phones are not forced into a 1200px box. */}
       <h2 className="sr-only">HSNCEMENTANDSTEEL</h2>
-      <section aria-hidden="true" className="relative w-full overflow-hidden">
+      <section aria-hidden="true" className="relative w-full">
         <Reveal className="home-wordmark-reveal">
           <VectorWordmark
             text="HSNCEMENTANDSTEEL"
