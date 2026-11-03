@@ -9,7 +9,7 @@ import { changeAdminPassword } from '../lib/password';
 
 export default function AdminDashboard() {
   const ctx = useApp();
-  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, updateCategory, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, deleteAchievement, setOrderFinalDeliveryCharge } = ctx;
+  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, updateCategory, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, deleteAchievement, setOrderFinalDeliveryCharge, launchingSoon, setLaunchingSoon } = ctx;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const totalRevenue = orders.reduce((a, o) => a + o.total, 0);
@@ -1047,6 +1047,16 @@ export default function AdminDashboard() {
               <input type="text" value={f.val} onChange={e => updateSiteSettings({ [f.key]: e.target.value })} className="w-full bg-charcoal/50 border border-gunmetal rounded-2xl px-3 py-2.5 text-xs text-ivory focus:outline-none focus:border-brand-500 transition" />
             </div>
           ))}
+        </div>
+      </div>
+      <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
+        <h3 className="text-sm font-bold text-ivory border-b border-gunmetal pb-3">Launching Soon Poster</h3>
+        <p className="text-xs text-silver">When ON, normal visitors see only the full-page “Launching Soon” poster (countdown to Monday, 23 November 2026) and cannot open any page. The admin portal itself is never blocked.</p>
+        <div className="flex items-center justify-between gap-4 bg-charcoal/50 border border-gunmetal rounded-2xl px-4 py-3">
+          <span className="text-xs font-bold text-ivory">{launchingSoon ? 'Poster is ON — website closed to visitors' : 'Poster is OFF — website open'}</span>
+          <button type="button" onClick={() => setLaunchingSoon(!launchingSoon)} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition ${launchingSoon ? 'bg-brand-500 text-obsidian' : 'bg-white/10 border border-gunmetal text-ivory'}`}>
+            {launchingSoon ? 'Remove poster' : 'Show poster'}
+          </button>
         </div>
       </div>
       <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
