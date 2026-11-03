@@ -338,17 +338,6 @@ export default function Home() {
             }}
           />
         </Reveal>
-        {/* EEL overlay — only the last 3 letters of STEEL, larger than the
-            canvas letters, sitting on the wordmark's own EEL position at
-            the right end of the band (atlas is centred at 96% width, so
-            its right edge is at 98%). It animates from above into place
-            when scrolled into view (home-eel-settle in index.css). This
-            is an overlay on the wordmark, not a separate block below it. */}
-        <Reveal className="home-eel-reveal absolute inset-0 flex items-center justify-end pr-[2%] pointer-events-none">
-          <span className="home-eel-settle font-industrial font-black text-ivory leading-none">
-            EEL
-          </span>
-        </Reveal>
       </section>
 
     </div>
