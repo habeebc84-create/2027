@@ -22,6 +22,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import Terms from './pages/Terms';
 import WelcomeGate from './pages/WelcomeGate';
 import Splash from './components/Splash';
+import LaunchingSoon from './components/LaunchingSoon';
+import { isLaunchPending } from './lib/launch';
 import SiteCursorDots from './components/SiteCursorDots';
 import type { Page } from './types';
 
@@ -87,7 +89,7 @@ class PageErrorBoundary extends React.Component<
 }
 
 function AppContent() {
-  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash } = useApp();
+  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash, launchingSoon, setLaunchingSoon } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   useEffect(() => {
@@ -175,6 +177,15 @@ function AppContent() {
   // First paint on a QR deep link skips the splash gate; the mount effect
   // persists the dismissal so navigating away never re-shows it either.
   const deepLink = !isLoginPage && isOrderDeepLink();
+  // Launching-soon gate (BUILD 63): normal pages are covered by the full-page
+  // poster and nothing behind it can be opened. The admin portal page is
+  // never gated (otherwise the admin could not reach the remove switch),
+  // and a signed-in admin on a normal page sees only a Remove button on
+  // the poster itself. After launch day the gate switches itself off.
+  const isAdminPage = currentPage === 'admin' || currentPage === 'admin-login' || isLoginPage;
+  if (launchingSoon && isLaunchPending() && !isAdminPage) {
+    return (<PageErrorBoundary><LaunchingSoon isAdmin={isAdmin} onRemove={() => setLaunchingSoon(false)} /></PageErrorBoundary>);
+  }
   if (!splashDismissed && !isLoginPage && !deepLink) return (<PageErrorBoundary><Splash /></PageErrorBoundary>);
 
   const renderPage = () => {

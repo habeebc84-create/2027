@@ -77,6 +77,9 @@ interface AppContextType {
   showToast: (message: string, type?: 'success' | 'error') => void;
   splashDismissed: boolean;
   dismissSplash: () => void;
+  /** Launching-soon poster flag: true = normal pages are covered by the poster. */
+  launchingSoon: boolean;
+  setLaunchingSoon: (value: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -112,6 +115,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [trackingOrderId, setTrackingOrderId] = useState<string | undefined>(undefined);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [splashDismissed, setSplashDismissed] = useState(false);
+  // Launching-soon poster: ON by default (BUILD 63) so normal visitors see
+  // only the poster until the admin removes it or launch day arrives.
+  const [launchingSoon, setLaunchingSoonState] = useState<boolean>(() => load<boolean>('hsn_launching_soon', true));
   const [adminPage, setAdminPage] = useState<AdminPage>('overview');
 
   const [products, setProducts] = useState<Product[]>(() => { const v = load<Product[]>('hsn_products', defaultProducts); return Array.isArray(v) ? v : defaultProducts; });
@@ -132,6 +138,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Orders intentionally deleted by the admin. Sent with every cloud snapshot
   // so other devices drop them too instead of re-merging them from stale cloud data.
   const deletedOrderIdsRef = useRef<Set<string>>(new Set());
+  const setLaunchingSoon = useCallback((value: boolean) => {
+    localEditRef.current = true; // push the flag to the cloud copy for all devices
+    setLaunchingSoonState(value);
+  }, []);
   // Current orders, for the Postgres backfill (orders already on this device
   // are upserted into hsn_orders once the table exists).
   const ordersRef = useRef<Order[]>([]);
@@ -155,6 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 2500);
   }, []);
 
+  useEffect(() => { save('hsn_launching_soon', launchingSoon); }, [launchingSoon]);
   useEffect(() => { save('hsn_cart', cart); }, [cart]);
   useEffect(() => { save('hsn_orders', orders); }, [orders]);
   useEffect(() => { save('hsn_products', products); }, [products]);
@@ -190,6 +201,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       achievements,
       orders,  // orders included so the owner sees location-shared orders on all devices
       deletedOrders: [...deletedOrderIdsRef.current], // tombstones: every device removes these for good
+      launchingSoon, // launching-soon poster flag, so removing it opens every device
     };
     void pushRemoteContent(snapshot).then(version => {
       if (version) {
@@ -199,7 +211,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         showToast('Cloud sync failed — change stays on this device only', 'error');
       }
     });
-  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, showToast]);
+  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, showToast]);
 
   const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
@@ -211,6 +223,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSiteContent(prev => ({ ...prev, ...sc }));
     }
     if (json.v === 2) {
+      if (typeof json.launchingSoon === 'boolean') setLaunchingSoonState(json.launchingSoon);
       if (json.siteSettings && typeof json.siteSettings === 'object') setSiteSettings(json.siteSettings as SiteSettings);
       if (Array.isArray(json.products)) setProducts(json.products as Product[]);
       if (Array.isArray(json.categories)) setCategories(json.categories as Category[]);
@@ -647,6 +660,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       siteSettings, updateSiteSettings,
       isAdmin, loginAdmin, logoutAdmin, adminPage, setAdminPage,
       toasts, showToast, splashDismissed, dismissSplash,
+      launchingSoon, setLaunchingSoon,
     }}>
       {children}
     </AppContext.Provider>
