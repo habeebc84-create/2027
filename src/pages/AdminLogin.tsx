@@ -73,9 +73,9 @@ export default function AdminLogin() {
       return;
     }
     setSubmitting(true);
-    const success = await loginAdmin(email, password);
+    const err = await loginAdmin(email, password);
     setSubmitting(false);
-    if (success) {
+    if (!err) {
       // Reset the streak AND persist it immediately — the component unmounts
       // right after setPage('admin'), which can skip the persistence effect and
       // leak old attempts into the next login session.
@@ -91,7 +91,7 @@ export default function AdminLogin() {
         setLock({ attempts: next, until: Date.now() + secs * 1000, lastFail: Date.now() });
       } else {
         setLock({ attempts: next, until: 0, lastFail: Date.now() });
-        setError('Invalid credentials. Access denied.');
+        setError(err);
       }
     }
   };
@@ -166,7 +166,7 @@ export default function AdminLogin() {
         </div>
 
         <p className="text-center text-[10px] text-silver mt-4">
-          Contact site owner for credentials
+          This login uses Supabase Auth. The admin user must exist in Supabase → Authentication → Users, with Auto Confirm on.
         </p>
       </div>
       </div>
