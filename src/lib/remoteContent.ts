@@ -123,7 +123,16 @@ export async function pushRemoteContent(value: unknown): Promise<string | null> 
         upsert: true,
         cacheControl: '0',
       });
-    if (vErr) console.error('[remoteContent] version bump failed', vErr.message);
+    // BUILD 70: the version marker is how other devices notice a change.
+    // If it fails, the new content is uploaded but no device will pull it,
+    // so the poster timing (and every other edit) looks unchanged — and
+    // returning the version here used to report a false "Saved" toast.
+    // Return null instead, so the caller shows the honest sync-failed
+    // message and the admin retries instead of thinking it updated.
+    if (vErr) {
+      console.error('[remoteContent] version bump failed', vErr.message);
+      return null;
+    }
     return version;
   } catch (e) {
     console.error('[remoteContent] push threw', e);
