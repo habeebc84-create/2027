@@ -238,8 +238,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSiteContent(prev => ({ ...prev, ...sc }));
     }
     if (json.v === 2) {
-      if (typeof json.launchingSoon === 'boolean') setLaunchingSoonState(json.launchingSoon);
-      if (typeof json.launchDateTime === 'string' && Number.isFinite(Date.parse(json.launchDateTime))) setLaunchDateTimeState(json.launchDateTime);
+      // BUILD 70: never let a stale cloud pull revert a poster change the
+      // admin just made in this session. If localEditRef is set, an admin
+      // edit is pending / pushing — keep the local poster flag + date,
+      // and let the push effect re-push that local value. Without this,
+      // a 10s poll arriving between the admin's edit and the end of the
+      // 1.3MB cloud upload overwrote the new date with the old cloud
+      // date, so the poster timing looked like it never updated.
+      if (!localEditRef.current) {
+        if (typeof json.launchingSoon === 'boolean') setLaunchingSoonState(json.launchingSoon);
+        if (typeof json.launchDateTime === 'string' && Number.isFinite(Date.parse(json.launchDateTime))) setLaunchDateTimeState(json.launchDateTime);
+      }
       if (Array.isArray(json.notifications)) {
         const cloudNotifs = json.notifications as Notification[];
         setNotifications(prev => {

@@ -6,7 +6,7 @@ import type { AdminPage, Product, Category, ContentBlock, OrderStatus, Notificat
 import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile } from '../lib/images';
 import { changeAdminAuthPassword } from '../lib/adminAuth';
-import { splitLaunchDateTime, joinLaunchDateTime } from '../lib/launch';
+import { splitLaunchDateTime, joinLaunchDateTime, parseLaunchTime } from '../lib/launch';
 import DotLens from '../components/originkit/ui/dot-lens';
 
 export default function AdminDashboard() {
@@ -1071,6 +1071,7 @@ export default function AdminDashboard() {
             <input type="time" value={splitLaunchDateTime(launchDateTime).time} onChange={e => { if (e.target.value) setLaunchDateTime(joinLaunchDateTime(splitLaunchDateTime(launchDateTime).date, e.target.value)); }} className="w-full bg-charcoal/50 border border-gunmetal rounded-2xl px-3 py-2.5 text-xs text-ivory focus:outline-none focus:border-brand-500 transition" />
           </div>
         </div>
+        <p className="text-xs text-silver">Current poster time: <span className="font-bold text-ivory">{new Date(parseLaunchTime(launchDateTime)).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} at {new Date(parseLaunchTime(launchDateTime)).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })} IST</span> — change the date/time above and this line updates at once; other devices follow within about 10 seconds once the cloud save succeeds (you will see a “Saved” message, or a sync-failed warning if it did not).</p>
         <div className="flex items-center justify-between gap-4 bg-charcoal/50 border border-gunmetal rounded-2xl px-4 py-3">
           <span className="text-xs font-bold text-ivory">{launchingSoon ? 'Poster is ON — website closed to visitors' : 'Poster is OFF — website open'}</span>
           <button type="button" onClick={() => setLaunchingSoon(!launchingSoon)} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition ${launchingSoon ? 'bg-brand-500 text-obsidian' : 'bg-white/10 border border-gunmetal text-ivory'}`}>
@@ -1099,24 +1100,30 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard min-h-screen relative z-10">
-      {/* BUILD 69: Originkit Dot Lens, admin dashboard background ONLY —
-          not on login, not on normal pages. Dimmed on purpose: wrapper
-          opacity 40%, dim grey base, champagne accent (not white),
-          smaller dots, tighter reach, slower drift. The component file
-          itself is used verbatim; only these props + wrapper dim it.
-          pointer-events-none so it never blocks dashboard clicks;
-          reduced-motion is handled inside the component (speed 0). */}
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-40">
+      {/* BUILD 70: Originkit Dot Lens, admin dashboard background ONLY —
+          not on login, not on normal pages. BUILD 69 dimmed it too far
+          (40% wrapper opacity + #3A3A3A dots on obsidian, behind opaque
+          charcoal cards), so on a real dashboard it looked like no dots
+          at all. Now: no wrapper dimming, original grey base, champagne
+          base dots with a bright ivory lens centre, full-size dots,
+          wider reach, full speed/hover — plus the dashboard cards below
+          are made translucent (see .admin-dashboard in index.css) so the
+          dots show through the panels, not just in the gaps between them.
+          The component file itself is used verbatim; only these props
+          + wrapper change it. pointer-events-none so it never blocks
+          dashboard clicks; reduced-motion is handled inside the
+          component (speed 0). */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <DotLens
           background="#0B0C0E"
-          baseColor="#3A3A3A"
-          accentColor="#C6A875"
+          baseColor="#8A8A8A"
+          accentColor="#F7F5F0"
           density={30}
-          dotSize={60}
-          reach={15}
-          minSize={4}
-          speed={30}
-          hover={70}
+          dotSize={90}
+          reach={25}
+          minSize={8}
+          speed={50}
+          hover={100}
           style={{ minWidth: 0, minHeight: 0 }}
         />
       </div>
