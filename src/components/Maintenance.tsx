@@ -10,7 +10,17 @@
  * runs above the heading, re-coloured to HSN champagne/ivory — see the
  * .pl rules in index.css. It is decorative only; it does not mean the
  * page is about to open.
+ * BUILD 76: Originkit Glitter Cascade (CLI-added verbatim
+ * src/components/originkit/ui/glitter-cascade.tsx, no extra packages)
+ * is the full-screen background behind the maintenance content ONLY —
+ * not on the main page, not on normal pages. The template's "main page
+ * with no other content" instruction is overridden by the owner's
+ * trailing scope: "for system maintenance background full image".
+ * A 45% obsidian overlay sits between the glitter and the text so the
+ * heading stays readable; reduced-motion is handled inside the
+ * component.
  */
+import GlitterCascade from './originkit/ui/glitter-cascade';
 export default function Maintenance({ isAdmin, onTurnOff, message }: { isAdmin: boolean; onTurnOff: () => void; message: string }) {
   const text = message && message.trim() ? message : 'We are currently maintaining the system. Please check back soon.';
   return (
@@ -18,6 +28,14 @@ export default function Maintenance({ isAdmin, onTurnOff, message }: { isAdmin: 
       data-maintenance
       className="fixed inset-0 z-[400] overflow-y-auto overflow-x-clip bg-obsidian text-ivory"
     >
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <GlitterCascade
+          background="#0B0C0E"
+          advanced={{"haze":85,"seed":1,"drift":3,"grain":0,"stray":9,"hazeLow":"#3A2A6A","shimmer":30,"flakeLav":"#AE89B5","glintArm":34,"topBoost":266,"topDepth":57,"topWidth":89,"vignette":0,"fallSpeed":9,"flakeBlue":"#A0B0FF","flakePink":"#E070D0","flakeSize":4,"flakeWarm":"#E8A080","glintBlue":"#8A8AFF","glintCore":3,"glintHalo":12,"glintLife":450,"glintPink":"#FF7AD0","glintRise":150,"glintWarm":7,"hazeDepth":22,"hazeWidth":86,"warmShare":6,"fallSpread":63,"pushRadius":12,"coreDensity":76,"flakeBright":120,"glintBright":100,"sizeVariance":60}}
+          style={{ minWidth: 0, minHeight: 0 }}
+        />
+      </div>
+      <div className="absolute inset-0 bg-obsidian/45 pointer-events-none" />
       <div className="relative z-10 min-h-full flex flex-col items-center justify-center text-center px-5 py-10 pointer-events-none">
         <div className="pl mb-8" aria-hidden="true">
           {Array.from({ length: 12 }).map((_, i) => (
