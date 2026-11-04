@@ -31,15 +31,19 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
       banner.setAttribute('role', 'alert');
       banner.setAttribute('aria-live', 'polite');
       banner.style.cssText =
-        'position:fixed;top:12px;left:50%;transform:translateX(-50%);' +
-        'width:calc(100% - 24px);max-width:640px;z-index:9999;' +
-        'display:flex;align-items:center;gap:10px;flex-wrap:wrap;' +
+        /* BUILD 75 mobile: sit below the phone notch / status bar
+           (safe-area-inset-top) instead of a fixed 12px that could
+           sit under it, and use the safe-area on the sides too so
+           the popup never touches a curved screen edge. */
+        'position:fixed;top:max(12px, env(safe-area-inset-top));left:50%;transform:translateX(-50%);' +
+        'width:calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right));max-width:640px;z-index:9999;' +
+        'display:flex;align-items:center;gap:8px;flex-wrap:wrap;' +
         'background:#C6A875;color:#0B0C0E;border-radius:16px;' +
         'padding:12px 14px;box-shadow:0 12px 32px rgba(0,0,0,0.45);' +
         'font-family:system-ui,sans-serif;font-size:14px;font-weight:700;';
       const text = document.createElement('span');
       text.textContent = 'Update available — update to latest version';
-      text.style.cssText = 'flex:1 1 160px;';
+      text.style.cssText = 'flex:1 1 140px;';
       const updateBtn = document.createElement('button');
       updateBtn.type = 'button';
       updateBtn.textContent = 'Update now';
