@@ -10,7 +10,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 );
 
 export default function Contact() {
-  const { siteContent, showToast } = useApp();
+  const { siteContent, showToast, addNotification } = useApp();
   const [form, setForm] = useState({ name: '', mobile: '', materialNeeded: 'Cement & Steel', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
@@ -20,6 +20,24 @@ export default function Contact() {
       showToast('Please enter your name and mobile number', 'error');
       return;
     }
+    const mobileDigits = form.mobile.replace(/\D/g, '').slice(-10);
+    if (!/^[6-9]\d{9}$/.test(mobileDigits)) {
+      showToast('Enter a valid 10-digit Indian mobile number.', 'error');
+      return;
+    }
+    // BUILD 65 audit fix: the old form showed "Inquiry sent successfully"
+    // but sent nothing anywhere — the store never received it. An inquiry
+    // is now a real admin notification (synced via the cloud copy, so the
+    // admin sees it on every device in Notifications).
+    addNotification({
+      id: `inquiry-${Date.now()}`,
+      title: `Inquiry: ${form.name}`,
+      content: `${form.materialNeeded} — ${form.message || 'No notes'} — Mobile: ${mobileDigits}`,
+      type: 'announcement',
+      active: true,
+      read: false,
+      createdAt: new Date().toISOString(),
+    });
     setSubmitted(true);
     showToast('Inquiry sent successfully!');
   };

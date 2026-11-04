@@ -664,9 +664,9 @@ export default function OrderSuccess({ orderId }: { orderId: string }) {
             {/* Payment Card */}
             <div className={`rounded-2xl p-5 border ${order.paymentMode.includes('Cash') ? 'bg-brand-500/5 border-brand-500/20' : 'bg-brand-500/5 border-brand-500/20'}`}>
               <h4 className="text-xs font-black text-ivory flex items-center space-x-2 mb-2">
-                {order.paymentMode.includes('Cash') ? <><CreditCard className="w-4 h-4 text-brand-400" /><span>CASH ON DELIVERY</span></> : <><Check className="w-4 h-4 text-success-foreground" /><span>PAYMENT RECEIVED</span></>}
+                {order.paymentMode.includes('Cash') ? <><CreditCard className="w-4 h-4 text-brand-400" /><span>CASH ON DELIVERY</span></> : <><CreditCard className="w-4 h-4 text-brand-400" /><span>PAYMENT PENDING — UPI ON DELIVERY</span></>}
               </h4>
-              <p className="text-xs text-silver">{order.paymentMode.includes('Cash') ? 'Please keep the payable amount ready at the time of delivery.' : 'Online payment has been completed.'}</p>
+              <p className="text-xs text-silver">{order.paymentMode.includes('Cash') ? 'Please keep the payable amount ready at the time of delivery.' : 'No payment has been taken yet — pay via UPI when your order is delivered.'}</p>
               <div className="mt-2 text-sm font-black text-ivory">Amount: Rs.{order.total.toLocaleString('en-IN')}</div>
             </div>
 

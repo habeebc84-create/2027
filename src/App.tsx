@@ -45,10 +45,16 @@ function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?
 
 // QR scans and shared invoice links (/track-order/<id>, /order-success/<id>,
 // legacy ?track=<id>) must open the order page immediately — never gated
-// behind the splash screen.
+// behind the splash screen. BUILD 65 audit fix: the same applies to any
+// shared page link (/products, /about, ...). Before this, opening such a
+// link showed only the splash, and Enter sent the visitor to Home instead
+// of the page they were sent — the shared link effectively did not work.
+// Home (/) and /splash still show the splash as before.
 function isOrderDeepLink(): boolean {
   if (new URLSearchParams(window.location.search).has('track')) return true;
-  return /^\/(track-order|order-success)\/.+/.test(window.location.pathname);
+  if (/^\/(track-order|order-success)\/.+/.test(window.location.pathname)) return true;
+  const clean = window.location.pathname.replace(/\/+$/, '');
+  return ['/products', '/services', '/gallery', '/about', '/contact', '/checkout', '/terms', '/track-order'].includes(clean);
 }
 
 
