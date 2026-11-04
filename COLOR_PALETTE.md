@@ -65,6 +65,15 @@ production colors remain the source of truth:
    This keeps older/admin-entered class strings on-brand while new commerce
    CTAs opt into purchase orange explicitly.
 
+## Admin portal surfaces
+
+The admin dashboard and admin login sit on a still **cement + black** slab:
+`public/admin_cement_charcoal.jpg` (charcoal concrete) under a flat black
+wash, with panels mixed from charcoal and cement grey (`#303335`) and
+cement-tinted hairlines. The portal deliberately has **no lighting**: no
+radial glows, no blurred champagne orbs, no animated dot field. Champagne
+stays reserved for admin actions and accents, never for background light.
+
 ## Print / PDF
 
 `src/lib/pdfColors.ts` mirrors the CSS tokens as numeric RGB tuples for jsPDF.

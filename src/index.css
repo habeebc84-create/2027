@@ -1357,8 +1357,35 @@ svg {
 
 
 /* ============================================================
-   ADMIN PORTAL — rounded command-center panels + login light field
+   ADMIN PORTAL — cement + charcoal, flat matte surfaces
+   The portal sits on a real charcoal/cement texture over near-black.
+   There is no light source anywhere: no radial glows, no blurred
+   champagne orbs, no animated dot field. Only flat black washes over
+   the concrete so ivory text keeps its contrast.
    ============================================================ */
+
+/* A still, unlit cement seam. Replaces the drifting champagne orbs so the
+   slab still has structure without any glow or motion. */
+.admin-cement-seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 61%;
+  height: 1px;
+  background: rgb(168 169 162 / 12%);
+}
+
+.admin-cement-grain {
+  position: absolute;
+  inset: 0;
+  /* Flat black shading only — no light, no sheen, no scan lines. */
+  background-image: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 26%) 0%,
+    rgb(0 0 0 / 6%) 42%,
+    rgb(0 0 0 / 46%) 100%
+  );
+}
 
 .admin-login-bg {
   position: absolute;
@@ -1366,82 +1393,52 @@ svg {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background:
-    radial-gradient(1100px 520px at 18% -10%, color-mix(in srgb, var(--color-champagne) 10%, transparent), transparent 62%),
-    radial-gradient(900px 520px at 88% 112%, color-mix(in srgb, var(--color-charcoal) 85%, transparent), transparent 60%),
-    var(--color-obsidian);
+  background-color: #07080a;
+  background-image:
+    linear-gradient(180deg, rgb(5 6 8 / 22%), rgb(5 6 8 / 52%)),
+    url('/admin_cement_charcoal.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.admin-login-orb {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(70px);
-  opacity: 0.5;
-  transform: translateZ(0);
-  animation: adminOrbDrift 18s ease-in-out infinite alternate;
-}
-
-.admin-login-orb-a {
-  width: 340px;
-  height: 340px;
-  left: -90px;
-  top: -70px;
-  background: radial-gradient(circle, color-mix(in srgb, var(--color-champagne) 34%, transparent), transparent 68%);
-}
-
-.admin-login-orb-b {
-  width: 420px;
-  height: 420px;
-  right: -140px;
-  bottom: -150px;
-  background: radial-gradient(circle, color-mix(in srgb, var(--color-champagne) 22%, transparent), transparent 70%);
-  animation-duration: 23s;
-  animation-delay: -7s;
-}
-
-.admin-login-orb-c {
-  width: 260px;
-  height: 260px;
-  left: 52%;
-  top: 30%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--color-silver) 14%, transparent), transparent 70%);
-  animation-duration: 27s;
-  animation-delay: -12s;
-}
-
-.admin-login-vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(120% 90% at 50% 42%, transparent 42%, rgb(11 12 14 / 62%) 100%);
-}
-
+/* Matte card on the concrete: struck shadow only, no coloured halo. */
 .admin-login-card {
+  background-color: color-mix(in srgb, #303335 92%, transparent);
+  border-color: color-mix(in srgb, var(--color-gunmetal) 78%, #7c7d78);
   box-shadow:
-    0 24px 70px -30px rgb(0 0 0 / 85%),
-    0 0 0 1px rgb(198 168 117 / 6%),
-    0 0 44px -18px rgb(198 168 117 / 30%);
+    0 28px 70px -34px rgb(0 0 0 / 92%),
+    0 0 0 1px rgb(168 169 162 / 8%);
 }
 
 .admin-dashboard {
-  background:
-    radial-gradient(900px 420px at 85% -10%, color-mix(in srgb, var(--color-champagne) 6%, transparent), transparent 60%),
-    var(--color-obsidian);
+  background-color: #07080a;
+  background-image:
+    linear-gradient(180deg, rgb(6 7 9 / 14%), rgb(7 8 10 / 46%)),
+    url('/admin_cement_charcoal.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
-/* BUILD 70: let the Dot Lens background show through the dashboard panels.
-   Without this, the opaque charcoal cards + obsidian sidebar cover the
-   canvas almost everywhere, so the dots only appear in the thin gaps
-   between cards and look absent. 78% charcoal keeps ivory text readable
-   while the dot field shows through. Only inside .admin-dashboard. */
+/* Panels read as cement slabs: charcoal tinted with concrete grey, kept
+   slightly translucent so the texture stays a whisper behind ivory text. */
 .admin-dashboard .bg-charcoal {
-  background-color: color-mix(in srgb, var(--color-charcoal) 78%, transparent);
-  backdrop-filter: blur(2px);
+  background-color: color-mix(in srgb, #303335 92%, transparent);
+  backdrop-filter: blur(8px);
 }
 
-@keyframes adminOrbDrift {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(26px, 18px, 0) scale(1.06); }
-  100% { transform: translate3d(-20px, 26px, 0) scale(0.98); }
+/* Active nav pill: a cement slab, not a champagne glow. */
+.admin-nav-active {
+  background-color: color-mix(in srgb, #3a3e40 92%, transparent);
+  border-color: color-mix(in srgb, var(--color-gunmetal) 70%, #7c7d78);
+  box-shadow: none;
+}
+
+/* Cement-tinted hairlines instead of flat steel borders. */
+.admin-dashboard .border-gunmetal {
+  border-color: color-mix(in srgb, var(--color-gunmetal) 78%, #7c7d78);
 }
 
 /* Give the closing home wordmark its own gentle top-to-bottom entrance as
@@ -1492,9 +1489,6 @@ svg {
 @media (prefers-reduced-motion: reduce) {
   .home-wordmark-reveal.reveal-visible > div,
   .home-wordmark-reveal.reveal-visible canvas {
-    animation: none !important;
-  }
-  .admin-login-orb {
     animation: none !important;
   }
   .floating-bottom-nav-indicator,

@@ -7,7 +7,6 @@ import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile } from '../lib/images';
 import { changeAdminAuthPassword } from '../lib/adminAuth';
 import { splitLaunchDateTime, joinLaunchDateTime, parseLaunchTime } from '../lib/launch';
-import DotLens from '../components/originkit/ui/dot-lens';
 
 export default function AdminDashboard() {
   const ctx = useApp();
@@ -50,7 +49,7 @@ export default function AdminDashboard() {
           const Icon = item.icon;
           return (
             <button key={item.id} onClick={() => { setAdminPage(item.id); setSidebarOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-xs font-bold transition ${adminPage === item.id ? 'bg-gradient-to-r from-brand-500/20 to-brand-500/20 text-ivory border border-brand-500/30' : 'text-silver hover:text-ivory hover:bg-charcoal border border-transparent'}`}>
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-xs font-bold transition ${adminPage === item.id ? 'admin-nav-active text-ivory border' : 'text-silver hover:text-ivory hover:bg-charcoal border border-transparent'}`}>
               <Icon className="w-4 h-4" />
               <span className="flex-1 text-left">{item.label}</span>
               {item.badge !== undefined && item.badge > 0 && <span className="btn-brand text-[9px] px-1.5 py-0.5 rounded-full">{item.badge}</span>}
@@ -1100,33 +1099,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard min-h-screen relative z-10">
-      {/* BUILD 70: Originkit Dot Lens, admin dashboard background ONLY —
-          not on login, not on normal pages. BUILD 69 dimmed it too far
-          (40% wrapper opacity + #3A3A3A dots on obsidian, behind opaque
-          charcoal cards), so on a real dashboard it looked like no dots
-          at all. Now: no wrapper dimming, original grey base, champagne
-          base dots with a bright ivory lens centre, full-size dots,
-          wider reach, full speed/hover — plus the dashboard cards below
-          are made translucent (see .admin-dashboard in index.css) so the
-          dots show through the panels, not just in the gaps between them.
-          The component file itself is used verbatim; only these props
-          + wrapper change it. pointer-events-none so it never blocks
-          dashboard clicks; reduced-motion is handled inside the
-          component (speed 0). */}
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <DotLens
-          background="#0B0C0E"
-          baseColor="#8A8A8A"
-          accentColor="#F7F5F0"
-          density={30}
-          dotSize={90}
-          reach={25}
-          minSize={8}
-          speed={50}
-          hover={100}
-          style={{ minWidth: 0, minHeight: 0 }}
-        />
-      </div>
+      {/* Background is a still charcoal/cement slab (see .admin-dashboard in
+          index.css). The animated Dot Lens / glow dot field that used to sit
+          here was the "lighting" on the portal and has been removed — the
+          portal now runs on flat cement + black only. */}
       <Sidebar />
       {sidebarOpen && <div className="fixed inset-0 bg-obsidian/50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
       <div className="relative z-10 lg:ml-[18rem] p-4 sm:p-6 lg:p-8">

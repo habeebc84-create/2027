@@ -24,7 +24,6 @@ import WelcomeGate from './pages/WelcomeGate';
 import Splash from './components/Splash';
 import LaunchingSoon from './components/LaunchingSoon';
 import { isLaunchPending, parseLaunchTime } from './lib/launch';
-import SiteCursorDots from './components/SiteCursorDots';
 import type { Page } from './types';
 
 function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?: string } {
@@ -296,7 +295,9 @@ function ScrollAwareBottomNav() {
 export default function App() {
   return (
     <AppProvider>
-      <SiteCursorDots />
+      {/* The admin dot field (SiteCursorDots) is intentionally unmounted: the
+          portal background is now a still cement/charcoal slab with no glow
+          or animated lighting. The component file is kept in the repo. */}
       <AppContent />
     </AppProvider>
   );
