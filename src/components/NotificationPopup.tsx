@@ -11,7 +11,12 @@ const typeConfig: Record<string, { icon: LucideIcon; color: string; bg: string; 
 };
 
 export default function NotificationPopup() {
-  const { notifications, markNotificationRead, currentPage } = useApp();
+  // `read` is the shared "team has handled this alert" flag (synced to every
+  // device). The popup must NOT use it: once the admin marks an alert read on
+  // the dashboard, the announcement would stop popping for visitors. Instead
+  // the popup tracks a per-device "seen" record, so every phone/laptop gets
+  // the popup once on its own — and again if the alert is edited.
+  const { notifications, isNotificationSeen, markNotificationSeen, currentPage } = useApp();
   const [showPanel, setShowPanel] = useState(false);
   const [autoShown, setAutoShown] = useState(false);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
@@ -28,12 +33,12 @@ export default function NotificationPopup() {
   // dismissal, so without this flag the effect would re-arm every time.
   useEffect(() => {
     if (currentPage !== 'home') return;
-    const unread = activeNotifications.find(n => !n.read && !dismissedIds.has(n.id));
+    const unread = activeNotifications.find(n => !isNotificationSeen(n) && !dismissedIds.has(n.id));
     if (unread && !showPanel && !autoShown) {
       const timer = setTimeout(() => { setShowPanel(true); setAutoShown(true); }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [activeNotifications, dismissedIds, showPanel, autoShown, currentPage]);
+  }, [activeNotifications, dismissedIds, showPanel, autoShown, currentPage, isNotificationSeen]);
 
   // Close the panel (and its full-screen backdrop) whenever the page
   // changes. The panel used to travel with the user from Home to
@@ -45,9 +50,10 @@ export default function NotificationPopup() {
     setShowPanel(false);
   }, [currentPage]);
 
-  const dismissNotification = (notifId: string) => {
-    setDismissedIds(prev => new Set(prev).add(notifId));
-    markNotificationRead(notifId);
+  const dismissNotification = (id: string) => {
+    const target = notifications.find(n => n.id === id);
+    setDismissedIds(prev => new Set(prev).add(id));
+    if (target) markNotificationSeen(target);
   };
 
   if (activeNotifications.length === 0) return null;
@@ -73,7 +79,7 @@ export default function NotificationPopup() {
             </div>
             <div>
               <h3 className="text-sm font-black text-ivory">Notifications & Alerts</h3>
-              <p className="text-[10px] text-silver">{activeNotifications.filter(n => !n.read).length} unread · {activeNotifications.length} total</p>
+              <p className="text-[10px] text-silver">{activeNotifications.filter(n => !isNotificationSeen(n)).length} unread · {activeNotifications.length} total</p>
             </div>
           </div>
           <button onClick={() => setShowPanel(false)} className="p-2 rounded-xl bg-charcoal hover:bg-white/10 text-silver hover:text-ivory transition">
@@ -92,12 +98,12 @@ export default function NotificationPopup() {
             activeNotifications.map(n => {
               const config = typeConfig[n.type] || typeConfig.announcement;
               const Icon = config.icon;
-              const isDismissed = dismissedIds.has(n.id);
+              const isDismissed = dismissedIds.has(n.id) || isNotificationSeen(n);
               return (
                 <div
                   key={n.id}
                   onClick={() => dismissNotification(n.id)}
-                  className={`bg-charcoal border rounded-2xl p-4 cursor-pointer transition hover:border-brand-500/30 ${n.read || isDismissed ? 'border-gunmetal opacity-70' : 'border-brand-500/20'}`}
+                  className={`bg-charcoal border rounded-2xl p-4 cursor-pointer transition hover:border-brand-500/30 ${isDismissed ? 'border-gunmetal opacity-70' : 'border-brand-500/20'}`}
                 >
                   <div className="flex items-start space-x-3">
                     <div className={`w-11 h-11 rounded-xl ${config.bg} border ${config.border} flex items-center justify-center shrink-0`}>
@@ -105,7 +111,7 @@ export default function NotificationPopup() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        {!n.read && !isDismissed && <div className="w-2 h-2 bg-brand-400 rounded-full shrink-0 animate-pulse" />}
+                        {!isDismissed && <div className="w-2 h-2 bg-brand-400 rounded-full shrink-0 animate-pulse" />}
                         <div className="text-sm font-bold text-ivory truncate">{n.title}</div>
                         <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-brand-500/20 text-brand-400 font-bold border border-brand-500/20 shrink-0">{n.type}</span>
                       </div>

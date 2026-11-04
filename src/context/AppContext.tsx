@@ -7,6 +7,7 @@ import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfig
 import { fetchOrdersDb, insertOrderDb, updateOrderDb, deleteOrderDb, mergeDbOrders } from '../lib/ordersDb';
 import { DEFAULT_LAUNCH_DATE_TIME } from '../lib/launch';
 import { getAdminSessionEmail, signInAdmin, signOutAdmin, isAdminEmail } from '../lib/adminAuth';
+import { mergeNotifications, notifSeenKey } from '../lib/notifSync';
 
 interface AppContextType {
   currentPage: Page;
@@ -62,6 +63,9 @@ interface AppContextType {
   deleteNotification: (id: string) => void;
   markNotificationRead: (id: string) => void;
   clearNotifications: () => void;
+  /** Per-device "already shown to me" record for the public popup. Never synced. */
+  isNotificationSeen: (n: Notification) => boolean;
+  markNotificationSeen: (n: Notification) => void;
   banners: Banner[];
   siteContent: SiteContent;
   updateSiteContent: (updates: Partial<SiteContent>) => void;
@@ -117,6 +121,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // localStorage flag (hsn_admin) is ignored and deleted on load — setting
   // it in the console no longer opens the admin panel.
   const [isAdmin, setIsAdmin] = useState(false);
+  // Read inside callbacks that must not re-create on every auth change.
+  const isAdminRef = useRef(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [trackingOrderId, setTrackingOrderId] = useState<string | undefined>(undefined);
@@ -131,6 +137,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>(() => { const v = load<Category[]>('hsn_categories', defaultCategories); return Array.isArray(v) ? v : defaultCategories; });
   const [brands] = useState<Brand[]>(() => { const v = load<Brand[]>('hsn_brands', defaultBrands); return Array.isArray(v) ? v : defaultBrands; });
   const [notifications, setNotifications] = useState<Notification[]>(() => { const v = load<Notification[]>('hsn_notifications', defaultNotifications); return Array.isArray(v) ? v : defaultNotifications; });
+  // Per-device "seen" list (id@updatedAt) that drives the public popup only.
+  // It is deliberately NOT cloud-synced: an announcement the admin reads on
+  // the dashboard must still pop for a visitor on their own phone.
+  const [seenNotificationKeys, setSeenNotificationKeys] = useState<string[]>(() => {
+    const v = load<string[]>('hsn_notif_seen', []);
+    return Array.isArray(v) ? v : [];
+  });
+  // Ids currently held in memory, so a cloud pull can tell which alerts are new.
+  const notifIdsRef = useRef<Set<string>>(new Set(notifications.map(n => n.id)));
   const [siteContent, setSiteContent] = useState<SiteContent>(() => ({ ...defaultSiteContent, ...load('hsn_siteContent', {}) }));
 
   // Cloud sync refs: site content lives in a shared cloud copy so image changes
@@ -145,6 +160,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Orders intentionally deleted by the admin. Sent with every cloud snapshot
   // so other devices drop them too instead of re-merging them from stale cloud data.
   const deletedOrderIdsRef = useRef<Set<string>>(new Set());
+  // Alerts intentionally deleted by the admin: same tombstone idea, so a
+  // phone that still has the old alert in localStorage drops it for good.
+  const deletedNotificationIdsRef = useRef<Set<string>>(new Set((() => {
+    const v = load<string[]>('hsn_notif_deleted', []);
+    return Array.isArray(v) ? v : [];
+  })()));
   const setLaunchingSoon = useCallback((value: boolean) => {
     localEditRef.current = true; // push the flag to the cloud copy for all devices
     setLaunchingSoonState(value);
@@ -177,6 +198,45 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 2500);
   }, []);
 
+  /* One coalescing pusher for the shared cloud copy.
+     Editing an alert, then marking it read, used to fire two overlapping
+     uploads of the whole snapshot (~1.3MB with images) and the slower one
+     could land last and win. Now bursts collapse into one push and only one
+     push is ever in flight; anything that arrives meanwhile is pushed right
+     after it, so every device still ends up with the newest state. */
+  const pushTimerRef = useRef<number | null>(null);
+  const pendingPushRef = useRef<unknown>(null);
+  const pushInFlightRef = useRef(false);
+
+  const runPush = useCallback(async () => {
+    if (pushInFlightRef.current) return; // the finally block re-runs us
+    const payload = pendingPushRef.current;
+    if (!payload) return;
+    pendingPushRef.current = null;
+    pushInFlightRef.current = true;
+    try {
+      const version = await pushRemoteContent(payload);
+      if (version) {
+        remoteVersionRef.current = version;
+        showToast('Saved — updating on all devices…');
+      } else {
+        showToast('Cloud sync failed — change stays on this device only', 'error');
+      }
+    } finally {
+      pushInFlightRef.current = false;
+      if (pendingPushRef.current) void runPush();
+    }
+  }, [showToast]);
+
+  const schedulePush = useCallback((payload: unknown) => {
+    pendingPushRef.current = payload;
+    if (pushTimerRef.current !== null) window.clearTimeout(pushTimerRef.current);
+    pushTimerRef.current = window.setTimeout(() => {
+      pushTimerRef.current = null;
+      void runPush();
+    }, 350);
+  }, [runPush]);
+
   useEffect(() => { save('hsn_launching_soon', launchingSoon); }, [launchingSoon]);
   useEffect(() => { save('hsn_launch_date_time', launchDateTime); }, [launchDateTime]);
   useEffect(() => { save('hsn_cart', cart); }, [cart]);
@@ -184,6 +244,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { save('hsn_products', products); }, [products]);
   useEffect(() => { save('hsn_categories', categories); }, [categories]);
   useEffect(() => { save('hsn_notifications', notifications); }, [notifications]);
+  useEffect(() => { isAdminRef.current = isAdmin; }, [isAdmin]);
+  useEffect(() => { save('hsn_notif_seen', seenNotificationKeys); }, [seenNotificationKeys]);
+  // Tombstones are also kept in localStorage so the other tabs of the same
+  // browser can drop a deleted alert instead of merging it back in.
+  useEffect(() => { save('hsn_notif_deleted', [...deletedNotificationIdsRef.current]); }, [notifications]);
+  useEffect(() => { notifIdsRef.current = new Set(notifications.map(n => n.id)); }, [notifications]);
   // Persist locally; push genuine local edits to the shared cloud copy.
   // Cloud-driven updates and plain page loads are never pushed, so visitors
   // can't clobber the shared copy with their own cached state.
@@ -217,16 +283,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       launchingSoon, // launching-soon poster flag, so removing it opens every device
       launchDateTime, // opening date/time for the poster countdown
       notifications, // BUILD 65: admin announcements + contact inquiries now reach every device
+      deletedNotifications: [...deletedNotificationIdsRef.current], // tombstones: every device drops deleted alerts
     };
-    void pushRemoteContent(snapshot).then(version => {
-      if (version) {
-        remoteVersionRef.current = version;
-        showToast('Saved — updating on all devices…');
-      } else {
-        showToast('Cloud sync failed — change stays on this device only', 'error');
-      }
-    });
-  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, notifications, showToast]);
+    schedulePush(snapshot);
+  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, notifications, schedulePush]);
 
   const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
@@ -249,14 +309,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (typeof json.launchingSoon === 'boolean') setLaunchingSoonState(json.launchingSoon);
         if (typeof json.launchDateTime === 'string' && Number.isFinite(Date.parse(json.launchDateTime))) setLaunchDateTimeState(json.launchDateTime);
       }
+      // Alerts: FULL merge, not "add the new ones only". The old code just
+      // appended unseen ids, so an alert that was edited, hidden, deleted or
+      // marked read on another device kept showing its stale copy here — the
+      // reason notification changes only ever appeared on the device that
+      // made them. Now: tombstones remove, `updatedAt` decides the winner.
       if (Array.isArray(json.notifications)) {
-        const cloudNotifs = json.notifications as Notification[];
-        setNotifications(prev => {
-          const ids = new Set(prev.map(n => n.id));
-          const missing = cloudNotifs.filter(n => n && n.id && !ids.has(n.id));
-          if (missing.length === 0) return prev;
-          return [...prev, ...missing].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-        });
+        const cloudNotifs = (json.notifications as Notification[]).filter(n => n && n.id);
+        const cloudDeleted = Array.isArray(json.deletedNotifications) ? json.deletedNotifications as string[] : [];
+        // Adopt the cloud's tombstones so our own next push keeps them alive.
+        for (const id of cloudDeleted) deletedNotificationIdsRef.current.add(id);
+        const deleted = new Set<string>([...deletedNotificationIdsRef.current, ...cloudDeleted]);
+        const fresh = cloudNotifs.filter(n => !deleted.has(n.id) && !notifIdsRef.current.has(n.id));
+        setNotifications(prev => mergeNotifications(prev, cloudNotifs, deleted));
+        // Signed-in admin: tell them the change landed on this device too, so
+        // it is obvious that editing/publishing on one browser hits all of them.
+        if (fresh.length > 0 && isAdminRef.current) {
+          const label = fresh.length === 1 ? `New alert: ${fresh[0].title}` : `${fresh.length} new alerts synced to this device`;
+          showToast(label);
+        }
       }
       if (json.siteSettings && typeof json.siteSettings === 'object') setSiteSettings(json.siteSettings as SiteSettings);
       if (Array.isArray(json.products)) setProducts(json.products as Product[]);
@@ -385,7 +456,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         inFlight = false;
       }
     };
-    const iv = setInterval(check, 10000);
+    // 5s (was 10s): an alert published on one device reaches open browsers
+    // on other devices twice as fast. The check is a tiny version file, so
+    // the extra request is cheap; the full JSON is only pulled when it moves.
+    const iv = setInterval(check, 5000);
     const onVisible = () => { if (document.visibilityState === 'visible') void check(); };
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('focus', onVisible);
@@ -395,6 +469,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('focus', onVisible);
     };
   }, [applyCloudSnapshot]);
+  // Same browser, several tabs/windows: a localStorage write fires `storage`
+  // in every OTHER tab, so an alert published/edited/read/deleted in one
+  // Chrome tab (or window) appears in the rest instantly — no reload, no
+  // waiting for the cloud poll. Cross-device sync is the cloud pull below.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'hsn_notif_deleted') {
+        try {
+          const ids = JSON.parse(e.newValue || '[]') as string[];
+          if (Array.isArray(ids)) for (const id of ids) deletedNotificationIdsRef.current.add(id);
+        } catch { /* ignore malformed */ }
+        return;
+      }
+      if (e.key !== 'hsn_notifications' || !e.newValue) return;
+      try {
+        const incoming = JSON.parse(e.newValue) as Notification[];
+        if (!Array.isArray(incoming)) return;
+        const localDeleted = load<string[]>('hsn_notif_deleted', []);
+        if (Array.isArray(localDeleted)) for (const id of localDeleted) deletedNotificationIdsRef.current.add(id);
+        setNotifications(prev => mergeNotifications(prev, incoming, deletedNotificationIdsRef.current));
+      } catch { /* ignore malformed */ }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
   useEffect(() => { save('hsn_transportZones', transportZones); }, [transportZones]);
   useEffect(() => { save('hsn_marketPrices', marketPrices); }, [marketPrices]);
   useEffect(() => { save('hsn_achievements', achievements); }, [achievements]);
@@ -597,14 +697,52 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteContentBlock = useCallback((id: string) => { localEditRef.current = true; setContentBlocks(prev => prev.filter(b => b.id !== id)); showToast('Content deleted'); }, [showToast]);
   const toggleContentBlock = useCallback((id: string) => { localEditRef.current = true; setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, active: !b.active } : b)); }, []);
 
+  /* Every notification mutation below sets localEditRef, so the cloud-push
+     effect actually ships the change; without it the edit stopped at this
+     device (the old behaviour for edit / hide / delete / mark-read). Each one
+     also stamps `updatedAt`, which is what lets other devices pick the newer
+     copy instead of keeping their stale one. */
   const addNotification = useCallback((n: Notification) => {
-    localEditRef.current = true; // BUILD 65: notifications now sync to the cloud
-    setNotifications(prev => { const u = [n, ...prev]; save('hsn_notifications', u); return u; });
+    localEditRef.current = true; // notifications sync to the cloud for every device
+    const fresh = { ...n, updatedAt: n.updatedAt || new Date().toISOString() };
+    setNotifications(prev => { const u = [fresh, ...prev]; save('hsn_notifications', u); return u; });
   }, []);
-  const updateNotification = useCallback((id: string, updates: Partial<Notification>) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, ...updates } : n); save('hsn_notifications', u); return u; }); showToast('Notification updated'); }, [showToast]);
-  const deleteNotification = useCallback((id: string) => { setNotifications(prev => { const u = prev.filter(n => n.id !== id); save('hsn_notifications', u); return u; }); showToast('Notification deleted'); }, [showToast]);
-  const markNotificationRead = useCallback((id: string) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, read: true } : n); save('hsn_notifications', u); return u; }); }, []);
-  const clearNotifications = useCallback(() => { setNotifications(prev => { const u = prev.map(n => ({ ...n, read: true })); save('hsn_notifications', u); return u; }); }, []);
+  const updateNotification = useCallback((id: string, updates: Partial<Notification>) => {
+    localEditRef.current = true;
+    setNotifications(prev => {
+      const u = prev.map(n => n.id === id ? { ...n, ...updates, updatedAt: new Date().toISOString() } : n);
+      save('hsn_notifications', u);
+      return u;
+    });
+    showToast('Notification updated');
+  }, [showToast]);
+  const deleteNotification = useCallback((id: string) => {
+    localEditRef.current = true;
+    deletedNotificationIdsRef.current.add(id); // tombstone so no device resurrects it
+    setNotifications(prev => { const u = prev.filter(n => n.id !== id); save('hsn_notifications', u); return u; });
+    showToast('Notification deleted');
+  }, [showToast]);
+  const markNotificationRead = useCallback((id: string) => {
+    localEditRef.current = true;
+    setNotifications(prev => {
+      // Do not stamp `updatedAt` on read: that would let a read flag beat a
+      // newer edit made on another device. `readAt` keeps them independent.
+      const u = prev.map(n => n.id === id ? { ...n, read: true } : n);
+      save('hsn_notifications', u);
+      return u;
+    });
+  }, []);
+  const clearNotifications = useCallback(() => {
+    localEditRef.current = true;
+    setNotifications(prev => { const u = prev.map(n => ({ ...n, read: true })); save('hsn_notifications', u); return u; });
+  }, []);
+
+  // Public popup bookkeeping, per device only.
+  const isNotificationSeen = useCallback((n: Notification) => seenNotificationKeys.includes(notifSeenKey(n)), [seenNotificationKeys]);
+  const markNotificationSeen = useCallback((n: Notification) => {
+    const key = notifSeenKey(n);
+    setSeenNotificationKeys(prev => (prev.includes(key) ? prev : [...prev, key]));
+  }, []);
 
   const updateSiteContent = useCallback((updates: Partial<SiteContent>) => {
     // Mark every state change from this call (including async compression
@@ -720,7 +858,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       marketPrices, updateMarketPrices,
       achievements, addAchievement, deleteAchievement,
       contentBlocks, addContentBlock, updateContentBlock, deleteContentBlock, toggleContentBlock,
-      notifications, addNotification, updateNotification, deleteNotification, markNotificationRead, clearNotifications, banners,
+      notifications, addNotification, updateNotification, deleteNotification, markNotificationRead, clearNotifications,
+      isNotificationSeen, markNotificationSeen, banners,
       siteContent, updateSiteContent, termsContent, updateTermsContent,
       siteSettings, updateSiteSettings,
       isAdmin, loginAdmin, logoutAdmin, adminPage, setAdminPage,
