@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Lock, Mail, Eye, EyeOff, Timer } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { requestAdminPasswordReset, ADMIN_EMAIL } from '../lib/adminAuth';
 import { bustedImageSrc } from '../lib/images';
 import AdminLoginBackground from '../components/AdminLoginBackground';
 
@@ -63,6 +64,20 @@ export default function AdminLogin() {
   }, [locked]);
 
   const [submitting, setSubmitting] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetError, setResetError] = useState('');
+
+  const handleForgotPassword = async () => {
+    if (resetting) return;
+    setResetError('');
+    setResetSent(false);
+    setResetting(true);
+    const err = await requestAdminPasswordReset();
+    setResetting(false);
+    if (err) setResetError(err);
+    else setResetSent(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,6 +177,24 @@ export default function AdminLogin() {
             >
               {locked ? `Locked — wait ${remaining}s` : submitting ? 'Verifying…' : 'Authenticate'}
             </button>
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={resetting}
+              className="w-full text-center text-xs font-bold text-silver hover:text-ivory transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {resetting ? 'Sending reset link…' : 'Forgot password? Send reset link to mail'}
+            </button>
+            {resetSent && (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-2xl text-xs font-bold text-center">
+                Reset link sent to {ADMIN_EMAIL}. Check your inbox (and spam), click the link — it opens the admin dashboard — then go to Security &amp; Settings &gt; Change to set your new password.
+              </div>
+            )}
+            {resetError && (
+              <div className="bg-brand-500/10 border border-brand-500/30 text-brand-400 px-4 py-3 rounded-2xl text-xs font-bold text-center">
+                {resetError}
+              </div>
+            )}
           </form>
         </div>
 
