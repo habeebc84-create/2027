@@ -15,6 +15,17 @@ export default function ProductCard({ product }: { product: Product }) {
     }
     return product.price;
   })();
+  // BUILD 65 audit fix: the card used to let quantity grow past stock
+  // (detail page already capped it) and let out-of-stock items be added.
+  const currentStock = (() => {
+    if (selectedSize && product.sizes) {
+      const sizeData = product.sizes.find(s => s.size === selectedSize);
+      if (sizeData) return sizeData.stock;
+    }
+    return product.stock;
+  })();
+  const inStock = currentStock === undefined || currentStock > 0;
+  const maxQty = currentStock === undefined ? 999 : Math.max(1, currentStock);
 
   const handleViewDetail = () => {
     setSelectedProductId(product.id);
@@ -64,9 +75,9 @@ export default function ProductCard({ product }: { product: Product }) {
             <div className="flex items-center rounded-lg border border-gunmetal bg-obsidian">
               <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-2 py-1.5 text-silver hover:text-ivory text-xs font-bold" aria-label={`Decrease quantity of ${product.name}`}>-</button>
               <span className="text-xs font-bold text-ivory px-1 min-w-[20px] text-center">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="px-2 py-1.5 text-silver hover:text-ivory text-xs font-bold" aria-label={`Increase quantity of ${product.name}`}>+</button>
+              <button onClick={() => setQuantity(Math.min(maxQty, quantity + 1))} className="px-2 py-1.5 text-silver hover:text-ivory text-xs font-bold" aria-label={`Increase quantity of ${product.name}`}>+</button>
             </div>
-            <button onClick={() => addToCart(product, quantity, selectedSize)} className="btn-purchase p-2.5 rounded-xl shadow-lg" aria-label={`Add ${product.name} to cart`}>
+            <button onClick={() => { if (inStock) addToCart(product, Math.min(maxQty, quantity), selectedSize); }} disabled={!inStock} className="btn-purchase p-2.5 rounded-xl shadow-lg disabled:opacity-50" aria-label={inStock ? `Add ${product.name} to cart` : `${product.name} is out of stock`}>
               <ShoppingCart className="w-4 h-4" />
             </button>
           </div>
