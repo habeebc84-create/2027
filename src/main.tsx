@@ -12,15 +12,18 @@ createRoot(document.getElementById('root')!).render(
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // BUILD 71: visible update prompt, not a silent reload.
-    // Phones (installed app / phone browser) can sit resumed for days
-    // on an old build: the old code re-checked only every 30 minutes,
-    // auto-reloaded silently on normal pages, and did NOTHING at all
-    // on checkout/admin pages (to protect typed data) — so those pages
-    // simply never synced, with no message telling the user why.
-    // Now: when a new version is found, a banner says "Update available
-    // — update to latest version" on every page, and the user taps
-    // "Update now" to reload. Nothing reloads on its own, so typed
-    // checkout/admin data is never lost without the user choosing it.
+    // BUILD 74: it is a popup at the TOP of the website, not a bottom
+    // banner — the bottom bar was easy to miss behind the phone's
+    // bottom dock / cart drawer. Phones (installed app / phone browser)
+    // can sit resumed for days on an old build: the old code re-checked
+    // only every 30 minutes, auto-reloaded silently on normal pages,
+    // and did NOTHING at all on checkout/admin pages (to protect typed
+    // data) — so those pages simply never synced, with no message
+    // telling the user why. Now: when a new version is found, a popup
+    // at the top says "Update available — update to latest version"
+    // on every page, and the user taps "Update now" to reload. Nothing
+    // reloads on its own, so typed checkout/admin data is never lost
+    // without the user choosing it.
     const showUpdateBanner = () => {
       if (document.getElementById('hsn-update-banner')) return;
       const banner = document.createElement('div');
@@ -28,7 +31,8 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
       banner.setAttribute('role', 'alert');
       banner.setAttribute('aria-live', 'polite');
       banner.style.cssText =
-        'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;' +
+        'position:fixed;top:12px;left:50%;transform:translateX(-50%);' +
+        'width:calc(100% - 24px);max-width:640px;z-index:9999;' +
         'display:flex;align-items:center;gap:10px;flex-wrap:wrap;' +
         'background:#C6A875;color:#0B0C0E;border-radius:16px;' +
         'padding:12px 14px;box-shadow:0 12px 32px rgba(0,0,0,0.45);' +
