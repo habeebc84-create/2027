@@ -118,7 +118,12 @@ function generateOrderId(): string {
   const year = new Date().getFullYear();
   const count = load<number>('hsn_order_count', 0) + 1;
   save('hsn_order_count', count);
-  return `HSN-${year}-${String(count).padStart(5, '0')}`;
+  // BUILD 77 audit fix: the count is per-device localStorage, so the first
+  // order on two different phones both became HSN-YYYY-00001 and tracking
+  // (which matches by orderId) could show the wrong order. A time+random
+  // suffix keeps the readable number but makes it unique across devices.
+  const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`.toUpperCase();
+  return `HSN-${year}-${String(count).padStart(5, '0')}-${suffix}`;
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -551,8 +556,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem('hsn_splash_dismissed', 'true'); } catch { /* storage blocked/full: entering must still work */ }
   }, []);
 
-  const addProduct = useCallback((p: Product) => { localEditRef.current = true; setProducts(prev => [...prev, p]); showToast('Product added'); }, [showToast]);
-  const updateProduct = useCallback((id: string, updates: Partial<Product>) => { localEditRef.current = true; setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p)); showToast('Product updated'); }, [showToast]);
+  // BUILD 77 audit fix: the admin add/edit form only checked name/brand,
+  // so a negative or garbage price/stock could be saved and then shown to
+  // visitors (and could make a total negative). Clamp here so both the
+  // add and edit paths are covered, whatever the form passes.
+  const cleanProduct = (p: Product): Product => ({
+    ...p,
+    price: Math.max(0, Number(p.price) || 0),
+    stock: Math.max(0, Math.floor(Number(p.stock) || 0)),
+    sizes: p.sizes ? p.sizes.map(s => ({ ...s, price: Math.max(0, Number(s.price) || 0), stock: Math.max(0, Math.floor(Number(s.stock) || 0)) })) : p.sizes,
+  });
+  const cleanProductUpdates = (u: Partial<Product>): Partial<Product> => ({
+    ...u,
+    ...(u.price !== undefined ? { price: Math.max(0, Number(u.price) || 0) } : {}),
+    ...(u.stock !== undefined ? { stock: Math.max(0, Math.floor(Number(u.stock) || 0)) } : {}),
+    ...(u.sizes ? { sizes: u.sizes.map(s => ({ ...s, price: Math.max(0, Number(s.price) || 0), stock: Math.max(0, Math.floor(Number(s.stock) || 0)) })) } : {}),
+  });
+  const addProduct = useCallback((p: Product) => { localEditRef.current = true; setProducts(prev => [...prev, cleanProduct(p)]); showToast('Product added'); }, [showToast]);
+  const updateProduct = useCallback((id: string, updates: Partial<Product>) => { localEditRef.current = true; setProducts(prev => prev.map(p => p.id === id ? { ...p, ...cleanProductUpdates(updates) } : p)); showToast('Product updated'); }, [showToast]);
   const deleteProduct = useCallback((id: string) => { localEditRef.current = true; setProducts(prev => prev.filter(p => p.id !== id)); showToast('Product deleted'); }, [showToast]);
   const toggleProduct = useCallback((id: string) => { localEditRef.current = true; setProducts(prev => prev.map(p => p.id === id ? { ...p, enabled: !p.enabled } : p)); }, []);
 
@@ -580,7 +601,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const updateCartQuantity = useCallback((productId: string, quantity: number, selectedSize?: string) => {
     if (quantity <= 0) { removeFromCart(productId, selectedSize); return; }
-    setCart(prev => prev.map(i => i.product.id === productId && i.selectedSize === selectedSize ? { ...i, quantity } : i));
+    // BUILD 77 audit fix: the drawer +/- buttons had no stock cap, so a
+    // cart quantity could exceed stock even though product cards cap adds.
+    setCart(prev => prev.map(i => {
+      if (i.product.id !== productId || i.selectedSize !== selectedSize) return i;
+      const sizeData = selectedSize && i.product.sizes ? i.product.sizes.find(s => s.size === selectedSize) : undefined;
+      const maxStock = sizeData ? sizeData.stock : i.product.stock;
+      return { ...i, quantity: maxStock > 0 ? Math.min(quantity, maxStock) : quantity };
+    }));
   }, [removeFromCart]);
 
   const cartTotal = cart.reduce((t, item) => {
