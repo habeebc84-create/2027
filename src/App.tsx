@@ -23,6 +23,7 @@ import Terms from './pages/Terms';
 import WelcomeGate from './pages/WelcomeGate';
 import Splash from './components/Splash';
 import LaunchingSoon from './components/LaunchingSoon';
+import Maintenance from './components/Maintenance';
 import { isLaunchPending, parseLaunchTime } from './lib/launch';
 import type { Page } from './types';
 
@@ -94,7 +95,7 @@ class PageErrorBoundary extends React.Component<
 }
 
 function AppContent() {
-  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash, launchingSoon, setLaunchingSoon, launchDateTime } = useApp();
+  const { currentPage, splashDismissed, isAdmin, setPage, setSelectedProductId, trackingOrderId, dismissSplash, launchingSoon, setLaunchingSoon, launchDateTime, maintenanceMode, setMaintenanceMode, maintenanceMessage } = useApp();
   const [cartOpen, setCartOpen] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   useEffect(() => {
@@ -188,6 +189,13 @@ function AppContent() {
   // and a signed-in admin on a normal page sees only a Remove button on
   // the poster itself. After launch day the gate switches itself off.
   const isAdminPage = currentPage === 'admin' || currentPage === 'admin-login' || isLoginPage;
+  // Maintenance gate (BUILD 73): checked BEFORE the poster gate, so when
+  // both are ON visitors see maintenance, not the poster. The admin
+  // portal is never gated, and a signed-in admin sees only a button
+  // on this page that turns maintenance off for everyone.
+  if (maintenanceMode && !isAdminPage) {
+    return (<PageErrorBoundary><Maintenance isAdmin={isAdmin} onTurnOff={() => setMaintenanceMode(false)} message={maintenanceMessage} /></PageErrorBoundary>);
+  }
   if (launchingSoon && isLaunchPending(parseLaunchTime(launchDateTime)) && !isAdminPage) {
     return (<PageErrorBoundary><LaunchingSoon isAdmin={isAdmin} onRemove={() => setLaunchingSoon(false)} launchDateTime={launchDateTime} /></PageErrorBoundary>);
   }

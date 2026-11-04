@@ -10,7 +10,7 @@ import { splitLaunchDateTime, joinLaunchDateTime, parseLaunchTime } from '../lib
 
 export default function AdminDashboard() {
   const ctx = useApp();
-  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, updateCategory, transportZones, refreshFromCloud, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, deleteAchievement, setOrderFinalDeliveryCharge, launchingSoon, setLaunchingSoon, launchDateTime, setLaunchDateTime } = ctx;
+  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, updateCategory, transportZones, refreshFromCloud, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, deleteAchievement, setOrderFinalDeliveryCharge, launchingSoon, setLaunchingSoon, launchDateTime, setLaunchDateTime, maintenanceMode, setMaintenanceMode, maintenanceMessage, setMaintenanceMessage } = ctx;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const totalRevenue = orders.reduce((a, o) => a + o.total, 0);
@@ -1089,6 +1089,20 @@ export default function AdminDashboard() {
           <span className="text-xs font-bold text-ivory">{launchingSoon ? 'Poster is ON — website closed to visitors' : 'Poster is OFF — website open'}</span>
           <button type="button" onClick={() => setLaunchingSoon(!launchingSoon)} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition ${launchingSoon ? 'bg-brand-500 text-obsidian' : 'bg-white/10 border border-gunmetal text-ivory'}`}>
             {launchingSoon ? 'Remove poster' : 'Show poster'}
+          </button>
+        </div>
+      </div>
+      <div className="bg-charcoal border border-gunmetal rounded-3xl p-6 space-y-4">
+        <h3 className="text-sm font-bold text-ivory border-b border-gunmetal pb-3">System Under Maintenance</h3>
+        <p className="text-xs text-silver">When ON, normal visitors see only a full-page “System Under Maintenance” page with the message below and cannot open any page. The admin portal itself is never blocked. Maintenance takes precedence over the Launching Soon poster — if both are ON, visitors see maintenance, not the poster. The change syncs to every device via the cloud flag.</p>
+        <div>
+          <label className="text-[10px] font-bold text-silver uppercase block mb-1">Message shown to visitors</label>
+          <input type="text" value={maintenanceMessage} onChange={e => setMaintenanceMessage(e.target.value)} className="w-full bg-charcoal/50 border border-gunmetal rounded-2xl px-3 py-2.5 text-xs text-ivory focus:outline-none focus:border-brand-500 transition" />
+        </div>
+        <div className="flex items-center justify-between gap-4 bg-charcoal/50 border border-gunmetal rounded-2xl px-4 py-3">
+          <span className="text-xs font-bold text-ivory">{maintenanceMode ? 'Maintenance is ON — website closed to visitors' : 'Maintenance is OFF — website open'}</span>
+          <button type="button" onClick={() => setMaintenanceMode(!maintenanceMode)} className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition ${maintenanceMode ? 'bg-brand-500 text-obsidian' : 'bg-white/10 border border-gunmetal text-ivory'}`}>
+            {maintenanceMode ? 'Turn maintenance off' : 'Turn maintenance on'}
           </button>
         </div>
       </div>
