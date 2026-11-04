@@ -47,6 +47,8 @@ export interface Notification {
   createdAt?: string;
   dateBadge?: string;
   read?: boolean;
+  /** Last change (create/edit/hide/read). Used to resolve cross-device merges. */
+  updatedAt?: string;
 }
 
 export interface Banner {

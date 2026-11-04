@@ -10,7 +10,7 @@ import { splitLaunchDateTime, joinLaunchDateTime, parseLaunchTime } from '../lib
 
 export default function AdminDashboard() {
   const ctx = useApp();
-  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, updateCategory, transportZones, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, deleteAchievement, setOrderFinalDeliveryCharge, launchingSoon, setLaunchingSoon, launchDateTime, setLaunchDateTime } = ctx;
+  const { logoutAdmin, products, orders, customers, deleteCustomer, categories, updateCategory, transportZones, refreshFromCloud, contentBlocks, notifications, termsContent, siteSettings, updateSiteSettings, siteContent, updateSiteContent, updateOrderStatus, deleteOrder, deleteProduct, updateProduct, toggleProduct, deleteCategory, deleteTransportZone, deleteContentBlock, updateTermsContent, setPage, setAdminPage, adminPage, achievements, deleteAchievement, setOrderFinalDeliveryCharge, launchingSoon, setLaunchingSoon, launchDateTime, setLaunchDateTime } = ctx;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const totalRevenue = orders.reduce((a, o) => a + o.total, 0);
@@ -72,8 +72,17 @@ export default function AdminDashboard() {
         <h2 className="text-lg font-black text-ivory font-industrial">{title}</h2>
       </div>
       <div className="flex items-center space-x-3">
-        <button className="hidden sm:flex items-center space-x-2 bg-charcoal border border-gunmetal text-silver px-3 py-2 rounded-2xl text-xs font-bold hover:bg-white/10 transition">
-          <Globe className="w-3.5 h-3.5" /><span>Sync Database</span>
+        {/* Was a dead button. Now it force-pulls the shared cloud copy, so the
+            admin can make another device's change (or their own) land here
+            immediately instead of waiting for the 5s automatic poll. */}
+        <button
+          onClick={async () => {
+            await refreshFromCloud();
+            ctx.showToast('Synced — latest alerts and data pulled from the cloud');
+          }}
+          className="hidden sm:flex items-center space-x-2 bg-charcoal border border-gunmetal text-silver px-3 py-2 rounded-2xl text-xs font-bold hover:bg-white/10 transition"
+        >
+          <Globe className="w-3.5 h-3.5" /><span>Sync Now</span>
         </button>
         <div className="flex items-center space-x-2 bg-charcoal border border-gunmetal px-3 py-2 rounded-2xl">
           <div className="w-2 h-2 bg-brand-400 rounded-full animate-pulse" />
@@ -938,6 +947,11 @@ export default function AdminDashboard() {
             <p className="text-xs text-silver">{unreadNotifs} unread</p>
             <span className="text-xs text-slate-600">|</span>
             <p className="text-xs text-silver">{notifications.filter(n => n.active).length} active</p>
+            <span className="text-xs text-slate-600">|</span>
+            <p className="flex items-center space-x-1.5 text-[10px] font-bold text-success-foreground">
+              <span className="w-1.5 h-1.5 rounded-full bg-success" />
+              <span>Live on every device &amp; browser</span>
+            </p>
           </div>
           <div className="flex items-center space-x-2">
             <button onClick={() => ctx.clearNotifications()} className="text-xs font-bold text-silver hover:text-ivory border border-gunmetal px-3 py-1.5 rounded-xl transition">Mark All Read</button>
