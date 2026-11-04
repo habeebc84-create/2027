@@ -88,6 +88,13 @@ interface AppContextType {
   /** Opening date/time for the poster countdown (ISO string, IST offset). */
   launchDateTime: string;
   setLaunchDateTime: (value: string) => void;
+  /** System-under-maintenance flag: true = normal visitors see only the
+      maintenance page. The admin portal itself is never blocked. */
+  maintenanceMode: boolean;
+  setMaintenanceMode: (value: boolean) => void;
+  /** Message shown to visitors on the maintenance page. */
+  maintenanceMessage: string;
+  setMaintenanceMessage: (value: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -175,6 +182,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localEditRef.current = true; // push the new opening date/time to all devices
     setLaunchDateTimeState(value);
   }, []);
+  // BUILD 73: system-under-maintenance, admin-controlled, OFF by default.
+  const [maintenanceMode, setMaintenanceModeState] = useState<boolean>(() => load<boolean>('hsn_maintenance_mode', false));
+  const setMaintenanceMode = useCallback((value: boolean) => {
+    localEditRef.current = true; // push the flag to the cloud copy for all devices
+    setMaintenanceModeState(value);
+  }, []);
+  const [maintenanceMessage, setMaintenanceMessageState] = useState<string>(() => load<string>('hsn_maintenance_message', 'We are currently maintaining the system. Please check back soon.'));
+  const setMaintenanceMessage = useCallback((value: string) => {
+    localEditRef.current = true; // push the message to the cloud copy for all devices
+    setMaintenanceMessageState(value);
+  }, []);
   // Current orders, for the Postgres backfill (orders already on this device
   // are upserted into hsn_orders once the table exists).
   const ordersRef = useRef<Order[]>([]);
@@ -239,6 +257,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => { save('hsn_launching_soon', launchingSoon); }, [launchingSoon]);
   useEffect(() => { save('hsn_launch_date_time', launchDateTime); }, [launchDateTime]);
+  useEffect(() => { save('hsn_maintenance_mode', maintenanceMode); }, [maintenanceMode]);
+  useEffect(() => { save('hsn_maintenance_message', maintenanceMessage); }, [maintenanceMessage]);
   useEffect(() => { save('hsn_cart', cart); }, [cart]);
   useEffect(() => { save('hsn_orders', orders); }, [orders]);
   useEffect(() => { save('hsn_products', products); }, [products]);
@@ -282,11 +302,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deletedOrders: [...deletedOrderIdsRef.current], // tombstones: every device removes these for good
       launchingSoon, // launching-soon poster flag, so removing it opens every device
       launchDateTime, // opening date/time for the poster countdown
+      maintenanceMode, // system-under-maintenance flag, so turning it on blocks every device
+      maintenanceMessage, // message visitors see on the maintenance page
       notifications, // BUILD 65: admin announcements + contact inquiries now reach every device
       deletedNotifications: [...deletedNotificationIdsRef.current], // tombstones: every device drops deleted alerts
     };
     schedulePush(snapshot);
-  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, notifications, schedulePush]);
+  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, maintenanceMode, maintenanceMessage, notifications, schedulePush]);
 
   const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
@@ -308,6 +330,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (!localEditRef.current) {
         if (typeof json.launchingSoon === 'boolean') setLaunchingSoonState(json.launchingSoon);
         if (typeof json.launchDateTime === 'string' && Number.isFinite(Date.parse(json.launchDateTime))) setLaunchDateTimeState(json.launchDateTime);
+        // BUILD 73: same guard for maintenance — a stale cloud pull must
+        // not revert a maintenance change the admin just made (BUILD 70
+        // poster lesson, applied here from the start).
+        if (typeof json.maintenanceMode === 'boolean') setMaintenanceModeState(json.maintenanceMode);
+        if (typeof json.maintenanceMessage === 'string') setMaintenanceMessageState(json.maintenanceMessage);
       }
       // Alerts: FULL merge, not "add the new ones only". The old code just
       // appended unseen ids, so an alert that was edited, hidden, deleted or
@@ -866,6 +893,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       toasts, showToast, splashDismissed, dismissSplash,
       launchingSoon, setLaunchingSoon,
       launchDateTime, setLaunchDateTime,
+      maintenanceMode, setMaintenanceMode,
+      maintenanceMessage, setMaintenanceMessage,
     }}>
       {children}
     </AppContext.Provider>
