@@ -45,6 +45,10 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                   if (sizeData) price = sizeData.price;
                 }
                 const lineTotal = price * item.quantity;
+                // BUILD 77 audit fix: disable + at the stock limit.
+                const sizeData = item.selectedSize && item.product.sizes ? item.product.sizes.find(s => s.size === item.selectedSize) : undefined;
+                const maxStock = sizeData ? sizeData.stock : item.product.stock;
+                const atStockLimit = maxStock > 0 && item.quantity >= maxStock;
 
                 return (
                   <div key={`${item.product.id}-${item.selectedSize}-${idx}`} className="bg-obsidian p-3.5 rounded-xl border border-gunmetal flex items-center space-x-3 backdrop-blur-sm shadow-md animate-[slideIn_0.3s_ease-out]">
@@ -62,7 +66,7 @@ export default function CartDrawer({ isOpen, onClose, onProceedToCheckout }: Car
                             <Minus className="w-3 h-3" />
                           </button>
                           <span className="text-xs font-bold text-ivory px-1">{item.quantity}</span>
-                          <button onClick={() => updateCartQuantity(item.product.id, item.quantity + 1, item.selectedSize)} className="px-2 py-0.5 text-silver hover:text-ivory font-bold text-xs">
+                          <button onClick={() => updateCartQuantity(item.product.id, item.quantity + 1, item.selectedSize)} disabled={atStockLimit} title={atStockLimit ? 'No more stock available' : undefined} className="px-2 py-0.5 text-silver hover:text-ivory font-bold text-xs disabled:opacity-40 disabled:cursor-not-allowed">
                             <Plus className="w-3 h-3" />
                           </button>
                         </div>

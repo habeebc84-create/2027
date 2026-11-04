@@ -57,6 +57,9 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
               </h2>
               <form onSubmit={e => {
                 e.preventDefault();
+                // BUILD 77 audit fix: a second submit (double-click / Enter
+                // while the 1500ms timer runs) used to place a second order.
+                if (isProcessing) return;
                 if (!name || !mobile || !address || !landmark) { showToast('Please fill required fields.', 'error'); return; }
                 // BUILD 65 audit fix: the old check (length < 10) accepted
                 // letters and 11+ digit numbers. Indian mobiles are exactly
@@ -152,7 +155,7 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
                   </div>
                 </div>
 
-                <button type="submit" className="btn-purchase w-full py-4 rounded-2xl text-sm shadow-2xl mt-4">
+                <button type="submit" disabled={isProcessing} className="btn-purchase w-full py-4 rounded-2xl text-sm shadow-2xl mt-4 disabled:opacity-60">
                   CONFIRM & PLACE ORDER
                 </button>
               </form>
