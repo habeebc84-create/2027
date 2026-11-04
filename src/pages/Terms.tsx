@@ -11,7 +11,7 @@ export default function Terms() {
   const { setPage } = useApp();
 
   return (
-    <div className="py-12 bg-transparent min-h-screen relative z-10">
+    <div className="py-12 bg-transparent min-h-screen relative z-10 break-words">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl sm:text-4xl font-black text-ivory font-industrial mb-8">
           Terms & <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">Conditions</span>
