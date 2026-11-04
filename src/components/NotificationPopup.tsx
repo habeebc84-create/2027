@@ -54,10 +54,12 @@ export default function NotificationPopup() {
 
   return (
     <>
-      {/* Backdrop */}
-      {showPanel && (
-        <div className="fixed inset-0 bg-obsidian/40 z-[80] backdrop-blur-sm transition-opacity" onClick={() => setShowPanel(false)} />
-      )}
+      {/* No full-screen backdrop (BUILD 65 audit fix): the backdrop used to
+          sit above the top nav and swallow the user's first tap after the
+          panel auto-opened on Home — the tap only dismissed the popup
+          instead of opening Products/cart. The panel still closes on page
+          change (effect above) and with its X button, so it never traps
+          the user, but it no longer blocks taps on the rest of the page. */}
 
       {/* Left side notification panel - always renders, slides in.
           On phones it stops at 85vw so the cart shortcut on the right
