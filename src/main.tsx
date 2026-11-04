@@ -11,14 +11,62 @@ createRoot(document.getElementById('root')!).render(
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    // BUILD 71: visible update prompt, not a silent reload.
+    // Phones (installed app / phone browser) can sit resumed for days
+    // on an old build: the old code re-checked only every 30 minutes,
+    // auto-reloaded silently on normal pages, and did NOTHING at all
+    // on checkout/admin pages (to protect typed data) — so those pages
+    // simply never synced, with no message telling the user why.
+    // Now: when a new version is found, a banner says "Update available
+    // — update to latest version" on every page, and the user taps
+    // "Update now" to reload. Nothing reloads on its own, so typed
+    // checkout/admin data is never lost without the user choosing it.
+    const showUpdateBanner = () => {
+      if (document.getElementById('hsn-update-banner')) return;
+      const banner = document.createElement('div');
+      banner.id = 'hsn-update-banner';
+      banner.setAttribute('role', 'alert');
+      banner.setAttribute('aria-live', 'polite');
+      banner.style.cssText =
+        'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;' +
+        'display:flex;align-items:center;gap:10px;flex-wrap:wrap;' +
+        'background:#C6A875;color:#0B0C0E;border-radius:16px;' +
+        'padding:12px 14px;box-shadow:0 12px 32px rgba(0,0,0,0.45);' +
+        'font-family:system-ui,sans-serif;font-size:14px;font-weight:700;';
+      const text = document.createElement('span');
+      text.textContent = 'Update available — update to latest version';
+      text.style.cssText = 'flex:1 1 160px;';
+      const updateBtn = document.createElement('button');
+      updateBtn.type = 'button';
+      updateBtn.textContent = 'Update now';
+      updateBtn.style.cssText =
+        'background:#0B0C0E;color:#F7F5F0;border:none;border-radius:12px;' +
+        'padding:10px 16px;font-weight:800;font-size:14px;cursor:pointer;';
+      updateBtn.addEventListener('click', () => {
+        window.location.reload();
+      });
+      const laterBtn = document.createElement('button');
+      laterBtn.type = 'button';
+      laterBtn.textContent = 'Later';
+      laterBtn.setAttribute('aria-label', 'Dismiss update notification');
+      laterBtn.style.cssText =
+        'background:transparent;color:#0B0C0E;border:1px solid #0B0C0E;' +
+        'border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;';
+      laterBtn.addEventListener('click', () => {
+        banner.remove();
+      });
+      banner.appendChild(text);
+      banner.appendChild(updateBtn);
+      banner.appendChild(laterBtn);
+      document.body.appendChild(banner);
+    };
+
     navigator.serviceWorker
       .register('/sw.js', { updateViaCache: 'none' })
       .then((registration) => {
-        // Installed apps can sit resumed in the background for days and
-        // never re-check for a new version — that left phones stuck on
-        // old builds (everything up to BUILD 34) even though the live
-        // site was already updated. So: re-check whenever the app
-        // becomes visible again and every 30 minutes while open.
+        // Re-check often on mobile: on foreground, on focus, and every
+        // 60 seconds while open (was 30 minutes — far too slow for a
+        // phone that stays open on one page).
         const checkForUpdate = () => {
           registration.update().catch(() => {
             // Update check is best-effort; the app works without it.
@@ -27,36 +75,35 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
         document.addEventListener('visibilitychange', () => {
           if (!document.hidden) checkForUpdate();
         });
-        window.setInterval(checkForUpdate, 30 * 60 * 1000);
+        window.addEventListener('focus', checkForUpdate);
+        window.setInterval(checkForUpdate, 60 * 1000);
+
+        // A waiting worker means a new version is downloaded but the
+        // running page is still old code — show the banner, don't reload.
+        if (registration.waiting) showUpdateBanner();
+        registration.addEventListener('updatefound', () => {
+          const worker = registration.installing;
+          if (!worker) return;
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateBanner();
+            }
+          });
+        });
       })
       .catch(() => {
         // Installability is an enhancement; the app still works without it.
       });
 
     // When a new service worker takes control, the running page is still
-    // the old code. Reload once so the user actually gets the new
-    // version — except on pages with unsaved form state (checkout and
-    // the admin portal), where a reload would lose what was typed.
-    // Only reload for an UPDATE: on a first visit there is no previous
-    // controller yet, and reloading then would just flash the page.
+    // the old code. Previously this auto-reloaded once (and never on
+    // checkout/admin, and never twice in a session). Now it just shows
+    // the banner, so the user chooses when to update. On a first visit
+    // there is no previous controller yet, so no banner is needed.
     const hadController = !!navigator.serviceWorker.controller;
-    let swReloaded = false;
-    try {
-      swReloaded = window.sessionStorage.getItem('hsn-sw-reloaded') === '1';
-    } catch {
-      swReloaded = false;
-    }
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!hadController || swReloaded) return;
-      const path = window.location.pathname || '';
-      if (path.includes('checkout') || path.includes('manage-portal') || path.includes('admin')) return;
-      try {
-        window.sessionStorage.setItem('hsn-sw-reloaded', '1');
-      } catch {
-        // Storage unavailable; still reload once via the flag above.
-      }
-      swReloaded = true;
-      window.location.reload();
+      if (!hadController) return;
+      showUpdateBanner();
     });
   });
 }
