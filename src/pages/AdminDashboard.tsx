@@ -7,6 +7,7 @@ import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile } from '../lib/images';
 import { changeAdminAuthPassword } from '../lib/adminAuth';
 import { splitLaunchDateTime, joinLaunchDateTime } from '../lib/launch';
+import DotLens from '../components/originkit/ui/dot-lens';
 
 export default function AdminDashboard() {
   const ctx = useApp();
@@ -1098,9 +1099,30 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard min-h-screen relative z-10">
+      {/* BUILD 69: Originkit Dot Lens, admin dashboard background ONLY —
+          not on login, not on normal pages. Dimmed on purpose: wrapper
+          opacity 40%, dim grey base, champagne accent (not white),
+          smaller dots, tighter reach, slower drift. The component file
+          itself is used verbatim; only these props + wrapper dim it.
+          pointer-events-none so it never blocks dashboard clicks;
+          reduced-motion is handled inside the component (speed 0). */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-40">
+        <DotLens
+          background="#0B0C0E"
+          baseColor="#3A3A3A"
+          accentColor="#C6A875"
+          density={30}
+          dotSize={60}
+          reach={15}
+          minSize={4}
+          speed={30}
+          hover={70}
+          style={{ minWidth: 0, minHeight: 0 }}
+        />
+      </div>
       <Sidebar />
       {sidebarOpen && <div className="fixed inset-0 bg-obsidian/50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
-      <div className="lg:ml-[18rem] p-4 sm:p-6 lg:p-8">
+      <div className="relative z-10 lg:ml-[18rem] p-4 sm:p-6 lg:p-8">
         {renderContent()}
       </div>
     </div>
