@@ -1428,6 +1428,16 @@ svg {
     var(--color-obsidian);
 }
 
+/* BUILD 70: let the Dot Lens background show through the dashboard panels.
+   Without this, the opaque charcoal cards + obsidian sidebar cover the
+   canvas almost everywhere, so the dots only appear in the thin gaps
+   between cards and look absent. 78% charcoal keeps ivory text readable
+   while the dot field shows through. Only inside .admin-dashboard. */
+.admin-dashboard .bg-charcoal {
+  background-color: color-mix(in srgb, var(--color-charcoal) 78%, transparent);
+  backdrop-filter: blur(2px);
+}
+
 @keyframes adminOrbDrift {
   0% { transform: translate3d(0, 0, 0) scale(1); }
   50% { transform: translate3d(26px, 18px, 0) scale(1.06); }
