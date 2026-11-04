@@ -58,15 +58,20 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
               <form onSubmit={e => {
                 e.preventDefault();
                 if (!name || !mobile || !address || !landmark) { showToast('Please fill required fields.', 'error'); return; }
-                if (mobile.length < 10) { showToast('Enter valid 10-digit mobile.', 'error'); return; }
+                // BUILD 65 audit fix: the old check (length < 10) accepted
+                // letters and 11+ digit numbers. Indian mobiles are exactly
+                // 10 digits starting 6-9; store the cleaned digits.
+                const mobileDigits = mobile.replace(/\D/g, '').slice(-10);
+                if (!/^[6-9]\d{9}$/.test(mobileDigits)) { showToast('Enter a valid 10-digit Indian mobile number.', 'error'); return; }
+                if (pincode && !/^\d{6}$/.test(pincode.replace(/\D/g, ''))) { showToast('Pincode must be 6 digits.', 'error'); return; }
                 setIsProcessing(true);
                 setTimeout(() => {
-                  const year = new Date().getFullYear();
-                  const count = (parseInt(localStorage.getItem('hsn_order_count') || '0')) + 1;
-                  const oid = `HSN-${year}-${String(count).padStart(5, '0')}`;
-                  placeOrder({
+                  // BUILD 65: use the id placeOrder actually created — the
+                  // old code computed its own id from the counter, which
+                  // could drift from the stored order.
+                  const oid = placeOrder({
                     items: cart, total: totalPayable,
-                    customer: { name, mobile, email, address, village, mandal, pincode, landmark },
+                    customer: { name, mobile: mobileDigits, email, address, village, mandal, pincode, landmark },
                     paymentMode, deliveryNote, deliveryLocation: selectedZone.name,
                     deliveryCharge, handlingCharge, deliveryMethod,
                   });
@@ -143,7 +148,7 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button type="button" onClick={() => setPaymentMode('Cash on Delivery')} className={`p-3 rounded-xl border text-xs font-bold transition ${paymentMode === 'Cash on Delivery' ? 'bg-brand-500/20 text-ivory border-brand-400/50' : 'bg-obsidian/50 text-silver border-gunmetal/50'}`}>Cash on Delivery</button>
-                    <button type="button" onClick={() => setPaymentMode('Online Payment (UPI)')} className={`p-3 rounded-xl border text-xs font-bold transition ${paymentMode === 'Online Payment (UPI)' ? 'bg-brand-500/20 text-ivory border-brand-400/50' : 'bg-obsidian/50 text-silver border-gunmetal/50'}`}>Online UPI</button>
+                    <button type="button" onClick={() => setPaymentMode('UPI on Delivery')} className={`p-3 rounded-xl border text-xs font-bold transition ${paymentMode === 'UPI on Delivery' ? 'bg-brand-500/20 text-ivory border-brand-400/50' : 'bg-obsidian/50 text-silver border-gunmetal/50'}`}>UPI on Delivery</button>
                   </div>
                 </div>
 
