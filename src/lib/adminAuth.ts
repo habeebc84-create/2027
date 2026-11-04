@@ -41,20 +41,29 @@ export async function getAdminSessionEmail(): Promise<string | null> {
   }
 }
 
-/** Sign in as admin with Supabase Auth. Returns true only on a real session. */
-export async function signInAdmin(email: string, password: string): Promise<boolean> {
-  if (!isAdminEmail(email)) return false;
+/**
+ * Sign in as admin with Supabase Auth. Returns null on success, or the real
+ * Supabase error message on failure. BUILD 67: the old version swallowed
+ * every failure as "Invalid credentials", so the owner could not tell
+ * "Email not confirmed" (Auto Confirm not ticked) from a wrong password
+ * from a user that does not exist at all. Showing Supabase's own message
+ * here is what Supabase itself shows — it does not reveal the password.
+ */
+export async function signInAdmin(email: string, password: string): Promise<string | null> {
+  if (!isAdminEmail(email)) return 'Only the admin email can sign in here. Use habeebc84@gmail.com, not another email.';
   const client = getSupabaseClient();
-  if (!client) return false;
+  if (!client) return 'Supabase is not configured. Please try again later.';
   try {
     const { data, error } = await client.auth.signInWithPassword({
       email: email.trim().toLowerCase(),
       password,
     });
-    if (error || !data.session) return false;
-    return isAdminEmail(data.session.user.email);
+    if (error) return error.message;
+    if (!data.session) return 'Sign-in did not return a session. Please try again.';
+    if (!isAdminEmail(data.session.user.email)) return 'This account is not the admin account.';
+    return null;
   } catch {
-    return false;
+    return 'Sign-in failed. Check your connection and try again.';
   }
 }
 

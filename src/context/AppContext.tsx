@@ -70,7 +70,7 @@ interface AppContextType {
   siteSettings: SiteSettings;
   updateSiteSettings: (updates: Partial<SiteSettings>) => void;
   isAdmin: boolean;
-  loginAdmin: (email: string, password: string) => Promise<boolean>;
+  loginAdmin: (email: string, password: string) => Promise<string | null>;
   logoutAdmin: () => void;
   adminPage: AdminPage;
   setAdminPage: (page: AdminPage) => void;
@@ -688,10 +688,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginAdmin = useCallback(async (email: string, password: string) => {
-    if (await signInAdmin(email, password)) {
-      setIsAdmin(true); showToast('Admin authenticated'); return true;
+    const err = await signInAdmin(email, password);
+    if (!err) {
+      setIsAdmin(true); showToast('Admin authenticated'); return null;
     }
-    showToast('Invalid credentials', 'error'); return false;
+    showToast(err, 'error'); return err;
   }, [showToast]);
 
   const logoutAdmin = useCallback(() => {
