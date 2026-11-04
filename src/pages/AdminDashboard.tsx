@@ -504,7 +504,14 @@ export default function AdminDashboard() {
                   {o.customerLocation && (
                     <div className="mt-2 bg-brand-500/10 border border-brand-500/25 rounded-2xl p-2.5">
                       <div className="text-[10px] font-bold text-brand-300 mb-1">📍 Customer-shared delivery location:</div>
-                      <a href={o.customerLocation} target="_blank" rel="noreferrer" className="text-[11px] text-brand-400 hover:text-brand-300 underline break-all line-clamp-1">Open on Google Maps →</a>
+                      {/* BUILD 65 audit fix: a customer-supplied link must never
+                          be rendered as-is — a javascript: link would run code
+                          in the admin's browser. Only https links open. */}
+                      {o.customerLocation.startsWith('https://') ? (
+                        <a href={o.customerLocation} target="_blank" rel="noreferrer" className="text-[11px] text-brand-400 hover:text-brand-300 underline break-all line-clamp-1">Open on Google Maps →</a>
+                      ) : (
+                        <span className="text-[11px] text-silver break-all line-clamp-1">Shared location link was not a valid https link and was not opened.</span>
+                      )}
                     </div>
                   )}
                 </div>
