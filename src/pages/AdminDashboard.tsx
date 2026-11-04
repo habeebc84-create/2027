@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 import type { AdminPage, Product, Category, ContentBlock, OrderStatus, Notification, Achievement } from '../types';
 import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile } from '../lib/images';
-import { changeAdminPassword } from '../lib/password';
+import { changeAdminAuthPassword } from '../lib/adminAuth';
 import { splitLaunchDateTime, joinLaunchDateTime } from '../lib/launch';
 
 export default function AdminDashboard() {
@@ -1084,7 +1084,7 @@ export default function AdminDashboard() {
           <div><label className="text-xs font-bold text-silver block mb-1.5">Password</label>
             <div className="flex space-x-2">
               <input type="password" value="Encrypted •••" disabled className="flex-1 bg-charcoal/50 border border-gunmetal rounded-2xl px-3 py-2.5 text-xs text-ivory" />
-              <button onClick={() => { const np = prompt('Enter new password (min 6 chars):'); if (np && np.length >= 6) { changeAdminPassword(np); alert('Password updated and encrypted'); } else if (np) { alert('Password must be at least 6 characters'); } }} className="bg-white/10 border border-gunmetal text-ivory px-4 py-2 rounded-2xl text-xs font-bold hover:bg-white/20 transition">Change</button>
+              <button onClick={async () => { const np = prompt('Enter new password (min 6 chars):'); if (np && np.length >= 6) { try { await changeAdminAuthPassword(np); alert('Password updated in Supabase Auth'); } catch (e) { alert('Password change failed: ' + (e instanceof Error ? e.message : String(e))); } } else if (np) { alert('Password must be at least 6 characters'); } }} className="bg-white/10 border border-gunmetal text-ivory px-4 py-2 rounded-2xl text-xs font-bold hover:bg-white/20 transition">Change</button>
             </div>
           </div>
         </div>
