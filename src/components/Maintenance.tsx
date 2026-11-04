@@ -16,7 +16,7 @@ export default function Maintenance({ isAdmin, onTurnOff, message }: { isAdmin: 
   return (
     <div
       data-maintenance
-      className="fixed inset-0 z-[400] overflow-y-auto bg-obsidian text-ivory"
+      className="fixed inset-0 z-[400] overflow-y-auto overflow-x-clip bg-obsidian text-ivory"
     >
       <div className="relative z-10 min-h-full flex flex-col items-center justify-center text-center px-5 py-10 pointer-events-none">
         <div className="pl mb-8" aria-hidden="true">

@@ -1656,3 +1656,16 @@ svg {
     animation: none !important;
   }
 }
+
+/* BUILD 75 — mobile fixes for the BUILD 74 changes.
+   The maintenance loader is 14em wide and rotated 45deg, so its
+   diagonal is ~317px at 16px — wider than a 320px phone minus the
+   page padding (280px), so its dots clipped / caused sideways scroll
+   on small phones. Shrink it on narrow screens: at 11px the ring is
+   154px wide, diagonal ~218px, comfortably inside 280px. All dot
+   sizes/positions are in em, so they scale with it. */
+@media (max-width: 480px) {
+  .pl {
+    font-size: 11px;
+  }
+}
