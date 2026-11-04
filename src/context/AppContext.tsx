@@ -3,10 +3,10 @@ import type { CartItem, Order, Product, Page, Toast, Customer, TransportZone, Co
 import { ORDER_STATUSES } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms, defaultMarketPrices } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
-import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured } from '../lib/remoteContent';
+import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured, getSupabaseClient } from '../lib/remoteContent';
 import { fetchOrdersDb, insertOrderDb, updateOrderDb, deleteOrderDb, mergeDbOrders } from '../lib/ordersDb';
 import { DEFAULT_LAUNCH_DATE_TIME } from '../lib/launch';
-import { verifyAdminPassword, changeAdminPassword } from '../lib/password';
+import { getAdminSessionEmail, signInAdmin, signOutAdmin, isAdminEmail } from '../lib/adminAuth';
 
 interface AppContextType {
   currentPage: Page;
@@ -113,7 +113,10 @@ function generateOrderId(): string {
 export function AppProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>(() => { const v = load<CartItem[]>('hsn_cart', []); return Array.isArray(v) ? v : []; });
   const [orders, setOrders] = useState<Order[]>(() => { const v = load<Order[]>('hsn_orders', []); return Array.isArray(v) ? v : []; });
-  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('hsn_admin') === 'true');
+  // BUILD 66: isAdmin comes ONLY from a Supabase Auth session. The old
+  // localStorage flag (hsn_admin) is ignored and deleted on load — setting
+  // it in the console no longer opens the admin panel.
+  const [isAdmin, setIsAdmin] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [trackingOrderId, setTrackingOrderId] = useState<string | undefined>(undefined);
@@ -655,24 +658,46 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateTermsContent = useCallback((id: string, content: string) => { localEditRef.current = true; setTermsContent(prev => prev.map(t => t.id === id ? { ...t, content, lastUpdated: new Date().toISOString() } : t)); showToast('Terms updated'); }, [showToast]);
   const updateSiteSettings = useCallback((updates: Partial<SiteSettings>) => { localEditRef.current = true; setSiteSettings(prev => ({ ...prev, ...updates })); showToast('Settings updated'); }, [showToast]);
 
-  const ADMIN_EMAIL = 'habeebc84@gmail.com';
-  const loginAdmin = useCallback(async (email: string, password: string) => {
-    // One-time migration: old versions stored the password in plain text.
-    // Convert it to a salted hash (keeping it as the working password), then delete it.
+  // Restore a Supabase Auth admin session on load, and follow sign-in /
+  // sign-out events. This runs once; the session itself is stored by
+  // Supabase as a signed JWT, not as a flag this app trusts on sight.
+  useEffect(() => {
     try {
-      const legacy = localStorage.getItem('hsn_admin_password');
-      if (legacy) {
-        localStorage.removeItem('hsn_admin_password');
-        if (legacy.trim()) await changeAdminPassword(legacy);
-      }
+      localStorage.removeItem('hsn_admin');
+      localStorage.removeItem('hsn_admin_password');
+      localStorage.removeItem('hsn_admin_password_hash');
     } catch { /* storage unavailable */ }
-    if (email.trim().toLowerCase() === ADMIN_EMAIL && await verifyAdminPassword(password)) {
-      setIsAdmin(true); localStorage.setItem('hsn_admin', 'true'); showToast('Admin authenticated'); return true;
+    let cancelled = false;
+    void getAdminSessionEmail().then(email => {
+      if (cancelled) return;
+      if (email) {
+        setIsAdmin(true);
+        if (window.location.pathname === '/manage-portal-9f3a') setPage('admin');
+      }
+    });
+    const client = getSupabaseClient();
+    const sub = client?.auth.onAuthStateChange((_event, session) => {
+      if (cancelled) return;
+      setIsAdmin(isAdminEmail(session?.user?.email));
+    });
+    return () => {
+      cancelled = true;
+      sub?.data.subscription.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loginAdmin = useCallback(async (email: string, password: string) => {
+    if (await signInAdmin(email, password)) {
+      setIsAdmin(true); showToast('Admin authenticated'); return true;
     }
     showToast('Invalid credentials', 'error'); return false;
   }, [showToast]);
 
-  const logoutAdmin = useCallback(() => { setIsAdmin(false); localStorage.removeItem('hsn_admin'); showToast('Logged out'); }, [showToast]);
+  const logoutAdmin = useCallback(() => {
+    void signOutAdmin();
+    setIsAdmin(false); showToast('Logged out');
+  }, [showToast]);
 
   return (
     <AppContext.Provider value={{
