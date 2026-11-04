@@ -33,7 +33,7 @@ interface AppContextType {
   cartCount: number;
   clearCart: () => void;
   orders: Order[];
-  placeOrder: (order: Omit<Order, 'id' | 'date' | 'status' | 'timeline' | 'orderId'>) => void;
+  placeOrder: (order: Omit<Order, 'id' | 'date' | 'status' | 'timeline' | 'orderId'>) => string;
   setOrderFinalDeliveryCharge: (orderId: string, charge: number) => void;
   updateOrderStatus: (orderId: string, status: OrderStatus, note?: string) => void;
   deleteOrder: (orderId: string) => void;
@@ -213,6 +213,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       deletedOrders: [...deletedOrderIdsRef.current], // tombstones: every device removes these for good
       launchingSoon, // launching-soon poster flag, so removing it opens every device
       launchDateTime, // opening date/time for the poster countdown
+      notifications, // BUILD 65: admin announcements + contact inquiries now reach every device
     };
     void pushRemoteContent(snapshot).then(version => {
       if (version) {
@@ -222,7 +223,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         showToast('Cloud sync failed — change stays on this device only', 'error');
       }
     });
-  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, showToast]);
+  }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, notifications, showToast]);
 
   const applyCloudSnapshot = useCallback((json: Record<string, unknown>, raw: string, version?: string | null) => {
     lastPulledRawRef.current = raw;
@@ -236,6 +237,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (json.v === 2) {
       if (typeof json.launchingSoon === 'boolean') setLaunchingSoonState(json.launchingSoon);
       if (typeof json.launchDateTime === 'string' && Number.isFinite(Date.parse(json.launchDateTime))) setLaunchDateTimeState(json.launchDateTime);
+      if (Array.isArray(json.notifications)) {
+        const cloudNotifs = json.notifications as Notification[];
+        setNotifications(prev => {
+          const ids = new Set(prev.map(n => n.id));
+          const missing = cloudNotifs.filter(n => n && n.id && !ids.has(n.id));
+          if (missing.length === 0) return prev;
+          return [...prev, ...missing].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        });
+      }
       if (json.siteSettings && typeof json.siteSettings === 'object') setSiteSettings(json.siteSettings as SiteSettings);
       if (Array.isArray(json.products)) setProducts(json.products as Product[]);
       if (Array.isArray(json.categories)) setCategories(json.categories as Category[]);
@@ -416,10 +426,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteAchievement = useCallback((id: string) => { localEditRef.current = true; setAchievements(prev => prev.filter(a => a.id !== id)); showToast('Removed'); }, [showToast]);
 
   const addToCart = useCallback((product: Product, quantity: number, selectedSize?: string) => {
+    const qty = Math.max(1, Math.floor(quantity) || 1);
     setCart(prev => {
       const ex = prev.find(i => i.product.id === product.id && i.selectedSize === selectedSize);
-      if (ex) return prev.map(i => i.product.id === product.id && i.selectedSize === selectedSize ? { ...i, quantity: i.quantity + quantity } : i);
-      return [...prev, { product, quantity, selectedSize }];
+      if (ex) return prev.map(i => i.product.id === product.id && i.selectedSize === selectedSize ? { ...i, quantity: i.quantity + qty } : i);
+      return [...prev, { product, quantity: qty, selectedSize }];
     });
     showToast(`Added "${product.name}" to cart`);
   }, [showToast]);
@@ -483,10 +494,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     showToast(`Order ${orderId} placed successfully!`);
     // Customer orders with a shared location reach the owner's other devices too.
     localEditRef.current = true;
+    return orderId; // BUILD 65: Checkout uses this id, instead of computing
+    // its own from the counter — the two could drift and the success page
+    // would then open an order that does not exist.
   }, [clearCart, showToast]);
 
   /** Owner review: set the final delivery charge after seeing the shared location. */
   const setOrderFinalDeliveryCharge = useCallback((orderId: string, charge: number) => {
+    if (!Number.isFinite(charge) || charge < 0) { showToast('Delivery charge cannot be negative', 'error'); return; }
     localEditRef.current = true;
     let dbOrder: Order | undefined;
     setOrders(prev => {
@@ -570,7 +585,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteContentBlock = useCallback((id: string) => { localEditRef.current = true; setContentBlocks(prev => prev.filter(b => b.id !== id)); showToast('Content deleted'); }, [showToast]);
   const toggleContentBlock = useCallback((id: string) => { localEditRef.current = true; setContentBlocks(prev => prev.map(b => b.id === id ? { ...b, active: !b.active } : b)); }, []);
 
-  const addNotification = useCallback((n: Notification) => { setNotifications(prev => { const u = [n, ...prev]; save('hsn_notifications', u); return u; }); }, []);
+  const addNotification = useCallback((n: Notification) => {
+    localEditRef.current = true; // BUILD 65: notifications now sync to the cloud
+    setNotifications(prev => { const u = [n, ...prev]; save('hsn_notifications', u); return u; });
+  }, []);
   const updateNotification = useCallback((id: string, updates: Partial<Notification>) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, ...updates } : n); save('hsn_notifications', u); return u; }); showToast('Notification updated'); }, [showToast]);
   const deleteNotification = useCallback((id: string) => { setNotifications(prev => { const u = prev.filter(n => n.id !== id); save('hsn_notifications', u); return u; }); showToast('Notification deleted'); }, [showToast]);
   const markNotificationRead = useCallback((id: string) => { setNotifications(prev => { const u = prev.map(n => n.id === id ? { ...n, read: true } : n); save('hsn_notifications', u); return u; }); }, []);
