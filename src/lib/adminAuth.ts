@@ -67,6 +67,32 @@ export async function signInAdmin(email: string, password: string): Promise<stri
   }
 }
 
+/**
+ * Send a password-reset email to the admin email only (BUILD 68).
+ * Returns null on success, or the real Supabase error message on failure.
+ * The link in the mail points back to /manage-portal-9f3a: clicking it
+ * sets a recovery session, which routes to the admin dashboard, where
+ * Security & Settings > Change sets the new password. It is sent only
+ * to ADMIN_EMAIL, never to an arbitrary typed address, so the link
+ * cannot be used to spam or enumerate other accounts. Note: if
+ * Supabase rejects the redirect, add
+ * https://hsncementandsteel-sigma.vercel.app/manage-portal-9f3a to
+ * Supabase Dashboard > Authentication > URL Configuration > Redirect URLs.
+ */
+export async function requestAdminPasswordReset(): Promise<string | null> {
+  const client = getSupabaseClient();
+  if (!client) return 'Supabase is not configured. Please try again later.';
+  try {
+    const { error } = await client.auth.resetPasswordForEmail(ADMIN_EMAIL, {
+      redirectTo: `${window.location.origin}/manage-portal-9f3a`,
+    });
+    if (error) return error.message;
+    return null;
+  } catch {
+    return 'Could not send the reset email. Check your connection and try again.';
+  }
+}
+
 /** Sign out the admin session. */
 export async function signOutAdmin(): Promise<void> {
   const client = getSupabaseClient();
