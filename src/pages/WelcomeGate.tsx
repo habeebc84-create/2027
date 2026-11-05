@@ -165,7 +165,7 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
 
         {/* Quick Links */}
         <Reveal delay={200} className="mb-10 sm:mb-14">
-        <div className={`grid grid-cols-3 gap-3 sm:gap-4 transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 transition-all duration-700 ${phase >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           {[
             { label: 'Our Services', desc: 'Site delivery & custom cutting', icon: Truck, color: 'from-brand-500/20 to-brand-600/20' },
             { label: 'About HSN', desc: '15+ years of trust', icon: Shield, color: 'from-brand-500/20 to-brand-600/20' },
@@ -178,9 +178,9 @@ export default function WelcomeGate({ onContinue, onShopCategory }: WelcomeGateP
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${item.color} border border-gunmetal flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                   <Icon className="w-5 h-5 text-ivory" />
                 </div>
-                <div className="text-left">
-                  <h4 className="text-xs sm:text-sm font-black text-ivory">{item.label}</h4>
-                  <p className="text-[9px] sm:text-[10px] text-silver">{item.desc}</p>
+                <div className="text-left min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-sm font-black text-ivory break-words leading-snug">{item.label}</h4>
+                  <p className="text-[11px] sm:text-[10px] text-silver break-words leading-snug">{item.desc}</p>
                 </div>
               </button>
             );
