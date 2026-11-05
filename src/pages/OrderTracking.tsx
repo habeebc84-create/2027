@@ -20,14 +20,33 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
   const [searching, setSearching] = useState(false);
   const [autoOpening, setAutoOpening] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  // BUILD 80 security fix: delivery address + phone are personal data.
+  // Status, timeline and total are visible with just the order ID
+  // (so a QR scan still shows live status), but address/phone stay
+  // hidden until the order's mobile number is entered and matches.
+  // Before this, a blank mobile field showed the full delivery info
+  // to anyone who knew (or guessed) an order ID.
+  const [piiUnlocked, setPiiUnlocked] = useState(false);
+  const [piiMobile, setPiiMobile] = useState('');
+  const [piiError, setPiiError] = useState('');
 
   const handleSearch = () => {
-    setError(''); setFound(false);
+    setError(''); setFound(false); setPiiUnlocked(false); setPiiError('');
     if (!orderId.trim()) { setError('Please enter your Order ID'); return; }
     const order = getOrderById(orderId.trim());
     if (!order) { setError('Order not found. Please check your Order ID.'); return; }
     if (mobile && order.customer.mobile !== mobile.trim()) { setError('Mobile number does not match this order.'); return; }
+    // Mobile matches (or was left blank for status-only view).
+    setPiiUnlocked(Boolean(mobile) && order.customer.mobile === mobile.trim());
     setFound(true);
+  };
+
+  const unlockPii = () => {
+    setPiiError('');
+    const order = getOrderById(orderId.trim());
+    if (!order) { setPiiError('Order not found.'); return; }
+    if (order.customer.mobile === piiMobile.trim()) setPiiUnlocked(true);
+    else setPiiError('Mobile number does not match this order.');
   };
 
   // Opened from an order's QR code: fetch that exact order automatically.
@@ -93,7 +112,7 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
                 className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-brand-500 transition" />
             </div>
             <div>
-              <label className="text-xs font-bold text-silver block mb-1.5">Mobile Number (optional)</label>
+              <label className="text-xs font-bold text-silver block mb-1.5">Mobile Number (optional for status — needed to show delivery details)</label>
               <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} placeholder="10-digit mobile number"
                 className="w-full bg-obsidian/50 border border-gunmetal/50 text-ivory px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-brand-500 transition" />
             </div>
@@ -161,12 +180,23 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
               </div>
             </div>
 
-            {/* Delivery Info */}
-            <div className="bg-charcoal/50 border border-gunmetal rounded-2xl p-4 space-y-2 text-xs">
-              <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
-              <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.deliveryLocation} (Rs.{order.finalDeliveryCharge ?? order.deliveryCharge}{order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge ? ' final' : ''})</span></div>
-              <div className="flex items-center space-x-2"><Phone className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.customer.mobile}</span></div>
-            </div>
+            {/* Delivery Info — gated behind the order mobile number (BUILD 80). */}
+            {piiUnlocked ? (
+              <div className="bg-charcoal/50 border border-gunmetal rounded-2xl p-4 space-y-2 text-xs">
+                <div className="flex items-center space-x-2"><MapPin className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.customer.address} {order.customer.landmark ? `- ${order.customer.landmark}` : ''}</span></div>
+                <div className="flex items-center space-x-2"><Truck className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.deliveryLocation} (Rs.{order.finalDeliveryCharge ?? order.deliveryCharge}{order.finalDeliveryCharge !== undefined && order.finalDeliveryCharge !== order.deliveryCharge ? ' final' : ''})</span></div>
+                <div className="flex items-center space-x-2"><Phone className="w-3.5 h-3.5 text-brand-400" /><span className="text-silver">{order.customer.mobile}</span></div>
+              </div>
+            ) : (
+              <div className="bg-charcoal/50 border border-gunmetal rounded-2xl p-4 space-y-3 text-xs">
+                <p className="text-silver font-bold">Delivery details are hidden — enter the mobile number used for this order to view the address and phone.</p>
+                {piiError && <p className="text-brand-400 font-bold">{piiError}</p>}
+                <div className="flex gap-2">
+                  <input type="tel" value={piiMobile} onChange={e => setPiiMobile(e.target.value)} placeholder="10-digit mobile number" className="flex-1 bg-obsidian/50 border border-gunmetal/50 text-ivory px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-brand-500 transition" />
+                  <button onClick={unlockPii} className="btn-brand font-bold px-4 py-2 rounded-xl text-xs shrink-0">Show details</button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
