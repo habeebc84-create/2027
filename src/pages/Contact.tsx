@@ -29,11 +29,17 @@ export default function Contact() {
     // but sent nothing anywhere — the store never received it. An inquiry
     // is now a real admin notification (synced via the cloud copy, so the
     // admin sees it on every device in Notifications).
+    // BUILD 80 security fix: inquiries used to be type 'announcement',
+    // so the public notification popup showed every visitor the
+    // inquirer's name and mobile number (and auto-popped it on Home).
+    // 'inquiry' is admin-only: the popup filters it out (see
+    // NotificationPopup), while the admin dashboard still lists all
+    // notifications, so the admin still sees the inquiry there.
     addNotification({
       id: `inquiry-${Date.now()}`,
       title: `Inquiry: ${form.name}`,
       content: `${form.materialNeeded} — ${form.message || 'No notes'} — Mobile: ${mobileDigits}`,
-      type: 'announcement',
+      type: 'inquiry',
       active: true,
       read: false,
       createdAt: new Date().toISOString(),

@@ -50,7 +50,10 @@ export async function getAdminSessionEmail(): Promise<string | null> {
  * here is what Supabase itself shows — it does not reveal the password.
  */
 export async function signInAdmin(email: string, password: string): Promise<string | null> {
-  if (!isAdminEmail(email)) return 'Only the admin email can sign in here. Use habeebc84@gmail.com, not another email.';
+  // BUILD 80 security fix: do not print the admin email in the sign-in
+  // error — anyone opening the admin login page could read it from
+  // there. The check itself is unchanged.
+  if (!isAdminEmail(email)) return 'Only the admin account can sign in here.';
   const client = getSupabaseClient();
   if (!client) return 'Supabase is not configured. Please try again later.';
   try {

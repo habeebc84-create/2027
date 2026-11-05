@@ -193,11 +193,16 @@ function AppContent() {
   // both are ON visitors see maintenance, not the poster. The admin
   // portal is never gated, and a signed-in admin sees only a button
   // on this page that turns maintenance off for everyone.
+  // BUILD 80 security fix: poster / maintenance removal is admin-only
+  // in depth, not just in the button's visibility — even if a page
+  // somehow rendered the button for a visitor, the callback itself
+  // refuses to change the flag without an admin session. The dashboard
+  // switches are admin-only pages too (see the 'admin' case below).
   if (maintenanceMode && !isAdminPage) {
-    return (<PageErrorBoundary><Maintenance isAdmin={isAdmin} onTurnOff={() => setMaintenanceMode(false)} message={maintenanceMessage} /></PageErrorBoundary>);
+    return (<PageErrorBoundary><Maintenance isAdmin={isAdmin} onTurnOff={() => { if (isAdmin) setMaintenanceMode(false); }} message={maintenanceMessage} /></PageErrorBoundary>);
   }
   if (launchingSoon && isLaunchPending(parseLaunchTime(launchDateTime)) && !isAdminPage) {
-    return (<PageErrorBoundary><LaunchingSoon isAdmin={isAdmin} onRemove={() => setLaunchingSoon(false)} launchDateTime={launchDateTime} /></PageErrorBoundary>);
+    return (<PageErrorBoundary><LaunchingSoon isAdmin={isAdmin} onRemove={() => { if (isAdmin) setLaunchingSoon(false); }} launchDateTime={launchDateTime} /></PageErrorBoundary>);
   }
   if (!splashDismissed && !isLoginPage && !deepLink) return (<PageErrorBoundary><Splash /></PageErrorBoundary>);
 
