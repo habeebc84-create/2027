@@ -21,7 +21,13 @@ export default function NotificationPopup() {
   const [autoShown, setAutoShown] = useState(false);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
 
-  const activeNotifications = notifications.filter(n => n.active !== false && n.type !== 'order');
+  // BUILD 80 security fix: never show inquiries to visitors. New
+  // inquiries are type 'inquiry' (see Contact), and older ones already
+  // synced to the cloud still carry type 'announcement' with an
+  // "Inquiry: <name>" title — filter those out too, so a name + mobile
+  // number can never pop up on a visitor's Home page again. Admin
+  // inquiries still appear in the admin dashboard, which lists all types.
+  const activeNotifications = notifications.filter(n => n.active !== false && n.type !== 'order' && n.type !== 'inquiry' && !n.title.startsWith('Inquiry:'));
 
   // Auto-show panel once after 3 seconds, but ONLY on the Home page.
   // It used to pop up on every page — including Products — 3s after
