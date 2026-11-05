@@ -435,9 +435,10 @@
 
 /* ====== TOP NAVBAR ====== */
 .splash-navbar {
-  /* Rectangular entrance dock around the logo, title and WhatsApp: it
-     sits inset from the screen edges, centred, and scrolls with the page
-     on all sizes, so it never sits on top of the contents below it.
+  /* Rounded entrance dock around the logo, title and WhatsApp (BUILD 79:
+     was rectangular, border-radius 0 — now rounded corners on all sizes):
+     it sits inset from the screen edges, centred, and scrolls with the
+     page on all sizes, so it never sits on top of the contents below it.
      No slide-down entrance: the dock just sits at the top. */
   position: absolute;
   top: 18px;
@@ -456,7 +457,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 25px;
-  border-radius: 0;
+  border-radius: 20px;
   background: rgba(26, 29, 33, 0.35);
   border:  1px solid var(--color-gunmetal);
   backdrop-filter: blur(24px) saturate(180%);
