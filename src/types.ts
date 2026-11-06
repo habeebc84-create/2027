@@ -226,7 +226,7 @@ export interface SiteSettings {
 
 export type AdminPage = 'overview' | 'analytics' | 'products' | 'categories' | 'orders' | 'customers' | 'content' | 'transport' | 'prices' | 'notifications' | 'terms' | 'security';
 
-export type Page = 'home' | 'splash' | 'welcome-gate' | 'products' | 'product-detail' | 'services' | 'gallery' | 'about' | 'contact' | 'checkout' | 'order-success' | 'order-tracking' | 'admin-login' | 'admin' | 'terms';
+export type Page = 'home' | 'splash' | 'welcome-gate' | 'products' | 'product-detail' | 'services' | 'gallery' | 'contact' | 'checkout' | 'order-success' | 'order-tracking' | 'admin-login' | 'admin' | 'terms';
 
 export interface Toast {
   id: string;

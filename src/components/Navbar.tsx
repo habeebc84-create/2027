@@ -11,7 +11,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 );
 
 // Top bar: brand, WhatsApp and cart only. Larger bar, still pinned. The section links
-// (Products, Services, Gallery, About Us, Contact, Track Order) live in
+// (Products, Services, Gallery, Contact, Track Order) live in
 // the FloatingBottomNav dock, so they are not repeated here.
 // The bar is always pinned to the top — it never slides away or moves
 // while scrolling, on the home page or anywhere else.

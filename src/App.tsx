@@ -12,7 +12,6 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Services from './pages/Services';
 import Gallery from './pages/Gallery';
-import About from './pages/About';
 import Contact from './pages/Contact';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
@@ -37,7 +36,7 @@ function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?
   if (clean.startsWith('/track-order/')) return { page: 'order-tracking', orderId: decode(clean.replace('/track-order/', '')) };
   const routeMap: Record<string, Page> = {
     '/': 'home', '/splash': 'splash', '/products': 'products', '/services': 'services',
-    '/gallery': 'gallery', '/about': 'about', '/contact': 'contact',
+    '/gallery': 'gallery', '/contact': 'contact',
     '/checkout': 'checkout', '/terms': 'terms', '/track-order': 'order-tracking',
   };
   return { page: routeMap[clean] || routeMap[path] || 'home' };
@@ -46,7 +45,7 @@ function getPageFromPath(path: string, isAdmin: boolean): { page: Page; orderId?
 // QR scans and shared invoice links (/track-order/<id>, /order-success/<id>,
 // legacy ?track=<id>) must open the order page immediately — never gated
 // behind the splash screen. BUILD 65 audit fix: the same applies to any
-// shared page link (/products, /about, ...). Before this, opening such a
+// shared page link (/products, /services, ...). Before this, opening such a
 // link showed only the splash, and Enter sent the visitor to Home instead
 // of the page they were sent — the shared link effectively did not work.
 // Home (/) and /splash still show the splash as before.
@@ -54,7 +53,7 @@ function isOrderDeepLink(): boolean {
   if (new URLSearchParams(window.location.search).has('track')) return true;
   if (/^\/(track-order|order-success)\/.+/.test(window.location.pathname)) return true;
   const clean = window.location.pathname.replace(/\/+$/, '');
-  return ['/products', '/services', '/gallery', '/about', '/contact', '/checkout', '/terms', '/track-order'].includes(clean);
+  return ['/products', '/services', '/gallery', '/contact', '/checkout', '/terms', '/track-order'].includes(clean);
 }
 
 
@@ -215,7 +214,6 @@ function AppContent() {
       case 'product-detail': return <ProductDetail />;
       case 'services': return <Services />;
       case 'gallery': return <Gallery />;
-      case 'about': return <About />;
       case 'contact': return <Contact />;
       case 'checkout': return <Checkout onBackToCart={() => setCartOpen(true)} onOrderSuccess={(id) => { setSuccessOrderId(id); setPage('order-success', id); }} />;
       case 'order-success': return <OrderSuccess orderId={successOrderId || ''} />;
