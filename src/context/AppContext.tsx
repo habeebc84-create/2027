@@ -5,6 +5,7 @@ import { products as defaultProducts, categories as defaultCategories, brands as
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured, getSupabaseClient } from '../lib/remoteContent';
 import { fetchOrdersDb, insertOrderDb, updateOrderDb, deleteOrderDb, mergeDbOrders } from '../lib/ordersDb';
+import { createOrderViaApi } from '../lib/apiOrders';
 import { DEFAULT_LAUNCH_DATE_TIME } from '../lib/launch';
 import { getAdminSessionEmail, signInAdmin, signOutAdmin, isAdminEmail } from '../lib/adminAuth';
 import { mergeNotifications, notifSeenKey } from '../lib/notifSync';
@@ -34,7 +35,7 @@ interface AppContextType {
   cartCount: number;
   clearCart: () => void;
   orders: Order[];
-  placeOrder: (order: Omit<Order, 'id' | 'date' | 'status' | 'timeline' | 'orderId'>) => string;
+  placeOrder: (order: Omit<Order, 'id' | 'date' | 'status' | 'timeline' | 'orderId'>) => Promise<string>;
   setOrderFinalDeliveryCharge: (orderId: string, charge: number) => void;
   updateOrderStatus: (orderId: string, status: OrderStatus, note?: string) => void;
   deleteOrder: (orderId: string) => void;
@@ -623,17 +624,52 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
   const clearCart = useCallback(() => { setCart([]); save('hsn_cart', []); }, []);
 
-  const placeOrder = useCallback((data: Omit<Order, 'id' | 'date' | 'status' | 'timeline' | 'orderId'>) => {
-    const orderId = generateOrderId();
+  const placeOrder = useCallback(async (data: Omit<Order, 'id' | 'date' | 'status' | 'timeline' | 'orderId'>) => {
+    // BUILD 84: try the Node backend first — it re-prices from the server's
+    // own product list and saves to Postgres. Any failure falls back to the
+    // current browser-direct path, so checkout works before the backend is
+    // configured (service key + orders table are dashboard steps).
+    let orderId: string;
+    let items = data.items;
+    let total = data.total;
+    const api = await createOrderViaApi({
+      items: data.items.map(i => ({ productId: i.product.id, size: i.selectedSize, quantity: i.quantity })),
+      customer: data.customer,
+      paymentMode: data.paymentMode,
+      deliveryNote: data.deliveryNote,
+      deliveryLocation: data.deliveryLocation,
+      deliveryMethod: data.deliveryMethod,
+    });
+    if (api) {
+      orderId = api.orderId;
+      total = api.total;
+      // Use the server-verified prices in the local copy too, so the order
+      // on this device matches the one saved in Postgres.
+      items = data.items.map(item => {
+        const priced = api.items.find(p => p.productId === item.product.id && (p.size || undefined) === (item.selectedSize || undefined));
+        if (!priced) return item;
+        const product = { ...item.product };
+        if (priced.size && product.sizes) {
+          product.sizes = product.sizes.map(s => (s.size === priced.size ? { ...s, price: priced.unitPrice } : s));
+        } else {
+          product.price = priced.unitPrice;
+        }
+        return { ...item, product };
+      });
+    } else {
+      orderId = generateOrderId();
+    }
     const order: Order = {
-      ...data, id: `order-${Date.now()}`, orderId, date: new Date().toISOString(),
+      ...data, items, total, id: `order-${Date.now()}`, orderId, date: new Date().toISOString(),
       status: 'placed', timeline: [{ status: 'placed', date: new Date().toISOString() }],
     };
     setOrders(prev => { const u = [order, ...prev]; save('hsn_orders', u); return u; });
-    void insertOrderDb(order); // Postgres when the table exists; no-op otherwise
+    // Server already saved it when the API answered; only write direct when
+    // the backend did not (its Postgres insert is a no-op without the table).
+    if (!api) void insertOrderDb(order);
     const n: Notification = {
       id: `notif-${Date.now()}`, title: `New Order: ${orderId}`,
-      content: `${data.customer.name} placed an order of Rs.${data.total.toLocaleString('en-IN')}`,
+      content: `${data.customer.name} placed an order of Rs.${total.toLocaleString('en-IN')}`,
       type: 'order', active: true, read: false, createdAt: new Date().toISOString(),
     };
     setNotifications(prev => { const u = [n, ...prev]; save('hsn_notifications', u); return u; });
@@ -642,14 +678,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (existing) {
         const updated = prev.map(c => c.mobile === data.customer.mobile ? {
           ...c, name: data.customer.name, email: data.customer.email || c.email,
-          totalOrders: c.totalOrders + 1, totalSpending: c.totalSpending + data.total, lastOrder: new Date().toISOString(),
+          totalOrders: c.totalOrders + 1, totalSpending: c.totalSpending + total, lastOrder: new Date().toISOString(),
         } : c);
         save('hsn_customers', updated);
         return updated;
       }
       const nc: Customer = {
         id: `cust-${Date.now()}`, name: data.customer.name, mobile: data.customer.mobile,
-        email: data.customer.email || '', totalOrders: 1, totalSpending: data.total,
+        email: data.customer.email || '', totalOrders: 1, totalSpending: total,
         lastOrder: new Date().toISOString(), createdAt: new Date().toISOString(),
         addresses: [{ address: data.customer.address, village: data.customer.village, mandal: data.customer.mandal, pincode: data.customer.pincode }],
       };
