@@ -541,7 +541,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (page === 'order-tracking') setTrackingOrderId(orderId);
     const rm: Record<Page, string> = {
       home: '/', splash: '/splash', 'welcome-gate': '/', products: '/products', 'product-detail': '/product',
-      services: '/services', gallery: '/gallery', about: '/about',
+      services: '/services', gallery: '/gallery',
       contact: '/contact', checkout: '/checkout', 'order-success': '/order-success', 'order-tracking': '/track-order',
       terms: '/terms', 'admin-login': '/manage-portal-9f3a', admin: '/manage-portal-9f3a',
     };
