@@ -17,8 +17,7 @@
  *       hsn_orders table does not exist yet; the site falls back to its
  *       current on-device tracking.
  */
-import type { ApiRequest, ApiResponse } from './_lib/server';
-import { getServiceClient, json, rateLimited } from './_lib/server';
+import { getServiceClient, json, rateLimited } from './_lib/server.js';
 
 const BLANK_CUSTOMER = {
   name: '',
@@ -31,7 +30,7 @@ const BLANK_CUSTOMER = {
   landmark: '',
 };
 
-export default async function handler(req: ApiRequest, res: ApiResponse) {
+export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return json(res, 405, { error: 'Method not allowed.' });
   }
@@ -57,14 +56,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (error) {
     return json(res, 503, { error: 'server_not_configured' });
   }
-  const row = (data || [])[0] as
-    | { order_id?: string; status?: string; total?: number; data?: unknown }
-    | undefined;
+  const row = (data || [])[0];
   if (!row || !row.data || typeof row.data !== 'object') {
     return json(res, 404, { error: 'not_found' });
   }
-  const order = row.data as Record<string, unknown>;
-  const customer = (order.customer || {}) as Record<string, unknown>;
+  const order = row.data;
+  const customer = order.customer || {};
   const orderMobile = typeof customer.mobile === 'string' ? customer.mobile : '';
   if (mobile && mobile !== orderMobile) {
     return json(res, 403, { error: 'mobile_mismatch' });
@@ -73,8 +70,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   return json(res, 200, {
     order: {
       ...order,
-      orderId: (row.order_id as string) || (order.orderId as string),
-      status: (row.status as string) || (order.status as string),
+      orderId: row.order_id || order.orderId,
+      status: row.status || order.status,
       total: typeof row.total === 'number' ? row.total : order.total,
       customer: unlocked ? customer : BLANK_CUSTOMER,
     },

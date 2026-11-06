@@ -15,7 +15,6 @@
  *       hsn_orders table does not exist yet. The site then falls back to
  *       its current browser-direct checkout, so nothing breaks.
  */
-import type { ApiRequest, ApiResponse } from './_lib/server';
 import {
   computeCharges,
   getCatalog,
@@ -25,11 +24,11 @@ import {
   priceItems,
   rateLimited,
   readJsonBody,
-} from './_lib/server';
+} from './_lib/server.js';
 
 const PAYMENT_MODES = ['Cash on Delivery', 'UPI on Delivery'];
 
-function validCustomer(c: Record<string, unknown>): string | null {
+function validCustomer(c) {
   const name = typeof c.name === 'string' ? c.name.trim() : '';
   const mobile = typeof c.mobile === 'string' ? c.mobile.trim() : '';
   const address = typeof c.address === 'string' ? c.address.trim() : '';
@@ -45,7 +44,7 @@ function validCustomer(c: Record<string, unknown>): string | null {
   return null;
 }
 
-export default async function handler(req: ApiRequest, res: ApiResponse) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return json(res, 405, { error: 'Method not allowed.' });
   }
@@ -53,7 +52,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     return json(res, 429, { error: 'Too many orders. Please try again in a minute.' });
   }
   const body = readJsonBody(req);
-  const customer = (body.customer || {}) as Record<string, unknown>;
+  const customer = body.customer || {};
   const customerError = validCustomer(customer);
   if (customerError) return json(res, 400, { error: customerError });
 
@@ -116,15 +115,14 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     }),
     total,
     customer: {
-      name: (customer.name as string).trim(),
-      mobile: (customer.mobile as string).trim(),
-      email:
-        typeof customer.email === 'string' ? customer.email.trim() : '',
-      address: (customer.address as string).trim(),
+      name: customer.name.trim(),
+      mobile: customer.mobile.trim(),
+      email: typeof customer.email === 'string' ? customer.email.trim() : '',
+      address: customer.address.trim(),
       village: typeof customer.village === 'string' ? customer.village.trim() : '',
       mandal: typeof customer.mandal === 'string' ? customer.mandal.trim() : '',
       pincode: typeof customer.pincode === 'string' ? customer.pincode.trim() : '',
-      landmark: (customer.landmark as string).trim(),
+      landmark: customer.landmark.trim(),
     },
     paymentMode,
     deliveryNote,

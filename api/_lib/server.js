@@ -1,11 +1,16 @@
 /**
  * Shared helpers for the HSN Node backend (Vercel serverless API, same repo).
  *
- * BUILD 84: the browser used to talk straight to Supabase with the public
- * anon key, so anyone could send any price and any order. These endpoints
- * sit in the middle: they re-price every order from the server's own
- * product list and write to Postgres with the service-role key, which the
- * browser never sees.
+ * BUILD 85 note: these files are plain JavaScript on purpose. The first
+ * version was TypeScript, and Vercel's file tracer (@vercel/nft) cannot
+ * parse `interface` declarations or `import type` statements — it silently
+ * dropped every import from those files, so the deployed functions crashed
+ * on load with FUNCTION_INVOCATION_FAILED. Plain JS traces cleanly.
+ *
+ * The browser used to talk straight to Supabase with the public anon key,
+ * so anyone could send any price and any order. These endpoints sit in the
+ * middle: they re-price every order from the server's own product list and
+ * write to Postgres with the service-role key, which the browser never sees.
  *
  * Two dashboard steps activate the backend (until then every endpoint
  * answers 503 `server_not_configured` and the site keeps working exactly
@@ -16,47 +21,28 @@
  *      Environment Variables (Supabase dashboard -> Settings -> API ->
  *      service_role key). Never put it in code, chat, or git.
  */
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { products as bundledProducts, defaultTransportZones } from '../../src/data';
-import type { Product, TransportZone } from '../../src/types';
 
-export const SUPABASE_URL =
+const SUPABASE_URL =
   process.env.SUPABASE_URL || 'https://jteynbnnxxtulphkxtlc.supabase.co';
 const SITE_CONTENT_URL = `${SUPABASE_URL}/storage/v1/object/public/site-content/site-content.json?cache-max-age=0`;
 
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-/** Minimal structural types for a Vercel Node function (no new dependency). */
-export interface ApiRequest {
-  method?: string;
-  body?: unknown;
-  query?: Record<string, string | string[] | undefined>;
-  headers: Record<string, string | string[] | undefined>;
-}
-
-export interface ApiResponse {
-  status(code: number): ApiResponse;
-  json(body: unknown): void;
-}
-
-export function json(res: ApiResponse, status: number, body: unknown): void {
+export function json(res, status, body) {
   res.status(status).json(body);
 }
 
 /** Service-role client (bypasses RLS). Null until the key is configured. */
-export function getServiceClient(): SupabaseClient | null {
+export function getServiceClient() {
   if (!SERVICE_KEY) return null;
   return createClient(SUPABASE_URL, SERVICE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
 
-export interface Catalog {
-  products: Product[];
-  zones: TransportZone[];
-}
-
-let catalogCache: { at: number; catalog: Catalog } | null = null;
+let catalogCache = null;
 
 /**
  * Current products + transport zones. Prefers the live shared copy in
@@ -64,10 +50,10 @@ let catalogCache: { at: number; catalog: Catalog } | null = null;
  * edits apply here too); falls back to the bundled defaults if that fetch
  * fails, so a Storage blip never blocks checkout.
  */
-export async function getCatalog(): Promise<Catalog> {
+export async function getCatalog() {
   const now = Date.now();
   if (catalogCache && now - catalogCache.at < 60_000) return catalogCache.catalog;
-  const fallback: Catalog = {
+  const fallback = {
     products: bundledProducts,
     zones: defaultTransportZones,
   };
@@ -80,13 +66,9 @@ export async function getCatalog(): Promise<Catalog> {
     });
     clearTimeout(timer);
     if (!res.ok) return fallback;
-    const data = (await res.json()) as Record<string, unknown>;
-    const products = Array.isArray(data.products)
-      ? (data.products as Product[])
-      : bundledProducts;
-    const zones = Array.isArray(data.transportZones)
-      ? (data.transportZones as TransportZone[])
-      : fallback.zones;
+    const data = await res.json();
+    const products = Array.isArray(data.products) ? data.products : bundledProducts;
+    const zones = Array.isArray(data.transportZones) ? data.transportZones : fallback.zones;
     const catalog = { products, zones };
     catalogCache = { at: now, catalog };
     return catalog;
@@ -95,35 +77,14 @@ export async function getCatalog(): Promise<Catalog> {
   }
 }
 
-export interface PricedItem {
-  productId: string;
-  name: string;
-  size?: string;
-  quantity: number;
-  unitPrice: number;
-  type: string;
-  /** Full catalogue product, so the stored order renders exactly like a
-   *  browser-placed one in the admin dashboard. */
-  product: Product;
-}
-
-export interface PriceResult {
-  ok: boolean;
-  error?: string;
-  items?: PricedItem[];
-  itemsTotal?: number;
-}
-
 /**
  * Re-price a cart from the server's product list. Client-sent prices are
  * never trusted. Stock is checked only when the stored stock is positive:
  * a zero stock value in the catalogue must not block an order the site
  * itself would have accepted (the drawer only caps when stock > 0).
+ * Returns { ok, items, itemsTotal } or { ok: false, error }.
  */
-export function priceItems(
-  rawItems: unknown,
-  products: Product[],
-): PriceResult {
+export function priceItems(rawItems, products) {
   if (!Array.isArray(rawItems) || rawItems.length === 0) {
     return { ok: false, error: 'Cart is empty.' };
   }
@@ -131,15 +92,15 @@ export function priceItems(
     return { ok: false, error: 'Too many items in one order.' };
   }
   const byId = new Map(products.map((p) => [p.id, p]));
-  const priced: PricedItem[] = [];
+  const priced = [];
   let itemsTotal = 0;
-  for (const raw of rawItems as Record<string, unknown>[]) {
+  for (const raw of rawItems) {
     if (!raw || typeof raw !== 'object') {
       return { ok: false, error: 'Invalid item.' };
     }
     const productId = typeof raw.productId === 'string' ? raw.productId : '';
     const size = typeof raw.size === 'string' ? raw.size : undefined;
-    const quantity = raw.quantity as number;
+    const quantity = raw.quantity;
     if (!productId || !Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
       return { ok: false, error: 'Invalid item quantity.' };
     }
@@ -175,22 +136,13 @@ export function priceItems(
   return { ok: true, items: priced, itemsTotal };
 }
 
-export interface Charges {
-  deliveryCharge: number;
-  handlingCharge: number;
-}
-
 /**
  * Delivery + handling, recomputed server-side from the same rules the
  * checkout page uses: zone charge by delivery location (0 for pickup),
  * handling Rs.5 per cement unit and Rs.20 per steel/wire unit.
+ * Returns { ok, charges } or { ok: false, error }.
  */
-export function computeCharges(
-  priced: PricedItem[],
-  deliveryLocation: string,
-  deliveryMethod: string,
-  zones: TransportZone[],
-): { ok: boolean; error?: string; charges?: Charges } {
+export function computeCharges(priced, deliveryLocation, deliveryMethod, zones) {
   let deliveryCharge = 0;
   if (deliveryMethod !== 'pickup') {
     const zone = zones.find((z) => z.name === deliveryLocation);
@@ -213,9 +165,7 @@ export function computeCharges(
 }
 
 /** Readable order id, same format as the site's own generator. */
-export async function newOrderId(
-  client: SupabaseClient,
-): Promise<string> {
+export async function newOrderId(client) {
   const year = new Date().getFullYear();
   let count = 0;
   try {
@@ -233,12 +183,12 @@ export async function newOrderId(
 }
 
 /** Parse a JSON body (Vercel usually parses it already). */
-export function readJsonBody(req: ApiRequest): Record<string, unknown> {
+export function readJsonBody(req) {
   const body = req.body;
-  if (body && typeof body === 'object') return body as Record<string, unknown>;
+  if (body && typeof body === 'object') return body;
   if (typeof body === 'string') {
     try {
-      return JSON.parse(body) as Record<string, unknown>;
+      return JSON.parse(body);
     } catch {
       return {};
     }
@@ -246,25 +196,20 @@ export function readJsonBody(req: ApiRequest): Record<string, unknown> {
   return {};
 }
 
-function clientIp(req: ApiRequest): string {
+function clientIp(req) {
   const fwd = req.headers['x-forwarded-for'];
   const first = Array.isArray(fwd) ? fwd[0] : (fwd || '').split(',')[0];
   return (first || 'unknown').trim();
 }
 
-const rateBuckets = new Map<string, { count: number; resetAt: number }>();
+const rateBuckets = new Map();
 
 /**
  * Best-effort per-IP throttle (per serverless instance, not global).
  * The public anon insert already exists today, so this does not make
  * spam any easier than it already is — it only adds friction.
  */
-export function rateLimited(
-  req: ApiRequest,
-  key: string,
-  limit: number,
-  windowMs: number,
-): boolean {
+export function rateLimited(req, key, limit, windowMs) {
   const bucketKey = `${key}:${clientIp(req)}`;
   const now = Date.now();
   const bucket = rateBuckets.get(bucketKey);
