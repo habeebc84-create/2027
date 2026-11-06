@@ -39,10 +39,10 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold text-ivory mb-4 border-b border-gunmetal pb-2">Quick Navigation</h4>
             <ul className="space-y-2 font-medium">
-              {['home', 'products', 'services', 'gallery', 'about', 'contact'].map(page => (
+              {['home', 'products', 'services', 'gallery', 'contact'].map(page => (
                 <li key={page}>
                   <button onClick={() => setPage(page as any)} className="hover:text-ivory transition capitalize text-xs">
-                    {page === 'about' ? 'About Us' : page}
+                    {page}
                   </button>
                 </li>
               ))}
