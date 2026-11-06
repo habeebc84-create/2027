@@ -71,6 +71,9 @@ export default async function handler(req, res) {
     typeof body.deliveryNote === 'string' ? body.deliveryNote.slice(0, 500) : '';
 
   const catalog = await getCatalog();
+  if (!catalog) {
+    return json(res, 503, { error: 'server_not_configured' });
+  }
   const priced = priceItems(body.items, catalog.products);
   if (!priced.ok || !priced.items || priced.itemsTotal === undefined) {
     return json(res, 400, { error: priced.error || 'Invalid items.' });

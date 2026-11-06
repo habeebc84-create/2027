@@ -22,7 +22,6 @@
  *      service_role key). Never put it in code, chat, or git.
  */
 import { createClient } from '@supabase/supabase-js';
-import { products as bundledProducts, defaultTransportZones } from '../../src/data';
 
 const SUPABASE_URL =
   process.env.SUPABASE_URL || 'https://jteynbnnxxtulphkxtlc.supabase.co';
@@ -45,18 +44,20 @@ export function getServiceClient() {
 let catalogCache = null;
 
 /**
- * Current products + transport zones. Prefers the live shared copy in
+ * Current products + transport zones, from the live shared copy in
  * Supabase Storage (the same file the site itself reads, so admin price
- * edits apply here too); falls back to the bundled defaults if that fetch
- * fails, so a Storage blip never blocks checkout.
+ * edits apply here too). Null when the fetch fails — the caller then
+ * answers 503 and the site falls back to its browser-direct path.
+ *
+ * BUILD 86 note: no bundled fallback on purpose. The first version fell
+ * back to `../../src/data`, a TypeScript file, and the deployed function
+ * still crashed on load — the runtime cannot load a .ts file required
+ * from a .js function. The API now depends only on plain JS + the live
+ * cloud copy, so there is no .ts file anywhere in its import graph.
  */
 export async function getCatalog() {
   const now = Date.now();
   if (catalogCache && now - catalogCache.at < 60_000) return catalogCache.catalog;
-  const fallback = {
-    products: bundledProducts,
-    zones: defaultTransportZones,
-  };
   try {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 5000);
@@ -65,15 +66,16 @@ export async function getCatalog() {
       signal: ctrl.signal,
     });
     clearTimeout(timer);
-    if (!res.ok) return fallback;
+    if (!res.ok) return null;
     const data = await res.json();
-    const products = Array.isArray(data.products) ? data.products : bundledProducts;
-    const zones = Array.isArray(data.transportZones) ? data.transportZones : fallback.zones;
-    const catalog = { products, zones };
+    if (!Array.isArray(data.products) || !Array.isArray(data.transportZones)) {
+      return null;
+    }
+    const catalog = { products: data.products, zones: data.transportZones };
     catalogCache = { at: now, catalog };
     return catalog;
   } catch {
-    return fallback;
+    return null;
   }
 }
 
