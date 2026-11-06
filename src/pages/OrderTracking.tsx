@@ -3,9 +3,10 @@ import { Search, Package, CheckCircle, Clock, Truck, MapPin, Phone, ArrowLeft, C
 import { useApp } from '../context/AppContext';
 import { telHref, nationalDigits } from '../lib/phone';
 import { orderTrackingUrl } from '../lib/deepLink';
+import { trackOrderViaApi } from '../lib/apiOrders';
 import { bustedImageSrc } from '../lib/images';
 import { QRCodeSVG } from 'qrcode.react';
-import { ORDER_STATUSES } from '../types';
+import { ORDER_STATUSES, type Order } from '../types';
 
 const statusIcons: Record<string, any> = {
   placed: Package, confirmed: CheckCircle, processing: Clock, ready_dispatch: Package, out_delivery: Truck, delivered: CheckCircle, cancelled: Package, returned: Package,
@@ -29,24 +30,47 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
   const [piiUnlocked, setPiiUnlocked] = useState(false);
   const [piiMobile, setPiiMobile] = useState('');
   const [piiError, setPiiError] = useState('');
+  // BUILD 84: an order fetched from the Node backend (not on this device
+  // yet). Kept separate from the local list so a status-only copy (mobile
+  // not matched, customer blanked) never overwrites the real order later.
+  const [remoteOrder, setRemoteOrder] = useState<Order | null>(null);
 
-  const handleSearch = () => {
-    setError(''); setFound(false); setPiiUnlocked(false); setPiiError('');
+  const handleSearch = async () => {
+    setError(''); setFound(false); setPiiUnlocked(false); setPiiError(''); setRemoteOrder(null);
     if (!orderId.trim()) { setError('Please enter your Order ID'); return; }
     const order = getOrderById(orderId.trim());
-    if (!order) { setError('Order not found. Please check your Order ID.'); return; }
-    if (mobile && order.customer.mobile !== mobile.trim()) { setError('Mobile number does not match this order.'); return; }
-    // Mobile matches (or was left blank for status-only view).
-    setPiiUnlocked(Boolean(mobile) && order.customer.mobile === mobile.trim());
+    if (order) {
+      if (mobile && order.customer.mobile !== mobile.trim()) { setError('Mobile number does not match this order.'); return; }
+      // Mobile matches (or was left blank for status-only view).
+      setPiiUnlocked(Boolean(mobile) && order.customer.mobile === mobile.trim());
+      setFound(true);
+      return;
+    }
+    // Not on this device yet — ask the Node backend, which reads Postgres.
+    setSearching(true);
+    const res = await trackOrderViaApi(orderId.trim(), mobile.trim() || undefined);
+    setSearching(false);
+    if (res.kind === 'mismatch') { setError('Mobile number does not match this order.'); return; }
+    if (res.kind !== 'ok') { setError('Order not found. Please check your Order ID.'); return; }
+    setRemoteOrder(res.order);
+    setPiiUnlocked(Boolean(mobile) && res.order.customer.mobile === mobile.trim());
     setFound(true);
   };
 
-  const unlockPii = () => {
+  const unlockPii = async () => {
     setPiiError('');
     const order = getOrderById(orderId.trim());
-    if (!order) { setPiiError('Order not found.'); return; }
-    if (order.customer.mobile === piiMobile.trim()) setPiiUnlocked(true);
-    else setPiiError('Mobile number does not match this order.');
+    if (order) {
+      if (order.customer.mobile === piiMobile.trim()) setPiiUnlocked(true);
+      else setPiiError('Mobile number does not match this order.');
+      return;
+    }
+    // Status-only copy from the backend: re-ask with the mobile to unlock.
+    if (!remoteOrder) { setPiiError('Order not found.'); return; }
+    const res = await trackOrderViaApi(orderId.trim(), piiMobile.trim());
+    if (res.kind === 'ok') { setRemoteOrder(res.order); setPiiUnlocked(true); }
+    else if (res.kind === 'mismatch') setPiiError('Mobile number does not match this order.');
+    else setPiiError('Order not found.');
   };
 
   // Opened from an order's QR code: fetch that exact order automatically.
@@ -68,13 +92,23 @@ export default function OrderTracking({ initialOrderId }: { initialOrderId?: str
         return;
       }
       if (tries < 7 && alive) { setTimeout(() => attempt(tries + 1), 1200); }
-      else if (alive) { setSearching(false); setAutoOpening(false); setError('Order not found on this device yet. Please try again in a moment.'); }
+      else if (alive) {
+        // Last resort: ask the Node backend (Postgres) for a status-only
+        // copy, so a QR scan works even before this device has synced.
+        const res = await trackOrderViaApi(initialOrderId);
+        if (alive && res.kind === 'ok') {
+          setRemoteOrder(res.order); setFound(true); setSearching(false); setAutoOpening(false);
+        } else if (alive) {
+          setSearching(false); setAutoOpening(false);
+          setError('Order not found on this device yet. Please try again in a moment.');
+        }
+      }
     };
     void attempt();
     return () => { alive = false; };
   }, [initialOrderId, getOrderById, refreshFromCloud]);
 
-  const order = found ? getOrderById(orderId.trim()) : null;
+  const order = found ? (getOrderById(orderId.trim()) || remoteOrder) : null;
   const trackUrl = order ? orderTrackingUrl(order.orderId) : '';
 
   const copyTrackingLink = () => {

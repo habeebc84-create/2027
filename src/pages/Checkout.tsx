@@ -68,17 +68,23 @@ export default function Checkout({ onBackToCart, onOrderSuccess }: { onBackToCar
                 if (!/^[6-9]\d{9}$/.test(mobileDigits)) { showToast('Enter a valid 10-digit Indian mobile number.', 'error'); return; }
                 if (pincode && !/^\d{6}$/.test(pincode.replace(/\D/g, ''))) { showToast('Pincode must be 6 digits.', 'error'); return; }
                 setIsProcessing(true);
-                setTimeout(() => {
+                setTimeout(async () => {
                   // BUILD 65: use the id placeOrder actually created — the
                   // old code computed its own id from the counter, which
-                  // could drift from the stored order.
-                  const oid = placeOrder({
-                    items: cart, total: totalPayable,
-                    customer: { name, mobile: mobileDigits, email, address, village, mandal, pincode, landmark },
-                    paymentMode, deliveryNote, deliveryLocation: selectedZone.name,
-                    deliveryCharge, handlingCharge, deliveryMethod,
-                  });
-                  onOrderSuccess(oid);
+                  // could drift from the stored order. BUILD 84: placeOrder
+                  // is async now (it tries the Node backend first).
+                  try {
+                    const oid = await placeOrder({
+                      items: cart, total: totalPayable,
+                      customer: { name, mobile: mobileDigits, email, address, village, mandal, pincode, landmark },
+                      paymentMode, deliveryNote, deliveryLocation: selectedZone.name,
+                      deliveryCharge, handlingCharge, deliveryMethod,
+                    });
+                    onOrderSuccess(oid);
+                  } catch {
+                    setIsProcessing(false);
+                    showToast('Could not place the order. Please try again.', 'error');
+                  }
                 }, 1500);
               }} className="space-y-5 text-xs sm:text-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
