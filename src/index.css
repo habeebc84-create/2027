@@ -697,17 +697,59 @@
 }
 
 /* CTA Row */
-.splash-quiet-call {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 14px;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.65);
-  text-decoration: underline;
-  text-underline-offset: 4px;
+/* ============================================================
+   LIME GLASS (BUILD 90) — a lime-tinted glass layer that sits
+   IN BETWEEN the ink background and the silver glass nav
+   surfaces (splash dock, top-bar pill, bottom dock). The layer
+   is a soft lime glow behind the silver glass; the bead is a
+   thin lime glass seam on the edge facing the page. Static
+   (no animation), so reduced-motion is unaffected.
+   ============================================================ */
+.lime-glass-layer {
+  position: absolute;
+  inset: -12px -16px;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse 62% 95% at 50% 0%, rgba(163, 230, 53, 0.22) 0%, rgba(163, 230, 53, 0.07) 55%, rgba(163, 230, 53, 0) 78%);
+  filter: blur(10px);
+  pointer-events: none;
 }
-.splash-quiet-call:hover { color: #fff; }
+.lime-glass-bead {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(163, 230, 53, 0) 0%, rgba(190, 242, 100, 0.8) 50%, rgba(163, 230, 53, 0) 100%);
+  pointer-events: none;
+}
+.lime-glass-bead-top { top: -1px; }
+/* Same lime glass on the top-bar pill (bead on its bottom edge) and the
+   bottom dock (bead on its top edge), via pseudo-elements so no extra
+   DOM is needed there. */
+.navbar-pill::before,
+.dock-glass::before {
+  content: "";
+  position: absolute;
+  inset: -12px -16px;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse 62% 95% at 50% 0%, rgba(163, 230, 53, 0.22) 0%, rgba(163, 230, 53, 0.07) 55%, rgba(163, 230, 53, 0) 78%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+.navbar-pill::after,
+.dock-glass::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(163, 230, 53, 0) 0%, rgba(190, 242, 100, 0.8) 50%, rgba(163, 230, 53, 0) 100%);
+  pointer-events: none;
+}
+.navbar-pill::after { bottom: -1px; }
+.dock-glass::after { top: -1px; }
+.lime-glass-bead-bottom { bottom: -1px; }
 .splash-cta-row {
   display: flex;
   flex-wrap: wrap;
