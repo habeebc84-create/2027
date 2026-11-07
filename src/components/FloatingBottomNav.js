@@ -53,7 +53,7 @@ export default function FloatingBottomNav({ visible }) {
             justifyContent: 'center',
             zIndex: 60,
             pointerEvents: 'none',
-        }, animate: visible ? { opacity: 1, y: 0 } : { opacity: 0, y: animate ? 12 : 0 }, transition: { duration: animate ? 0.32 : 0, ease: 'easeOut' }, "aria-label": "Primary navigation", "aria-hidden": !visible, inert: !visible, children: _jsxs("div", { className: "relative rounded-full w-[calc(100vw-16px)] sm:w-auto p-1.5 border border-gunmetal", style: {
+        }, animate: visible ? { opacity: 1, y: 0 } : { opacity: 0, y: animate ? 12 : 0 }, transition: { duration: animate ? 0.32 : 0, ease: 'easeOut' }, "aria-label": "Primary navigation", "aria-hidden": !visible, inert: !visible, children: _jsxs("div", { className: "dock-glass relative rounded-full w-[calc(100vw-16px)] sm:w-auto p-1.5 border border-gunmetal", style: {
                 pointerEvents: visible ? 'auto' : 'none',
                 maxWidth: 'calc(100vw - 16px)',
                 background: 'linear-gradient(180deg, rgba(26,29,33,0.44) 0%, rgba(26,29,33,0.34) 55%, rgba(26,29,33,0.28) 100%)',
