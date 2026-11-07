@@ -1,0 +1,18 @@
+export const ORDER_STATUSES = [
+    { key: 'placed', label: 'Order Placed', color: 'text-brand-400 bg-brand-500/20 border-brand-500/30' },
+    { key: 'confirmed', label: 'Order Confirmed', color: 'text-brand-400 bg-brand-500/20 border-brand-500/30' },
+    { key: 'processing', label: 'Processing', color: 'text-brand-400 bg-brand-500/20 border-brand-500/30' },
+    { key: 'ready_dispatch', label: 'Ready for Dispatch', color: 'text-brand-400 bg-brand-500/20 border-brand-500/30' },
+    { key: 'out_delivery', label: 'Out for Delivery', color: 'text-brand-400 bg-brand-500/20 border-brand-500/30' },
+    { key: 'delivered', label: 'Delivered', color: 'text-success-foreground bg-success/20 border-success/40' },
+    { key: 'cancelled', label: 'Cancelled', color: 'text-silver bg-gunmetal/40 border-gunmetal' },
+    { key: 'returned', label: 'Returned', color: 'text-silver bg-slate-500/20 border-slate-500/30' },
+];
+export const DEFAULT_TERMS = [
+    { id: 'terms', title: 'Terms & Conditions', content: 'Welcome to HSN Cement & Steel. By accessing or using our website and services, you agree to be bound by these Terms and Conditions. All products are subject to availability. Prices may change without prior notice. Orders are subject to confirmation. Delivery times are estimates and not guaranteed. Payment must be completed before dispatch unless agreed otherwise for credit accounts. We reserve the right to refuse or cancel any order. Disputes shall be subject to the jurisdiction of courts in Andhra Pradesh, India.', lastUpdated: new Date().toISOString() },
+    { id: 'privacy', title: 'Privacy Policy', content: 'HSN Cement & Steel respects your privacy. We collect personal information only to process orders and improve our services. Your data is stored securely and is not shared with third parties except as necessary for order fulfillment. We may use your contact information to communicate about orders, promotions, and service updates. You can request deletion of your data at any time by contacting us.', lastUpdated: new Date().toISOString() },
+    { id: 'shipping', title: 'Shipping Policy', content: 'We offer delivery across Kalikiri and surrounding mandals in Annamayya District. Delivery charges vary by location and order size. Same-day delivery is available for orders placed before 2:00 PM. Bulk orders may require 1-2 business days for preparation. Self-pickup is available at our Kalikiri yard during business hours.', lastUpdated: new Date().toISOString() },
+    { id: 'returns', title: 'Return Policy', content: 'Due to the nature of construction materials, returns are accepted only for damaged or defective products. Claims must be reported within 24 hours of delivery with photographic evidence. Cement bags opened or used cannot be returned. Steel products cut to custom lengths are non-returnable. Approved returns will be processed within 7 business days.', lastUpdated: new Date().toISOString() },
+    { id: 'cancellation', title: 'Cancellation Policy', content: 'Orders can be cancelled before dispatch without any charge. Once dispatched, cancellation is not possible. For bulk orders, cancellation within 24 hours of confirmation may incur a 5% processing fee. Refunds for cancelled orders are processed within 5-7 business days.', lastUpdated: new Date().toISOString() },
+    { id: 'payment', title: 'Payment Policy', content: 'We accept Cash on Delivery, UPI payments, bank transfers, and cheques (for verified contractors). All prices are inclusive of GST unless stated otherwise. Credit terms may be available for established contractors subject to approval. Outstanding balances must be cleared within 30 days.', lastUpdated: new Date().toISOString() },
+];

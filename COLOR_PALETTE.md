@@ -76,7 +76,7 @@ stays reserved for admin actions and accents, never for background light.
 
 ## Print / PDF
 
-`src/lib/pdfColors.ts` mirrors the CSS tokens as numeric RGB tuples for jsPDF.
+The invoice (`src/lib/invoice.js`) uses inline RGB tuples for jsPDF.
 Invoices use porcelain paper, graphite ink, champagne brand rules, obsidian
 header/footer bands, and deep green only for delivered status.
 
