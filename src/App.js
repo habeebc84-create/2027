@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { trackVisit } from './lib/visitTracking';
 import CartDrawer from './components/CartDrawer';
 import ToastContainer from './components/Toast';
 import NotificationPopup from './components/NotificationPopup';
@@ -91,6 +92,12 @@ function AppContent() {
         window.addEventListener('unhandledrejection', onReject);
         return () => { window.removeEventListener('error', onError); window.removeEventListener('unhandledrejection', onReject); };
     }, []);
+    // Visitor Intelligence: one anonymous page view per page the visitor
+    // opens. The admin's own panel and login are never counted.
+    useEffect(() => {
+        if (currentPage === 'admin' || currentPage === 'admin-login') return;
+        trackVisit(currentPage);
+    }, [currentPage]);
     const [successOrderId, setSuccessOrderId] = useState(null);
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
