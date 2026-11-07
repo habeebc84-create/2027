@@ -650,8 +650,8 @@
 /* Home hero: small-viewport units so mobile browser chrome doesn't
    make the hero taller than the visible area (vh fallback first). */
 .home-hero {
-  min-height: 72vh;
-  min-height: 72svh;
+  /* No forced height: the hero is as tall as its content + padding,
+     so the headline sits in air instead of a 72vh black void. */
 }
 
 .splash-letter {
@@ -697,6 +697,17 @@
 }
 
 /* CTA Row */
+.splash-quiet-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.splash-quiet-call:hover { color: #fff; }
 .splash-cta-row {
   display: flex;
   flex-wrap: wrap;

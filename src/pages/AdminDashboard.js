@@ -1,10 +1,11 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState } from 'react';
-import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, Edit, Trash2, Plus, Bell, FileText, Truck, Menu, Clock, Search, Filter, Globe, Lock, CheckCircle, Image as ImageIcon } from 'lucide-react';
+import { jsx as _jsx, jsxs as _jsxs, Fragment } from "react/jsx-runtime";
+import { useState, useEffect } from 'react';
+import { BarChart3, Package, ShoppingCart, Users, Settings, LogOut, TrendingUp, Edit, Trash2, Plus, Bell, FileText, Truck, Menu, Clock, Search, Filter, Globe, Lock, CheckCircle, Eye, Image as ImageIcon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { ORDER_STATUSES } from '../types';
 import { bustedImageSrc, compressImageFile } from '../lib/images';
 import { changeAdminAuthPassword } from '../lib/adminAuth';
+import { fetchVisits } from '../lib/visitsDb';
 import { splitLaunchDateTime, joinLaunchDateTime, parseLaunchTime } from '../lib/launch';
 export default function AdminDashboard() {
     const ctx = useApp();
@@ -17,6 +18,7 @@ export default function AdminDashboard() {
     const navItems = [
         { id: 'overview', label: 'Overview', icon: BarChart3 },
         { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+        { id: 'visitors', label: 'Visitor Intelligence', icon: Eye },
         { id: 'products', label: 'Products', icon: Package },
         { id: 'categories', label: 'Categories', icon: Filter },
         { id: 'orders', label: 'Orders', icon: ShoppingCart, badge: pendingOrders.length },
@@ -40,6 +42,7 @@ export default function AdminDashboard() {
         switch (adminPage) {
             case 'overview': return _jsx(OverviewSection, {});
             case 'analytics': return _jsx(AnalyticsSection, {});
+            case 'visitors': return _jsx(VisitorIntelligenceSection, {});
             case 'products': return _jsx(ProductsSection, {});
             case 'categories': return _jsx(CategoriesSection, {});
             case 'orders': return _jsx(OrdersSection, {});
@@ -86,7 +89,157 @@ export default function AdminDashboard() {
                                         const maxUnits = bestSelling[0][1] || 1;
                                         return (_jsxs("div", { className: "flex items-center space-x-3", children: [_jsx("span", { className: "w-5 h-5 rounded-xl bg-brand text-[9px] font-black text-obsidian flex items-center justify-center shrink-0", children: i + 1 }), _jsx("span", { className: "w-36 sm:w-44 text-xs font-bold text-ivory line-clamp-1", children: name }), _jsx("div", { className: "flex-1 h-3 bg-charcoal rounded-full overflow-hidden", children: _jsx("div", { className: "h-full bg-gradient-to-r from-brand-500 to-brand-500 rounded-full transition-all", style: { width: `${(units / maxUnits) * 100}%` } }) }), _jsxs("span", { className: "text-xs font-black text-ivory w-16 text-right", children: [units, " units"] })] }, name));
                                     }) }))] })] })] }));
-    }; // PRODUCTS
+    };
+    // VISITOR INTELLIGENCE — anonymous visits: city, device, browser,
+    // return visits and which ad or link brought them. No names, phones
+    // or IP addresses are ever stored. Bots are recorded but hidden
+    // from the counts by default.
+    const VisitorIntelligenceSection = () => {
+      const [range, setRange] = useState(30);
+      const [visits, setVisits] = useState(void 0);
+      const [showBots, setShowBots] = useState(false);
+      useEffect(() => {
+        let cancelled = false;
+        setVisits(void 0);
+        fetchVisits(range).then((rows) => {
+          if (!cancelled) setVisits(rows);
+        });
+        return () => {
+          cancelled = true;
+        };
+      }, [range]);
+      const all = visits || [];
+      const human = all.filter((v) => !v.isBot);
+      const bots = all.length - human.length;
+      const shown = showBots ? all : human;
+      const seenCounts = {};
+      human.forEach((v) => {
+        seenCounts[v.visitorId] = (seenCounts[v.visitorId] || 0) + 1;
+      });
+      const uniqueVisitors = Object.keys(seenCounts).length;
+      const returningVisitors = Object.values(seenCounts).filter((n) => n > 1).length;
+      const topList = (rows, keyFn, n) => {
+        const counts = {};
+        rows.forEach((r) => {
+          const k = keyFn(r) || "Unknown";
+          counts[k] = (counts[k] || 0) + 1;
+        });
+        return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, n || 5);
+      };
+      const pageLabel = (p) => ({ home: "Home", products: "Products", "product-detail": "Product", services: "Services", gallery: "Gallery", contact: "Contact", checkout: "Checkout", "order-success": "Order placed", "order-tracking": "Track order", terms: "Terms", "welcome-gate": "Welcome", splash: "Splash" })[p] || p;
+      const referrerHost = (r) => {
+        if (!r) return "Direct";
+        try {
+          return new URL(r).hostname.replace(/^www\./, "");
+        } catch {
+          return r;
+        }
+      };
+      const topCities = topList(human, (v) => `${v.city}, ${v.country}`);
+      const maxCity = Math.max(1, ...topCities.map(([, c]) => c));
+      const topDevices = topList(human, (v) => v.device);
+      const topBrowsers = topList(human, (v) => v.browser);
+      const topPages = topList(human, (v) => pageLabel(v.page));
+      const topSources = topList(human, (v) => v.utmCampaign ? `${v.utmSource || "ad"}: ${v.utmCampaign}` : referrerHost(v.referrer));
+      const stats = [
+        { label: "Total visits", value: human.length, sub: bots > 0 ? `${bots} bot visit${bots === 1 ? "" : "s"} filtered` : "Bots filtered out" },
+        { label: "Unique visitors", value: uniqueVisitors, sub: "Anonymous browsers" },
+        { label: "Returning visitors", value: returningVisitors, sub: "Came back at least once" },
+        { label: "Hot leads", value: human.filter((v) => v.page === "checkout" || v.page === "order-success").length, sub: "Reached checkout" }
+      ];
+      return /* @__PURE__ */ _jsxs("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ _jsx(TopHeader, { title: "Visitor Intelligence" }),
+        /* @__PURE__ */ _jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+          [{ days: 7, label: "Last 7 days" }, { days: 30, label: "Last 30 days" }, { days: 0, label: "All time" }].map((r) => /* @__PURE__ */ _jsx("button", { onClick: () => setRange(r.days), className: `px-3 py-2 rounded-2xl text-xs font-bold border transition ${range === r.days ? "btn-brand border-transparent" : "bg-charcoal text-silver border-gunmetal hover:text-ivory"}`, children: r.label }, r.days)),
+          /* @__PURE__ */ _jsx("button", { onClick: () => setShowBots(!showBots), className: `px-3 py-2 rounded-2xl text-xs font-bold border transition ${showBots ? "btn-brand border-transparent" : "bg-charcoal text-silver border-gunmetal hover:text-ivory"}`, children: showBots ? "Hiding bots" : "Show bots" }),
+          /* @__PURE__ */ _jsx("button", { onClick: () => {
+            setVisits(void 0);
+            fetchVisits(range).then(setVisits);
+          }, className: "px-3 py-2 rounded-2xl text-xs font-bold bg-charcoal text-silver border border-gunmetal hover:text-ivory transition", children: "Refresh" })
+        ] }),
+        visits === void 0 && /* @__PURE__ */ _jsx("p", { className: "text-xs text-silver text-center py-12", children: "Loading visits\u2026" }),
+        visits === null && /* @__PURE__ */ _jsxs("div", { className: "bg-charcoal border border-brand-500/30 rounded-3xl p-6 space-y-3", children: [
+          /* @__PURE__ */ _jsx("h3", { className: "text-sm font-bold text-ivory", children: "Visitor tracking isn't switched on yet" }),
+          /* @__PURE__ */ _jsxs("p", { className: "text-xs text-silver leading-relaxed", children: [
+            "Visits start recording only after two steps \u2014 the same two the orders backend needs: run ",
+            /* @__PURE__ */ _jsx("span", { className: "text-ivory font-bold", children: "supabase/hsn_visits.sql" }),
+            " in the Supabase SQL Editor, and add ",
+            /* @__PURE__ */ _jsx("span", { className: "text-ivory font-bold", children: "SUPABASE_SERVICE_ROLE_KEY" }),
+            " in Vercel \u2192 Project Settings \u2192 Environment Variables. Until then this page stays empty and nothing breaks on the shop."
+          ] })
+        ] }),
+        visits !== null && visits !== void 0 && /* @__PURE__ */ _jsxs(Fragment, { children: [
+          /* @__PURE__ */ _jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4", children: stats.map((s) => /* @__PURE__ */ _jsxs("div", { className: "bg-charcoal border border-gunmetal rounded-3xl p-5", children: [
+            /* @__PURE__ */ _jsx("div", { className: "text-xs font-bold text-silver mb-2", children: s.label }),
+            /* @__PURE__ */ _jsx("div", { className: "text-2xl font-black text-ivory", children: s.value }),
+            /* @__PURE__ */ _jsx("div", { className: "text-[10px] text-silver mt-1", children: s.sub })
+          ] }, s.label)) }),
+          /* @__PURE__ */ _jsxs("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6", children: [
+            /* @__PURE__ */ _jsxs("div", { className: "bg-charcoal border border-gunmetal rounded-3xl p-6", children: [
+              /* @__PURE__ */ _jsx("h3", { className: "text-sm font-bold text-ivory mb-4", children: "Top cities" }),
+              topCities.length === 0 ? /* @__PURE__ */ _jsx("p", { className: "text-xs text-silver text-center py-8", children: "No visits yet in this range" }) : topCities.map(([label, count]) => /* @__PURE__ */ _jsxs("div", { className: "flex items-center space-x-3 py-2", children: [
+                /* @__PURE__ */ _jsx("span", { className: "w-36 sm:w-44 text-xs font-bold text-ivory line-clamp-1", children: label }),
+                /* @__PURE__ */ _jsx("div", { className: "flex-1 h-3 bg-obsidian rounded-full overflow-hidden", children: /* @__PURE__ */ _jsx("div", { className: "h-full bg-gradient-to-r from-brand-500 to-brand-500 rounded-full", style: { width: `${count / maxCity * 100}%` } }) }),
+                /* @__PURE__ */ _jsx("span", { className: "text-xs font-black text-ivory w-8 text-right", children: count })
+              ] }, label))
+            ] }),
+            /* @__PURE__ */ _jsxs("div", { className: "bg-charcoal border border-gunmetal rounded-3xl p-6", children: [
+              /* @__PURE__ */ _jsx("h3", { className: "text-sm font-bold text-ivory mb-4", children: "Devices & browsers" }),
+              /* @__PURE__ */ _jsx("div", { className: "space-y-2", children: topDevices.map(([label, count]) => /* @__PURE__ */ _jsxs("div", { className: "flex items-center justify-between py-1", children: [
+                /* @__PURE__ */ _jsx("span", { className: "text-xs text-silver", children: label }),
+                /* @__PURE__ */ _jsx("span", { className: "text-xs font-bold text-ivory", children: count })
+              ] }, label)) }),
+              /* @__PURE__ */ _jsx("div", { className: "border-t border-gunmetal mt-3 pt-3 space-y-2", children: topBrowsers.map(([label, count]) => /* @__PURE__ */ _jsxs("div", { className: "flex items-center justify-between py-1", children: [
+                /* @__PURE__ */ _jsx("span", { className: "text-xs text-silver", children: label }),
+                /* @__PURE__ */ _jsx("span", { className: "text-xs font-bold text-ivory", children: count })
+              ] }, label)) })
+            ] }),
+            /* @__PURE__ */ _jsxs("div", { className: "bg-charcoal border border-gunmetal rounded-3xl p-6", children: [
+              /* @__PURE__ */ _jsx("h3", { className: "text-sm font-bold text-ivory mb-4", children: "Most viewed pages" }),
+              topPages.length === 0 ? /* @__PURE__ */ _jsx("p", { className: "text-xs text-silver text-center py-8", children: "No visits yet in this range" }) : topPages.map(([label, count]) => /* @__PURE__ */ _jsxs("div", { className: "flex items-center justify-between py-2", children: [
+                /* @__PURE__ */ _jsx("span", { className: "text-xs text-silver", children: label }),
+                /* @__PURE__ */ _jsx("span", { className: "text-xs font-bold text-ivory", children: count })
+              ] }, label))
+            ] }),
+            /* @__PURE__ */ _jsxs("div", { className: "bg-charcoal border border-gunmetal rounded-3xl p-6", children: [
+              /* @__PURE__ */ _jsx("h3", { className: "text-sm font-bold text-ivory mb-4", children: "Where visitors came from" }),
+              topSources.length === 0 ? /* @__PURE__ */ _jsx("p", { className: "text-xs text-silver text-center py-8", children: "No visits yet in this range" }) : topSources.map(([label, count]) => /* @__PURE__ */ _jsxs("div", { className: "flex items-center justify-between py-2", children: [
+                /* @__PURE__ */ _jsx("span", { className: "text-xs text-silver break-all", children: label }),
+                /* @__PURE__ */ _jsx("span", { className: "text-xs font-bold text-ivory shrink-0 ml-3", children: count })
+              ] }, label))
+            ] })
+          ] }),
+          /* @__PURE__ */ _jsxs("div", { className: "bg-charcoal border border-gunmetal rounded-3xl overflow-hidden", children: [
+            /* @__PURE__ */ _jsx("div", { className: "px-6 pt-5 pb-3", children: /* @__PURE__ */ _jsx("h3", { className: "text-sm font-bold text-ivory", children: "Recent visits" }) }),
+            shown.length === 0 ? /* @__PURE__ */ _jsx("p", { className: "text-xs text-silver text-center py-8", children: "No visits yet in this range" }) : /* @__PURE__ */ _jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ _jsxs("table", { className: "w-full text-xs", children: [
+              /* @__PURE__ */ _jsx("thead", { children: /* @__PURE__ */ _jsxs("tr", { className: "border-b border-gunmetal", children: [
+                /* @__PURE__ */ _jsx("th", { className: "text-left px-4 py-3 text-silver font-bold", children: "When" }),
+                /* @__PURE__ */ _jsx("th", { className: "text-left px-4 py-3 text-silver font-bold", children: "City" }),
+                /* @__PURE__ */ _jsx("th", { className: "text-left px-4 py-3 text-silver font-bold hidden sm:table-cell", children: "Device" }),
+                /* @__PURE__ */ _jsx("th", { className: "text-left px-4 py-3 text-silver font-bold hidden sm:table-cell", children: "Browser" }),
+                /* @__PURE__ */ _jsx("th", { className: "text-left px-4 py-3 text-silver font-bold", children: "Page" }),
+                /* @__PURE__ */ _jsx("th", { className: "text-left px-4 py-3 text-silver font-bold hidden md:table-cell", children: "From" }),
+                /* @__PURE__ */ _jsx("th", { className: "text-left px-4 py-3 text-silver font-bold", children: "Visitor" })
+              ] }) }),
+              /* @__PURE__ */ _jsx("tbody", { children: shown.slice(0, 15).map((v) => /* @__PURE__ */ _jsxs("tr", { className: "border-b border-gunmetal/50", children: [
+                /* @__PURE__ */ _jsx("td", { className: "px-4 py-3 text-silver whitespace-nowrap", children: v.visitedAt ? new Date(v.visitedAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "\u2014" }),
+                /* @__PURE__ */ _jsxs("td", { className: "px-4 py-3 font-bold text-ivory", children: [
+                  v.city,
+                  v.city !== "Unknown" && v.country !== "Unknown" ? `, ${v.country}` : ""
+                ] }),
+                /* @__PURE__ */ _jsx("td", { className: "px-4 py-3 text-silver hidden sm:table-cell", children: v.device }),
+                /* @__PURE__ */ _jsx("td", { className: "px-4 py-3 text-silver hidden sm:table-cell", children: v.browser }),
+                /* @__PURE__ */ _jsx("td", { className: "px-4 py-3 text-silver", children: pageLabel(v.page) }),
+                /* @__PURE__ */ _jsx("td", { className: "px-4 py-3 text-silver hidden md:table-cell break-all", children: v.utmCampaign ? `${v.utmSource || "ad"}: ${v.utmCampaign}` : referrerHost(v.referrer) }),
+                /* @__PURE__ */ _jsx("td", { className: "px-4 py-3", children: v.isBot ? /* @__PURE__ */ _jsx("span", { className: "px-2 py-0.5 rounded-full text-[10px] font-bold border bg-gunmetal/40 text-silver border-gunmetal", children: "Bot" }) : v.isReturning ? /* @__PURE__ */ _jsx("span", { className: "px-2 py-0.5 rounded-full text-[10px] font-bold border bg-brand-500/20 text-brand-400 border-brand-500/30", children: "Returning" }) : /* @__PURE__ */ _jsx("span", { className: "px-2 py-0.5 rounded-full text-[10px] font-bold border bg-success/20 text-success-foreground border-success/40", children: "New" }) })
+              ] }, v.id)) })
+            ] }) })
+          ] }),
+          /* @__PURE__ */ _jsx("p", { className: "text-[10px] text-silver leading-relaxed", children: "Anonymous only \u2014 no names, phone numbers or IP addresses are stored. A visitor's browser gets a random id so repeat visits can be counted. Visitors with Do Not Track on are not counted at all." })
+        ] })
+      ] });
+    };
+    // PRODUCTS
     const ProductsSection = () => {
         const [search, setSearch] = useState('');
         const [showAdd, setShowAdd] = useState(false);
