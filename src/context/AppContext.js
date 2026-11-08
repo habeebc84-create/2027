@@ -128,7 +128,11 @@ export function AppProvider({ children }) {
     const [marketPrices, setMarketPrices] = useState(() => ({ ...defaultMarketPrices, ...load('hsn_marketPrices', {}) }));
     const [achievements, setAchievements] = useState(() => { const v = load('hsn_achievements', []); return Array.isArray(v) ? v : []; });
     const [contentBlocks, setContentBlocks] = useState(() => { const v = load('hsn_contentBlocks', []); return Array.isArray(v) ? v : []; });
-    const [termsContent, setTermsContent] = useState(() => { const v = load('hsn_terms', defaultTerms); return Array.isArray(v) ? v : defaultTerms; });
+    // Terms format (BUILD 91): sections carry ids 'terms-1'..'terms-14'. Older stored copies
+    // (short generic items with ids like 'terms'/'payment') are ignored so the full 14-section
+    // text in defaultTerms wins; the admin's later edits (new ids) sync normally.
+    const isNewTerms = (v) => Array.isArray(v) && v.some(t => t && typeof t.id === 'string' && t.id.startsWith('terms-'));
+    const [termsContent, setTermsContent] = useState(() => { const v = load('hsn_terms', defaultTerms); return isNewTerms(v) ? v : defaultTerms; });
     const [siteSettings, setSiteSettings] = useState(() => load('hsn_settings', {
         businessName: 'HSN CEMENT AND STEEL', phone: '7989494779', whatsapp: '+91 9179173040',
         email: 'habeebc84@gmail.com', address: 'Kalikiri, AP - 517234', businessHours: '7 AM - 7 PM Daily',
@@ -303,7 +307,7 @@ export function AppProvider({ children }) {
                 setMarketPrices(prev => ({ ...prev, ...json.marketPrices }));
             if (Array.isArray(json.contentBlocks))
                 setContentBlocks(json.contentBlocks);
-            if (Array.isArray(json.terms))
+            if (isNewTerms(json.terms))
                 setTermsContent(json.terms);
             if (Array.isArray(json.achievements))
                 setAchievements(json.achievements);
