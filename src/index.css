@@ -1723,3 +1723,129 @@ svg {
     font-size: 11px;
   }
 }
+
+/* BUILD 92: delivery-truck loader, from Uiverse.io by vinodjangid07
+   (MIT License) — the snippet the owner sent, pasted as-is except
+   the road colours: the original road is #282828, invisible on
+   HSN's charcoal, so the road, its dashes and the lamp post are
+   silver (#C2C1BD) here. The truck SVG itself lives in
+   src/components/TruckLoader.js (cab re-coloured orange there).
+   Reduced-motion users get a still truck, not a moving one. */
+.truck-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0 2px;
+}
+.truck-loader-label {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #C2C1BD;
+  text-align: center;
+}
+.loader {
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.truckWrapper {
+  width: 200px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+  justify-content: flex-end;
+  overflow-x: hidden;
+}
+/* truck upper body */
+.truckBody {
+  width: 130px;
+  height: fit-content;
+  margin-bottom: 6px;
+  animation: motion 1s linear infinite;
+}
+/* truck suspension animation*/
+@keyframes motion {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+/* truck's tires */
+.truckTires {
+  width: 130px;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 10px 0px 15px;
+  position: absolute;
+  bottom: 0;
+}
+.truckTires svg {
+  width: 24px;
+}
+.road {
+  width: 100%;
+  height: 1.5px;
+  background-color: #C2C1BD;
+  position: relative;
+  bottom: 0;
+  align-self: flex-end;
+  border-radius: 3px;
+}
+.road::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 100%;
+  background-color: #C2C1BD;
+  right: -50%;
+  border-radius: 3px;
+  animation: roadAnimation 1.4s linear infinite;
+  border-left: 10px solid #F7F5F0;
+}
+.road::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  background-color: #C2C1BD;
+  right: -65%;
+  border-radius: 3px;
+  animation: roadAnimation 1.4s linear infinite;
+  border-left: 4px solid #F7F5F0;
+}
+.lampPost {
+  position: absolute;
+  bottom: 0;
+  right: -90%;
+  height: 90px;
+  animation: roadAnimation 1.4s linear infinite;
+}
+@keyframes roadAnimation {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(-350px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .truckBody,
+  .road::before,
+  .road::after,
+  .lampPost {
+    animation: none !important;
+  }
+}
