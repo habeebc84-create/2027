@@ -1,21 +1,6 @@
--- HSN Cement & Steel — real Postgres table for orders
--- Run this in Supabase Dashboard -> SQL Editor -> New query -> Run.
--- It is safe to run twice (IF NOT EXISTS / DROP POLICY IF EXISTS).
---
--- How the site uses it (src/lib/ordersDb.ts, wired in src/context/AppContext.tsx):
---   * placeOrder          -> INSERT (upsert on order_id)
---   * updateOrderStatus   -> UPSERT the full order (status + timeline in `data`)
---   * setOrderFinalDeliveryCharge -> UPSERT the full order
---   * deleteOrder         -> DELETE by order_id
---   * every device        -> SELECT all rows, merged with the local copy
---                           (a longer/newer timeline wins, same rule as the
---                           JSON cloud sync). Orders already on a device are
---                           upserted into this table on the next load, so
---                           existing orders migrate themselves.
--- The full order (items, customer, timeline, charges) is kept in `data` as
--- jsonb so nothing is lost by splitting it into columns; `status`, `total`
--- and `placed_at` are also real columns so the admin counts/filters can be
--- answered by SQL later without reading every row.
+-- Run in the Supabase SQL editor before deploying the API changes.
+-- Re-runnable for existing databases. Retains all order rows.
+begin;
 
 create table if not exists public.hsn_orders (
   id text primary key,
@@ -34,32 +19,66 @@ create index if not exists hsn_orders_placed_at_idx on public.hsn_orders (placed
 
 alter table public.hsn_orders enable row level security;
 
--- Openness note: these policies match the openness the site already has
--- today — the shared site-content.json file is public, and anyone holding
--- the published anon key can already read/overwrite it. The anon key is
--- NOT a secret and must never be treated as one. To lock writes down to
--- the owner only, the next step is Supabase Auth for the admin (sign-in
--- with email/password, then policies that allow writes only to that
--- admin user). Until then, do not put the service_role key anywhere in
--- the site code or in Vercel env vars — it bypasses RLS entirely.
-drop policy if exists "hsn_orders_select" on public.hsn_orders;
-create policy "hsn_orders_select" on public.hsn_orders
-  for select to anon, authenticated using (true);
+-- Customer checkout and tracking use the server's service role.
+-- Match the existing application administrator using the signed JWT claim.
+-- Remove old permissive policies, including policies created in the dashboard.
+do $$
+declare existing record;
+begin
+  for existing in select policyname from pg_policies
+    where schemaname = 'public' and tablename = 'hsn_orders'
+  loop
+    execute format('drop policy %I on public.hsn_orders', existing.policyname);
+  end loop;
+end $$;
 
-drop policy if exists "hsn_orders_insert" on public.hsn_orders;
-create policy "hsn_orders_insert" on public.hsn_orders
-  for insert to anon, authenticated with check (true);
+create policy hsn_orders_admin on public.hsn_orders
+  for all to authenticated
+  using (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com')
+  with check (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com');
 
-drop policy if exists "hsn_orders_update" on public.hsn_orders;
-create policy "hsn_orders_update" on public.hsn_orders
-  for update to anon, authenticated using (true) with check (true);
+revoke all on public.hsn_orders from anon;
+grant select, insert, update, delete on public.hsn_orders to authenticated, service_role;
 
-drop policy if exists "hsn_orders_delete" on public.hsn_orders;
-create policy "hsn_orders_delete" on public.hsn_orders
-  for delete to anon, authenticated using (true);
+-- Nullable columns preserve orders created before checkout retry protection.
+alter table public.hsn_orders add column if not exists checkout_key uuid;
+alter table public.hsn_orders add column if not exists checkout_hash text;
+create unique index if not exists hsn_orders_checkout_key_idx
+  on public.hsn_orders (checkout_key) where checkout_key is not null;
 
-grant select, insert, update, delete on public.hsn_orders to anon, authenticated;
+-- Private order alerts and customer inquiries are visible only to the administrator.
+create table if not exists public.hsn_private_notifications (
+  id text primary key,
+  data jsonb not null,
+  created_at timestamptz not null default now()
+);
+alter table public.hsn_private_notifications enable row level security;
+drop policy if exists hsn_private_notifications_admin on public.hsn_private_notifications;
+create policy hsn_private_notifications_admin on public.hsn_private_notifications
+  for all to authenticated
+  using (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com')
+  with check (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com');
+revoke all on public.hsn_private_notifications from anon;
+grant select, insert, update, delete on public.hsn_private_notifications to authenticated, service_role;
 
--- Verification (run after the table is created):
---   select count(*) as orders_in_postgres from public.hsn_orders;
---   select order_id, status, total, placed_at from public.hsn_orders order by placed_at desc limit 10;
+-- Restrictive guards also constrain any older permissive storage policies.
+-- Other buckets retain their current policy behavior.
+drop policy if exists site_content_write_guard_insert on storage.objects;
+create policy site_content_write_guard_insert on storage.objects as restrictive
+  for insert to anon, authenticated
+  with check (bucket_id <> 'site-content' or (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com'));
+drop policy if exists site_content_write_guard_update on storage.objects;
+create policy site_content_write_guard_update on storage.objects as restrictive
+  for update to anon, authenticated
+  using (bucket_id <> 'site-content' or (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com'))
+  with check (bucket_id <> 'site-content' or (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com'));
+drop policy if exists site_content_write_guard_delete on storage.objects;
+create policy site_content_write_guard_delete on storage.objects as restrictive
+  for delete to anon, authenticated
+  using (bucket_id <> 'site-content' or (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com'));
+drop policy if exists site_content_admin on storage.objects;
+create policy site_content_admin on storage.objects for all to authenticated
+  using (bucket_id = 'site-content' and auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com')
+  with check (bucket_id = 'site-content' and auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com');
+
+commit;

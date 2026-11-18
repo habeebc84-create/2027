@@ -1,48 +1,58 @@
-async function fetchJson(url, init, timeoutMs) {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+const CHECKOUT_STORAGE_KEY = 'hsn_pending_checkout';
+let pendingCheckout = null;
+
+/** Persist the key before sending, including across a reload after a timeout. */
+function checkoutKeyFor(payload) {
+    const fingerprint = JSON.stringify(payload);
     try {
-        const res = await fetch(url, { ...init, signal: ctrl.signal });
-        if (!res.ok)
-            return null;
-        return (await res.json());
+        pendingCheckout = JSON.parse(localStorage.getItem(CHECKOUT_STORAGE_KEY)) || pendingCheckout;
+    } catch { /* Use the in-memory key when storage is unavailable. */ }
+    if (pendingCheckout?.fingerprint !== fingerprint) {
+        pendingCheckout = { fingerprint, key: crypto.randomUUID() };
     }
-    catch {
-        return null;
-    }
-    finally {
+    try {
+        localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(pendingCheckout));
+    } catch { /* Retain the key for retries in this page. */ }
+    return pendingCheckout.key;
+}
+
+export function completeCheckout() {
+    pendingCheckout = null;
+    try { localStorage.removeItem(CHECKOUT_STORAGE_KEY); } catch { /* Storage unavailable. */ }
+}
+
+/** Reject failed or ambiguous responses so the caller retains the cart. */
+export async function createOrderViaApi(payload) {
+    const checkoutKey = checkoutKeyFor(payload);
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15000);
+    let response;
+    let data;
+    try {
+        response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...payload, checkoutKey }),
+            signal: ctrl.signal,
+            cache: 'no-store',
+        });
+        data = await response.json();
+    } catch {
+        throw new Error('Could not confirm your order. Please retry with the same details.');
+    } finally {
         clearTimeout(timer);
     }
-}
-/** Create an order through the server. Null = backend not live; fall back. */
-export async function createOrderViaApi(payload) {
-    const data = await fetchJson('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-    }, 15000);
-    if (!data || typeof data !== 'object')
-        return null;
-    const d = data;
-    if (typeof d.orderId !== 'string' || typeof d.total !== 'number')
-        return null;
-    if (!Array.isArray(d.items))
-        return null;
-    const items = [];
-    for (const raw of d.items) {
-        if (raw &&
-            typeof raw.productId === 'string' &&
-            typeof raw.quantity === 'number' &&
-            typeof raw.unitPrice === 'number') {
-            items.push({
-                productId: raw.productId,
-                size: typeof raw.size === 'string' ? raw.size : undefined,
-                quantity: raw.quantity,
-                unitPrice: raw.unitPrice,
-            });
-        }
+    if (!response.ok) {
+        const message = typeof data?.error === 'string' && data.error !== 'server_not_configured'
+            ? data.error : 'Checkout is temporarily unavailable. Please try again later.';
+        throw new Error(message);
     }
-    return { orderId: d.orderId, total: d.total, items };
+    const order = data?.order;
+    if (!order || typeof order.orderId !== 'string' || !Number.isFinite(order.total) ||
+        !Array.isArray(order.items) || !order.customer) {
+        throw new Error('Could not confirm your order. Please retry with the same details.');
+    }
+    return data;
 }
 /** Track one order through the server. 'unavailable' = backend not live. */
 export async function trackOrderViaApi(orderId, mobile) {
@@ -54,6 +64,7 @@ export async function trackOrderViaApi(orderId, mobile) {
     try {
         const res = await fetch(`/api/track?${params.toString()}`, {
             signal: ctrl.signal,
+            cache: 'no-store',
         });
         if (res.status === 404)
             return { kind: 'not_found' };
