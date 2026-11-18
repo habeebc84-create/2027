@@ -40,7 +40,9 @@ export default async function handler(req, res) {
   const query = req.query || {};
   const rawId = query.orderId;
   const orderId = (Array.isArray(rawId) ? rawId[0] : rawId || '').trim();
-  if (!orderId) return json(res, 400, { error: 'Order ID is required.' });
+  if (!/^[a-z0-9-]{1,100}$/i.test(orderId)) {
+    return json(res, 400, { error: 'Invalid Order ID.' });
+  }
   const rawMobile = query.mobile;
   const mobile = (Array.isArray(rawMobile) ? rawMobile[0] : rawMobile || '').trim();
 
@@ -51,7 +53,7 @@ export default async function handler(req, res) {
   const { data, error } = await client
     .from('hsn_orders')
     .select('*')
-    .ilike('order_id', orderId)
+    .eq('order_id', orderId.toUpperCase())
     .limit(1);
   if (error) {
     return json(res, 503, { error: 'server_not_configured' });
@@ -69,11 +71,19 @@ export default async function handler(req, res) {
   const unlocked = Boolean(mobile) && mobile === orderMobile;
   return json(res, 200, {
     order: {
-      ...order,
+      ...(unlocked ? order : {
+        id: order.id, items: order.items, date: order.date,
+        paymentMode: order.paymentMode, deliveryMethod: order.deliveryMethod,
+        deliveryCharge: order.deliveryCharge, finalDeliveryCharge: order.finalDeliveryCharge,
+        handlingCharge: order.handlingCharge,
+        timeline: (order.timeline || []).map(event => ({ status: event.status, date: event.date })),
+      }),
       orderId: row.order_id || order.orderId,
       status: row.status || order.status,
       total: typeof row.total === 'number' ? row.total : order.total,
       customer: unlocked ? customer : BLANK_CUSTOMER,
+      deliveryNote: unlocked ? order.deliveryNote : '',
+      deliveryLocation: unlocked ? order.deliveryLocation : '',
     },
   });
 }

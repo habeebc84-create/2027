@@ -1,20 +1,5 @@
-/**
- * POST /api/orders — create an order through the Node backend.
- *
- * The browser sends items (product id + size + quantity only), customer
- * details, payment mode, delivery location and method. Prices, delivery
- * and handling charges are ALL recomputed here from the server's product
- * list — client-sent totals are ignored, so a tampered total can never
- * reach the database.
- *
- * Responses:
- *   201 { orderId, total, items } — order saved in Postgres.
- *   400 { error } — invalid items / customer / delivery details.
- *   405 — not POST.  429 — too many orders from this address.
- *   503 { error: 'server_not_configured' } — service key missing or the
- *       hsn_orders table does not exist yet. The site then falls back to
- *       its current browser-direct checkout, so nothing breaks.
- */
+/** Create a server-priced order. Checkout keys make retries atomic in Postgres. */
+import { createHash, randomUUID } from 'node:crypto';
 import {
   computeCharges,
   getCatalog,
@@ -44,7 +29,31 @@ function validCustomer(c) {
   return null;
 }
 
+function orderResponse(order) {
+  return {
+    order,
+    orderId: order.orderId,
+    total: order.total,
+    items: order.items.map(item => ({
+      productId: item.product.id,
+      size: item.selectedSize,
+      quantity: item.quantity,
+      unitPrice: item.selectedSize
+        ? item.product.sizes?.find(s => s.size === item.selectedSize)?.price
+        : item.product.price,
+    })),
+  };
+}
+
 export default async function handler(req, res) {
+  try {
+    return await createOrder(req, res);
+  } catch {
+    return json(res, 503, { error: 'Could not confirm your order. Please retry with the same details.' });
+  }
+}
+
+async function createOrder(req, res) {
   if (req.method !== 'POST') {
     return json(res, 405, { error: 'Method not allowed.' });
   }
@@ -52,6 +61,27 @@ export default async function handler(req, res) {
     return json(res, 429, { error: 'Too many orders. Please try again in a minute.' });
   }
   const body = readJsonBody(req);
+  // Older clients may omit the key. New clients retain it until success.
+  const checkoutKey = body.checkoutKey || randomUUID();
+  if (typeof checkoutKey !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(checkoutKey)) {
+    return json(res, 400, { error: 'Invalid checkout key.' });
+  }
+  const requestData = {
+    items: body.items, customer: body.customer, paymentMode: body.paymentMode,
+    deliveryMethod: body.deliveryMethod, deliveryLocation: body.deliveryLocation,
+    deliveryNote: body.deliveryNote,
+  };
+  const checkoutHash = createHash('sha256').update(JSON.stringify(requestData)).digest('hex');
+  const client = getServiceClient();
+  if (!client) return json(res, 503, { error: 'Checkout is temporarily unavailable. Please try again later.' });
+  const existing = await client.from('hsn_orders').select('data,checkout_hash').eq('checkout_key', checkoutKey).maybeSingle();
+  if (existing.error) return json(res, 503, { error: 'Checkout is temporarily unavailable. Please try again later.' });
+  if (existing.data) {
+    if (existing.data.checkout_hash !== checkoutHash) {
+      return json(res, 409, { error: 'This checkout was already submitted with different details.' });
+    }
+    return json(res, 200, orderResponse(existing.data.data));
+  }
   const customer = body.customer || {};
   const customerError = validCustomer(customer);
   if (customerError) return json(res, 400, { error: customerError });
@@ -89,15 +119,11 @@ export default async function handler(req, res) {
   }
   const total = priced.itemsTotal + charges.charges.deliveryCharge + charges.charges.handlingCharge;
 
-  const client = getServiceClient();
-  if (!client) {
-    return json(res, 503, { error: 'server_not_configured' });
-  }
 
   const now = new Date().toISOString();
   const orderId = await newOrderId(client);
   const order = {
-    id: `order-${Date.now()}`,
+    id: `order-${randomUUID()}`,
     orderId,
     // Store full catalogue products with the server-verified price applied,
     // so the saved order renders exactly like a browser-placed one.
@@ -139,6 +165,8 @@ export default async function handler(req, res) {
   };
 
   const { error } = await client.from('hsn_orders').insert({
+    checkout_key: checkoutKey,
+    checkout_hash: checkoutHash,
     id: order.id,
     order_id: order.orderId,
     status: order.status,
@@ -148,12 +176,15 @@ export default async function handler(req, res) {
     updated_at: now,
   });
   if (error) {
-    // Table missing (PGRST205) or RLS blocking: backend not live yet.
-    return json(res, 503, { error: 'server_not_configured' });
+    // Concurrent retries race on the unique key. Read the winning insert.
+    if (error.code === '23505') {
+      const saved = await client.from('hsn_orders').select('data,checkout_hash').eq('checkout_key', checkoutKey).maybeSingle();
+      if (!saved.error && saved.data?.checkout_hash === checkoutHash) {
+        return json(res, 200, orderResponse(saved.data.data));
+      }
+      if (saved.data) return json(res, 409, { error: 'This checkout was already submitted with different details.' });
+    }
+    return json(res, 503, { error: 'Could not confirm your order. Please retry with the same details.' });
   }
-  return json(res, 201, {
-    orderId: order.orderId,
-    total: order.total,
-    items: priced.items,
-  });
+  return json(res, 201, orderResponse(order));
 }

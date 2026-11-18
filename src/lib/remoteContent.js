@@ -93,7 +93,14 @@ export async function pushRemoteContent(value) {
     if (!c)
         return null;
     try {
-        const body = JSON.stringify(value);
+        const publicValue = { ...value };
+        delete publicValue.orders;
+        delete publicValue.customers;
+        delete publicValue.deletedOrders;
+        if (Array.isArray(publicValue.notifications)) {
+            publicValue.notifications = publicValue.notifications.filter(n => n.type !== 'order' && n.type !== 'inquiry');
+        }
+        const body = JSON.stringify(publicValue);
         const { error } = await c.storage
             .from(BUCKET)
             .upload(FILE, body, {

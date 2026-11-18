@@ -3,7 +3,7 @@ import { createServer } from 'vite';
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' });
 try {
-  const { createInvoicePdf } = await server.ssrLoadModule('/src/lib/invoice.ts');
+  const { createInvoicePdf } = await server.ssrLoadModule('/src/lib/invoice.js');
   const product = { name: 'Premium cement', brand: 'Example', price: 400, unit: 'bag', sizes: [{ size: '50 kg', price: 425 }] };
   const order = {
     orderId: 'TEST-123', date: '2026-11-04T10:00:00Z',

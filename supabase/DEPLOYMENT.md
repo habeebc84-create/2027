@@ -1,0 +1,11 @@
+Apply this release using the existing administrator account, `habeebc84@gmail.com`. The database checks its signed Supabase Auth email claim. Update the matching application and SQL settings together if that account changes.
+
+1. Run `supabase/hsn_orders_auth.sql` and `supabase/hsn_visits.sql` in the Supabase SQL editor. The scripts retain existing rows, restrict direct access to the administrator, and add checkout retry keys and private notifications. Both order SQL entry points contain the same secure setup.
+2. Configure `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the server deployment environment. Configure the matching `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` for the browser. The service role key belongs only in the server environment.
+3. Deploy this branch. Checkout now requires a successful API response before clearing the cart. Missing backend configuration produces an error visible to the customer.
+4. With those server variables available in a trusted terminal, run `node scripts/migrate-private-content.mjs`. Let any active admin content edit finish first. The script backs up the existing public snapshot in a private temporary directory, imports legacy orders and private notifications, and removes private records from the public file. Existing database orders take precedence. Keep the backup securely until you verify migrated orders. Re-running the script is supported.
+5. Confirm the public `site-content.json` contains no orders, customers, or private notifications. Verify anonymous and non-admin authenticated clients cannot access either private table. Verify the administrator can read and update an order and that a customer can track it through `/api/track`.
+
+Existing service worker caches are removed when version 61 activates. Tracking API responses use `no-store`. The updated application stops downloading all orders for visitors and refreshes a single tracked order through the API.
+
+Run `npm test`, `npm run lint`, and `npm run build` for local checks. To check the built UI, start `npm run preview -- --port 5173`, then run `python verify_preview.py` with Python Playwright and Chromium installed. This browser check mocks remote services and asserts both launch states, route headings, checkout failure, retry key reuse, and saved server totals.

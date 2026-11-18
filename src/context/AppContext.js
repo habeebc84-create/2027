@@ -4,8 +4,8 @@ import { ORDER_STATUSES } from '../types';
 import { products as defaultProducts, categories as defaultCategories, brands as defaultBrands, defaultNotifications, defaultSiteContent, defaultTransportZones, defaultBanners, defaultTerms, defaultMarketPrices } from '../data';
 import { safeSaveSiteContent, compressImageFile } from '../lib/images';
 import { pullRemoteContent, pushRemoteContent, fetchRemoteVersion, isCloudConfigured, getSupabaseClient } from '../lib/remoteContent';
-import { fetchOrdersDb, insertOrderDb, updateOrderDb, deleteOrderDb, mergeDbOrders } from '../lib/ordersDb';
-import { createOrderViaApi } from '../lib/apiOrders';
+import { fetchOrdersDb, updateOrderDb, deleteOrderDb } from '../lib/ordersDb';
+import { createOrderViaApi, completeCheckout } from '../lib/apiOrders';
 import { DEFAULT_LAUNCH_DATE_TIME } from '../lib/launch';
 import { getAdminSessionEmail, signInAdmin, signOutAdmin, isAdminEmail } from '../lib/adminAuth';
 import { mergeNotifications, notifSeenKey } from '../lib/notifSync';
@@ -31,17 +31,6 @@ function save(key, value) {
         localStorage.setItem(key, JSON.stringify(value));
     }
     catch { /* */ }
-}
-function generateOrderId() {
-    const year = new Date().getFullYear();
-    const count = load('hsn_order_count', 0) + 1;
-    save('hsn_order_count', count);
-    // BUILD 77 audit fix: the count is per-device localStorage, so the first
-    // order on two different phones both became HSN-YYYY-00001 and tracking
-    // (which matches by orderId) could show the wrong order. A time+random
-    // suffix keeps the readable number but makes it unique across devices.
-    const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`.toUpperCase();
-    return `HSN-${year}-${String(count).padStart(5, '0')}-${suffix}`;
 }
 export function AppProvider({ children }) {
     const [cart, setCart] = useState(() => { const v = load('hsn_cart', []); return Array.isArray(v) ? v : []; });
@@ -90,9 +79,6 @@ export function AppProvider({ children }) {
     // Only genuine local edits (updateSiteContent) may push to the cloud —
     // never a visitor's initial localStorage state on page load.
     const localEditRef = useRef(false);
-    // Orders intentionally deleted by the admin. Sent with every cloud snapshot
-    // so other devices drop them too instead of re-merging them from stale cloud data.
-    const deletedOrderIdsRef = useRef(new Set());
     // Alerts intentionally deleted by the admin: same tombstone idea, so a
     // phone that still has the old alert in localStorage drops it for good.
     const deletedNotificationIdsRef = useRef(new Set((() => {
@@ -160,6 +146,7 @@ export function AppProvider({ children }) {
         if (!payload)
             return;
         pendingPushRef.current = null;
+        if (!isAdminRef.current) return;
         pushInFlightRef.current = true;
         try {
             const version = await pushRemoteContent(payload);
@@ -216,7 +203,7 @@ export function AppProvider({ children }) {
             return; // initial mount / non-edit change: leave the cloud copy alone
         }
         localEditRef.current = false;
-        if (!isCloudConfigured())
+        if (!isCloudConfigured() || !isAdminRef.current)
             return;
         adminTouchedRef.current = true;
         // Full admin snapshot: any admin change (images, settings, products,
@@ -232,14 +219,12 @@ export function AppProvider({ children }) {
             contentBlocks,
             terms: termsContent,
             achievements,
-            orders, // orders included so the owner sees location-shared orders on all devices
-            deletedOrders: [...deletedOrderIdsRef.current], // tombstones: every device removes these for good
             launchingSoon, // launching-soon poster flag, so removing it opens every device
             launchDateTime, // opening date/time for the poster countdown
             maintenanceMode, // system-under-maintenance flag, so turning it on blocks every device
             maintenanceMessage, // message visitors see on the maintenance page
-            notifications, // BUILD 65: admin announcements + contact inquiries now reach every device
-            deletedNotifications: [...deletedNotificationIdsRef.current], // tombstones: every device drops deleted alerts
+            notifications: notifications.filter(n => n.type !== 'order' && n.type !== 'inquiry'),
+            deletedNotifications: [...deletedNotificationIdsRef.current].filter(id => !id.startsWith('order-') && !id.startsWith('inquiry-')), // public announcement tombstones
         };
         schedulePush(snapshot);
     }, [siteContent, siteSettings, products, categories, transportZones, marketPrices, contentBlocks, termsContent, achievements, orders, launchingSoon, launchDateTime, maintenanceMode, maintenanceMessage, notifications, schedulePush]);
@@ -280,7 +265,7 @@ export function AppProvider({ children }) {
             // reason notification changes only ever appeared on the device that
             // made them. Now: tombstones remove, `updatedAt` decides the winner.
             if (Array.isArray(json.notifications)) {
-                const cloudNotifs = json.notifications.filter(n => n && n.id);
+                const cloudNotifs = json.notifications.filter(n => n && n.id && n.type !== 'order' && n.type !== 'inquiry');
                 const cloudDeleted = Array.isArray(json.deletedNotifications) ? json.deletedNotifications : [];
                 // Adopt the cloud's tombstones so our own next push keeps them alive.
                 for (const id of cloudDeleted)
@@ -311,84 +296,37 @@ export function AppProvider({ children }) {
                 setTermsContent(json.terms);
             if (Array.isArray(json.achievements))
                 setAchievements(json.achievements);
-            // Orders: merge cloud orders — except ones the admin deleted
-            // (tombstoned in deletedOrders), which are removed for good.
-            // BUG FIX (was: only NEW cloud orders were added): an order that
-            // already existed on this device kept its old status forever, so a
-            // customer who had already placed/tracked an order never saw the
-            // admin's status change. Now a cloud copy with a longer timeline
-            // (a newer status) overwrites the local copy, so the tracking
-            // page updates on the next 10s poll / focus pull.
-            if (Array.isArray(json.orders)) {
-                const cloudOrders = json.orders;
-                const deletedIds = new Set(Array.isArray(json.deletedOrders) ? json.deletedOrders : []);
-                setOrders(prev => {
-                    // Drop tombstoned orders locally so deletions win on every device.
-                    const survivors = prev.filter(o => !deletedIds.has(o.orderId));
-                    let changed = survivors.length !== prev.length;
-                    if (changed) {
-                        localEditRef.current = true;
-                    }
-                    const cloudById = new Map();
-                    const cloudByOrderId = new Map();
-                    for (const o of cloudOrders) {
-                        cloudById.set(o.id, o);
-                        cloudByOrderId.set(o.orderId, o);
-                    }
-                    const updated = survivors.map(local => {
-                        const cloud = cloudById.get(local.id) || cloudByOrderId.get(local.orderId);
-                        if (!cloud || deletedIds.has(cloud.orderId))
-                            return local;
-                        const localLast = local.timeline?.[local.timeline.length - 1]?.date || '';
-                        const cloudLast = cloud.timeline?.[cloud.timeline.length - 1]?.date || '';
-                        const cloudIsNewer = (cloud.timeline?.length || 0) > (local.timeline?.length || 0)
-                            || (cloudLast && localLast && cloudLast > localLast);
-                        if (cloudIsNewer) {
-                            changed = true;
-                            return cloud;
-                        }
-                        return local;
-                    });
-                    const ids = new Set(updated.map(o => o.id));
-                    const orderIds = new Set(updated.map(o => o.orderId));
-                    const missing = cloudOrders.filter(o => !ids.has(o.id) && !orderIds.has(o.orderId) && !deletedIds.has(o.orderId));
-                    if (missing.length > 0)
-                        changed = true;
-                    if (!changed)
-                        return prev;
-                    const merged = [...updated, ...missing].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                    save('hsn_orders', merged);
-                    return merged;
-                });
-            }
+
         }
     }, []);
-    // Postgres orders: merge a fetched list into local orders, and upsert any
-    // local order Postgres does not have yet (pre-migration backfill + retry
-    // for an order whose first insert failed). A null fetch means the table
-    // is not there yet — in that case do nothing and the JSON cloud sync
-    // below keeps working exactly as before.
+    // Only the signed-in administrator may fetch the full order list.
     const applyDbOrders = useCallback(async () => {
+        if (!isAdminRef.current)
+            return;
         const dbOrders = await fetchOrdersDb();
         if (dbOrders === null)
             return;
-        const deletedIds = deletedOrderIdsRef.current;
-        setOrders(prev => {
-            const merged = mergeDbOrders(prev, dbOrders, deletedIds);
-            save('hsn_orders', merged);
-            return merged;
-        });
-        const dbIds = new Set(dbOrders.map(o => o.orderId));
-        const missing = ordersRef.current.filter(o => !dbIds.has(o.orderId) && !deletedIds.has(o.orderId));
-        if (missing.length > 0) {
-            await Promise.all(missing.map(o => insertOrderDb(o)));
+        if (!isAdminRef.current) return;
+        setOrders(dbOrders);
+        const client = getSupabaseClient();
+        const { data, error } = await client.from('hsn_private_notifications').select('data');
+        if (!error && isAdminRef.current) {
+            const privateNotifications = (data || []).map(row => row.data);
+            for (const notification of privateNotifications) {
+                if (notification.deleted) deletedNotificationIdsRef.current.add(notification.id);
+            }
+            const orderAlerts = dbOrders.filter(order => !privateNotifications.some(n => n.id === `order-alert-${order.orderId}`)).map(order => ({
+                id: `order-alert-${order.orderId}`, title: `New Order: ${order.orderId}`,
+                content: `${order.customer.name} placed an order of Rs.${order.total}`,
+                type: 'order', active: true, read: false, createdAt: order.date,
+            }));
+            setNotifications(prev => mergeNotifications(prev, [...privateNotifications, ...orderAlerts], deletedNotificationIdsRef.current));
         }
+
     }, []);
-    // Postgres poll: like the JSON version poll, but for orders only. Runs
-    // every 20s and on tab focus, so an admin status change reaches the
-    // customer's tracking page even if the JSON cloud copy is stale.
+    // Refresh private administrator data every 20 seconds and on tab focus.
     useEffect(() => {
-        if (!isCloudConfigured())
+        if (!isCloudConfigured() || !isAdmin)
             return;
         void applyDbOrders();
         const iv = setInterval(() => { void applyDbOrders(); }, 20000);
@@ -401,7 +339,7 @@ export function AppProvider({ children }) {
             document.removeEventListener('visibilitychange', onVisible);
             window.removeEventListener('focus', onVisible);
         };
-    }, [applyDbOrders]);
+    }, [applyDbOrders, isAdmin]);
     // First load: pull the latest shared content from the cloud.
     useEffect(() => {
         let cancelled = false;
@@ -597,13 +535,6 @@ export function AppProvider({ children }) {
     const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
     const clearCart = useCallback(() => { setCart([]); save('hsn_cart', []); }, []);
     const placeOrder = useCallback(async (data) => {
-        // BUILD 84: try the Node backend first — it re-prices from the server's
-        // own product list and saves to Postgres. Any failure falls back to the
-        // current browser-direct path, so checkout works before the backend is
-        // configured (service key + orders table are dashboard steps).
-        let orderId;
-        let items = data.items;
-        let total = data.total;
         const api = await createOrderViaApi({
             items: data.items.map(i => ({ productId: i.product.id, size: i.selectedSize, quantity: i.quantity })),
             customer: data.customer,
@@ -612,37 +543,13 @@ export function AppProvider({ children }) {
             deliveryLocation: data.deliveryLocation,
             deliveryMethod: data.deliveryMethod,
         });
-        if (api) {
-            orderId = api.orderId;
-            total = api.total;
-            // Use the server-verified prices in the local copy too, so the order
-            // on this device matches the one saved in Postgres.
-            items = data.items.map(item => {
-                const priced = api.items.find(p => p.productId === item.product.id && (p.size || undefined) === (item.selectedSize || undefined));
-                if (!priced)
-                    return item;
-                const product = { ...item.product };
-                if (priced.size && product.sizes) {
-                    product.sizes = product.sizes.map(s => (s.size === priced.size ? { ...s, price: priced.unitPrice } : s));
-                }
-                else {
-                    product.price = priced.unitPrice;
-                }
-                return { ...item, product };
-            });
-        }
-        else {
-            orderId = generateOrderId();
-        }
-        const order = {
-            ...data, items, total, id: `order-${Date.now()}`, orderId, date: new Date().toISOString(),
-            status: 'placed', timeline: [{ status: 'placed', date: new Date().toISOString() }],
-        };
-        setOrders(prev => { const u = [order, ...prev]; save('hsn_orders', u); return u; });
-        // Server already saved it when the API answered; only write direct when
-        // the backend did not (its Postgres insert is a no-op without the table).
-        if (!api)
-            void insertOrderDb(order);
+        const order = api.order;
+        const { orderId, total } = order;
+        setOrders(prev => {
+            const updated = [order, ...prev.filter(o => o.orderId !== orderId)];
+            save('hsn_orders', updated);
+            return updated;
+        });
         const n = {
             id: `notif-${Date.now()}`, title: `New Order: ${orderId}`,
             content: `${data.customer.name} placed an order of Rs.${total.toLocaleString('en-IN')}`,
@@ -670,6 +577,7 @@ export function AppProvider({ children }) {
             return u;
         });
         clearCart();
+        completeCheckout();
         showToast(`Order ${orderId} placed successfully!`);
         // Customer orders with a shared location reach the owner's other devices too.
         localEditRef.current = true;
@@ -678,67 +586,52 @@ export function AppProvider({ children }) {
         // would then open an order that does not exist.
     }, [clearCart, showToast]);
     /** Owner review: set the final delivery charge after seeing the shared location. */
+    const orderWrites = useRef(new Set());
+    const saveOrderChange = useCallback(async (orderId, change) => {
+        if (!isAdminRef.current || orderWrites.current.has(orderId)) return;
+        const current = ordersRef.current.find(order => order.orderId === orderId);
+        if (!current) return;
+        orderWrites.current.add(orderId);
+        const updated = change(current);
+        try {
+            if (!await updateOrderDb(updated)) throw new Error('save failed');
+            ordersRef.current = ordersRef.current.map(order => order.orderId === orderId ? updated : order);
+            setOrders(ordersRef.current);
+            showToast(`Order ${orderId} updated`);
+        } catch {
+            showToast('Could not save the order. Please try again.', 'error');
+        } finally {
+            orderWrites.current.delete(orderId);
+        }
+    }, [showToast]);
     const setOrderFinalDeliveryCharge = useCallback((orderId, charge) => {
         if (!Number.isFinite(charge) || charge < 0) {
             showToast('Delivery charge cannot be negative', 'error');
             return;
         }
-        localEditRef.current = true;
-        let dbOrder;
-        setOrders(prev => {
-            const u = prev.map(o => {
-                if (o.orderId !== orderId)
-                    return o;
-                const updated = { ...o, finalDeliveryCharge: charge };
-                dbOrder = updated;
-                return updated;
-            });
-            save('hsn_orders', u);
-            return u;
-        });
-        if (dbOrder)
-            void updateOrderDb(dbOrder);
-        showToast(`Final delivery charge saved for ${orderId}`);
-    }, [showToast]);
+        return saveOrderChange(orderId, order => ({ ...order, finalDeliveryCharge: charge }));
+    }, [saveOrderChange, showToast]);
     const updateOrderStatus = useCallback((orderId, status, note) => {
-        // BUG FIX (was: status changes never left this device): unlike
-        // deleteOrder / setOrderFinalDeliveryCharge, this never set
-        // localEditRef, so the cloud-push effect below skipped it and the
-        // customer on another device never saw the new status. Setting the
-        // flag makes the change push to the shared cloud copy, which the
-        // customer's device polls every 10s (and on focus).
-        localEditRef.current = true;
-        let dbOrder;
-        setOrders(prev => {
-            const updated = prev.map(o => {
-                if (o.orderId !== orderId)
-                    return o;
-                const changed = { ...o, status, timeline: [...o.timeline, { status, date: new Date().toISOString(), note }] };
-                dbOrder = changed;
-                return changed;
-            });
-            save('hsn_orders', updated);
-            return updated;
-        });
-        if (dbOrder)
-            void updateOrderDb(dbOrder);
-        showToast(`Order ${orderId} updated to ${ORDER_STATUSES.find(s => s.key === status)?.label || status}`);
-    }, [showToast]);
-    const deleteOrder = useCallback((orderId) => {
-        localEditRef.current = true; // propagate the deletion to the cloud snapshot
-        deletedOrderIdsRef.current = new Set([...deletedOrderIdsRef.current, orderId]);
-        setOrders(prev => {
-            const u = prev.filter(o => o.orderId !== orderId);
-            save('hsn_orders', u);
-            return u;
-        });
-        void deleteOrderDb(orderId);
-        showToast('Order deleted — removing from all devices…');
+        if (!ORDER_STATUSES.some(item => item.key === status)) return;
+        return saveOrderChange(orderId, order => ({
+            ...order, status, timeline: [...order.timeline, { status, date: new Date().toISOString(), note }],
+        }));
+    }, [saveOrderChange]);
+    const deleteOrder = useCallback(async (orderId) => {
+        if (!isAdminRef.current || orderWrites.current.has(orderId)) return;
+        orderWrites.current.add(orderId);
+        try {
+            if (!await deleteOrderDb(orderId)) throw new Error('delete failed');
+            ordersRef.current = ordersRef.current.filter(order => order.orderId !== orderId);
+            setOrders(ordersRef.current);
+            showToast('Order deleted');
+        } catch {
+            showToast('Could not delete the order. Please try again.', 'error');
+        } finally {
+            orderWrites.current.delete(orderId);
+        }
     }, [showToast]);
     const deleteCustomer = useCallback((customerId) => { setCustomers(prev => { const u = prev.filter(c => c.id !== customerId); save('hsn_customers', u); return u; }); showToast('Customer deleted'); }, [showToast]);
-    // QR scans land here from arbitrary scanner apps: match the order ID
-    // tolerantly (trim, case-insensitive, URL-decoded) so the correct order
-    // always opens.
     const getOrderById = useCallback((orderId) => {
         const raw = (orderId || '').trim();
         if (!raw)
@@ -750,7 +643,7 @@ export function AppProvider({ children }) {
         catch { /* keep raw */ }
         return orders.find(o => o.orderId.toLowerCase() === wanted || o.id.toLowerCase() === wanted);
     }, [orders]);
-    /** Actively re-fetch the shared cloud copy so QR deep-links can load orders missing on this device. */
+    /** Refresh administrator orders and public site content. */
     const refreshFromCloud = useCallback(async () => {
         if (!isCloudConfigured())
             return;
@@ -780,35 +673,40 @@ export function AppProvider({ children }) {
         const fresh = { ...n, updatedAt: n.updatedAt || new Date().toISOString() };
         setNotifications(prev => { const u = [fresh, ...prev]; save('hsn_notifications', u); return u; });
     }, []);
-    const updateNotification = useCallback((id, updates) => {
-        localEditRef.current = true;
-        setNotifications(prev => {
-            const u = prev.map(n => n.id === id ? { ...n, ...updates, updatedAt: new Date().toISOString() } : n);
-            save('hsn_notifications', u);
-            return u;
+    const persistPrivateNotification = useCallback(async (notification) => {
+        if (notification.type !== 'order' && notification.type !== 'inquiry') return true;
+        if (!isAdminRef.current) return false;
+        const { error } = await getSupabaseClient().from('hsn_private_notifications').upsert({
+            id: notification.id, data: notification,
         });
-        showToast('Notification updated');
+        if (error) showToast('Could not save the notification. Please try again.', 'error');
+        return !error;
     }, [showToast]);
-    const deleteNotification = useCallback((id) => {
+    const updateNotification = useCallback(async (id, updates) => {
+        const existing = notifications.find(n => n.id === id);
+        if (!existing) return;
+        const changed = { ...existing, ...updates, updatedAt: new Date().toISOString() };
+        if (!await persistPrivateNotification(changed)) return;
         localEditRef.current = true;
-        deletedNotificationIdsRef.current.add(id); // tombstone so no device resurrects it
-        setNotifications(prev => { const u = prev.filter(n => n.id !== id); save('hsn_notifications', u); return u; });
+        setNotifications(prev => prev.map(n => n.id === id ? changed : n));
+        if (!updates.read) showToast('Notification updated');
+    }, [notifications, persistPrivateNotification, showToast]);
+    const deleteNotification = useCallback(async (id) => {
+        const existing = notifications.find(n => n.id === id);
+        if (!existing || !await persistPrivateNotification({ ...existing, deleted: true })) return;
+        localEditRef.current = true;
+        deletedNotificationIdsRef.current.add(id);
+        setNotifications(prev => prev.filter(n => n.id !== id));
         showToast('Notification deleted');
-    }, [showToast]);
-    const markNotificationRead = useCallback((id) => {
+    }, [notifications, persistPrivateNotification, showToast]);
+    const markNotificationRead = useCallback((id) => updateNotification(id, { read: true }), [updateNotification]);
+    const clearNotifications = useCallback(async () => {
+        const updated = notifications.map(n => ({ ...n, read: true }));
+        const results = await Promise.all(updated.map(persistPrivateNotification));
+        if (results.some(saved => !saved)) return;
         localEditRef.current = true;
-        setNotifications(prev => {
-            // Do not stamp `updatedAt` on read: that would let a read flag beat a
-            // newer edit made on another device. `readAt` keeps them independent.
-            const u = prev.map(n => n.id === id ? { ...n, read: true } : n);
-            save('hsn_notifications', u);
-            return u;
-        });
-    }, []);
-    const clearNotifications = useCallback(() => {
-        localEditRef.current = true;
-        setNotifications(prev => { const u = prev.map(n => ({ ...n, read: true })); save('hsn_notifications', u); return u; });
-    }, []);
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    }, [notifications, persistPrivateNotification]);
     // Public popup bookkeeping, per device only.
     const isNotificationSeen = useCallback((n) => seenNotificationKeys.includes(notifSeenKey(n)), [seenNotificationKeys]);
     const markNotificationSeen = useCallback((n) => {

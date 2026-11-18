@@ -1,14 +1,16 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { MapPin, Phone as PhoneIcon, Clock, Send, CheckCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { telHref, waHref } from '../lib/phone';
 const WhatsAppIcon = ({ className }) => (_jsx("svg", { viewBox: "0 0 24 24", fill: "currentColor", className: className, children: _jsx("path", { d: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" }) }));
 export default function Contact() {
-    const { siteContent, showToast, addNotification } = useApp();
+    const { siteContent, showToast } = useApp();
     const [form, setForm] = useState({ name: '', mobile: '', materialNeeded: 'Cement & Steel', message: '' });
     const [submitted, setSubmitted] = useState(false);
-    const handleSubmit = (e) => {
+    const inquiryId = useRef(crypto.randomUUID());
+    const sending = useRef(false);
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.name || !form.mobile) {
             showToast('Please enter your name and mobile number', 'error');
@@ -19,25 +21,23 @@ export default function Contact() {
             showToast('Enter a valid 10-digit Indian mobile number.', 'error');
             return;
         }
-        // BUILD 65 audit fix: the old form showed "Inquiry sent successfully"
-        // but sent nothing anywhere — the store never received it. An inquiry
-        // is now a real admin notification (synced via the cloud copy, so the
-        // admin sees it on every device in Notifications).
-        // BUILD 80 security fix: inquiries used to be type 'announcement',
-        // so the public notification popup showed every visitor the
-        // inquirer's name and mobile number (and auto-popped it on Home).
-        // 'inquiry' is admin-only: the popup filters it out (see
-        // NotificationPopup), while the admin dashboard still lists all
-        // notifications, so the admin still sees the inquiry there.
-        addNotification({
-            id: `inquiry-${Date.now()}`,
-            title: `Inquiry: ${form.name}`,
-            content: `${form.materialNeeded} — ${form.message || 'No notes'} — Mobile: ${mobileDigits}`,
-            type: 'inquiry',
-            active: true,
-            read: false,
-            createdAt: new Date().toISOString(),
-        });
+        if (sending.current) return;
+        sending.current = true;
+        try {
+            const response = await fetch('/api/inquiries', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...form, mobile: mobileDigits, id: inquiryId.current }),
+                signal: AbortSignal.timeout(15000),
+            });
+            const result = await response.json();
+            if (!response.ok || !result.ok) throw new Error(result.error || 'Could not send your inquiry.');
+        } catch (error) {
+            showToast(error.message || 'Could not send your inquiry. Please try again.', 'error');
+            return;
+        } finally {
+            sending.current = false;
+        }
+        inquiryId.current = crypto.randomUUID();
         setSubmitted(true);
         showToast('Inquiry sent successfully!');
     };

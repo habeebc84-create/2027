@@ -12,14 +12,8 @@
  * middle: they re-price every order from the server's own product list and
  * write to Postgres with the service-role key, which the browser never sees.
  *
- * Two dashboard steps activate the backend (until then every endpoint
- * answers 503 `server_not_configured` and the site keeps working exactly
- * as today, through the browser-direct path):
- *   1. Run supabase/hsn_orders_auth.sql in Supabase -> SQL Editor so the
- *      hsn_orders table exists.
- *   2. Add SUPABASE_SERVICE_ROLE_KEY in Vercel -> Project Settings ->
- *      Environment Variables (Supabase dashboard -> Settings -> API ->
- *      service_role key). Never put it in code, chat, or git.
+ * Configure SUPABASE_SERVICE_ROLE_KEY and apply supabase/hsn_orders_auth.sql
+ * before enabling checkout. Missing configuration returns 503.
  */
 import { createClient } from '@supabase/supabase-js';
 
@@ -30,6 +24,7 @@ const SITE_CONTENT_URL = `${SUPABASE_URL}/storage/v1/object/public/site-content/
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 export function json(res, status, body) {
+  res.setHeader('Cache-Control', 'no-store');
   res.status(status).json(body);
 }
 
@@ -47,7 +42,7 @@ let catalogCache = null;
  * Current products + transport zones, from the live shared copy in
  * Supabase Storage (the same file the site itself reads, so admin price
  * edits apply here too). Null when the fetch fails — the caller then
- * answers 503 and the site falls back to its browser-direct path.
+ * answers 503 and the customer retains their cart.
  *
  * BUILD 86 note: no bundled fallback on purpose. The first version fell
  * back to `../../src/data`, a TypeScript file, and the deployed function
@@ -190,7 +185,8 @@ export function readJsonBody(req) {
   if (body && typeof body === 'object') return body;
   if (typeof body === 'string') {
     try {
-      return JSON.parse(body);
+      const parsed = JSON.parse(body);
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
     } catch {
       return {};
     }
@@ -206,11 +202,7 @@ function clientIp(req) {
 
 const rateBuckets = new Map();
 
-/**
- * Best-effort per-IP throttle (per serverless instance, not global).
- * The public anon insert already exists today, so this does not make
- * spam any easier than it already is — it only adds friction.
- */
+/** Best-effort per-IP throttle, per serverless instance. */
 export function rateLimited(req, key, limit, windowMs) {
   const bucketKey = `${key}:${clientIp(req)}`;
   const now = Date.now();

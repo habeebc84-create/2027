@@ -44,7 +44,7 @@ alter table public.hsn_visits enable row level security;
 -- browsing must never be visible to other visitors.
 drop policy if exists "hsn_visits_select_admin" on public.hsn_visits;
 create policy "hsn_visits_select_admin" on public.hsn_visits
-  for select to authenticated using (true);
+  for select to authenticated using (auth.uid() is not null and lower(auth.jwt() ->> 'email') = 'habeebc84@gmail.com');
 
 -- No INSERT / UPDATE / DELETE policies for anon or authenticated: only
 -- the service-role key (server) writes. Do NOT add an open insert
