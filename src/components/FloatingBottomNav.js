@@ -1,7 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Home as HomeIcon, Package, Wrench, Images, MessageCircle, PackageCheck } from 'lucide-react';
+import { useReducedMotionPreference } from '../lib/motionPreference';
 import { useApp } from '../context/AppContext';
 const navItems = [
     { label: 'Home', page: 'home' },
@@ -11,8 +12,7 @@ const navItems = [
     { label: 'Contact', page: 'contact' },
     { label: 'Track Order', short: 'Track', page: 'order-tracking' },
 ];
-// Each destination gets its own small icon gesture. The active icon repeats
-// gently after a long pause; inactive icons respond to hover/tap.
+// Each destination gets a short icon gesture when activated.
 const iconAnimations = {
     home: { y: [0, -3, 0], scale: [1, 1.08, 1] },
     products: { y: [0, -2, 0], rotate: [0, -8, 6, 0] },
@@ -36,7 +36,7 @@ const activeRadii = {
 // Silver Mist so the dock stays readable over photos.
 export default function FloatingBottomNav({ visible }) {
     const { currentPage, setPage } = useApp();
-    const shouldReduceMotion = useReducedMotion();
+    const shouldReduceMotion = useReducedMotionPreference();
     const animate = !shouldReduceMotion;
     const [activation, setActivation] = useState({ page: currentPage, count: 0 });
     const handleNavigate = (page) => {
@@ -74,7 +74,7 @@ export default function FloatingBottomNav({ visible }) {
                     } }), _jsx("div", { className: "relative flex items-center gap-0.5 sm:gap-1", children: navItems.map((item, index) => {
                         const isActive = currentPage === item.page;
                         const activationKey = isActive && activation.page === item.page ? activation.count : 0;
-                        return (_jsxs(motion.button, { type: "button", "aria-current": isActive ? 'page' : undefined, "aria-label": item.label, onClick: () => handleNavigate(item.page), className: "relative flex-1 sm:flex-none flex flex-col items-center justify-center gap-1 rounded-full px-0 sm:px-2.5 py-2 min-w-0 sm:min-w-[64px] h-[56px] leading-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime", initial: animate ? { opacity: 0, y: 10, scale: 0.9 } : false, animate: { opacity: 1, y: 0, scale: 1 }, variants: { pressed: { scale: 0.94, transition: { duration: 0.12, delay: 0 } } }, whileHover: animate ? { y: -1.5, transition: { duration: 0.15, delay: 0 } } : undefined, whileTap: animate ? 'pressed' : undefined, transition: { duration: animate ? 0.28 : 0, delay: animate ? index * 0.04 : 0, ease: 'easeOut' }, children: [isActive && (_jsx(motion.span, { layoutId: "appleDockPill", "aria-hidden": "true", className: "absolute inset-0", style: {
+                        return (_jsxs(motion.button, { type: "button", "aria-current": isActive ? 'page' : undefined, "aria-label": item.label, onClick: () => handleNavigate(item.page), className: "relative flex-1 sm:flex-none flex flex-col items-center justify-center gap-1 rounded-full px-0 sm:px-2.5 py-2 min-w-0 sm:min-w-[64px] h-[56px] leading-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime", initial: animate ? { opacity: 0, y: 10, scale: 0.9 } : false, animate: { opacity: 1, y: 0, scale: 1 }, variants: { pressed: { scale: 0.94, transition: { duration: 0.12, delay: 0 } } }, whileHover: animate ? { y: -1.5, transition: { duration: 0.15, delay: 0 } } : undefined, whileTap: animate ? 'pressed' : undefined, transition: { duration: animate ? 0.28 : 0, delay: animate ? index * 0.04 : 0, ease: 'easeOut' }, children: [isActive && (_jsx(motion.span, { layoutId: animate ? "appleDockPill" : undefined, "aria-hidden": "true", className: "absolute inset-0", style: {
                                         background: 'var(--color-lime)',
                                         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 18px -8px rgba(0,0,0,0.55)',
                                         backdropFilter: 'blur(10px) saturate(140%)',
@@ -87,9 +87,9 @@ export default function FloatingBottomNav({ visible }) {
                                             damping: 34,
                                             mass: 0.7,
                                             borderRadius: { duration: 0.35, ease: 'easeOut' },
-                                        } })), _jsx(motion.span, { className: "relative flex items-center justify-center", style: { color: isActive ? 'var(--color-ink)' : 'var(--color-silver)' }, variants: { pressed: { scale: 0.88, rotate: item.page === 'services' ? -12 : 0 } }, transition: { duration: 0.12 }, children: _jsx(motion.span, { className: "flex items-center justify-center", animate: isActive && animate ? iconAnimations[item.page] : undefined, transition: isActive && animate
-                                            ? { duration: 0.7, ease: 'easeInOut', repeat: Infinity, repeatDelay: 4.5 }
-                                            : { duration: 0 }, children: _jsx(SvgIcon, { name: item.label, size: 22 }) }, `${item.page}-${isActive ? 'active' : 'idle'}-${activationKey}`) }), _jsxs("span", { className: `relative text-[11px] sm:text-[10px] font-medium tracking-tight select-none whitespace-nowrap leading-none ${isActive ? 'text-ink' : 'text-silver'}`, children: [_jsx("span", { className: "sm:hidden", children: item.short ?? item.label }), _jsx("span", { className: "hidden sm:inline", children: item.label })] })] }, item.page));
+                                        } })), _jsx(motion.span, { className: "relative flex items-center justify-center transition-colors duration-200", style: { color: isActive ? 'var(--color-ink)' : 'var(--color-silver)' }, variants: { pressed: { scale: 0.88, rotate: item.page === 'services' ? -12 : 0 } }, transition: { duration: 0.12 }, children: _jsx(motion.span, { className: "flex items-center justify-center", animate: isActive && animate ? iconAnimations[item.page] : undefined, transition: isActive && animate
+                                            ? { duration: 0.7, ease: 'easeInOut' }
+                                            : { duration: 0 }, children: _jsx(SvgIcon, { name: item.label, size: 22 }) }, `${item.page}-${isActive ? 'active' : 'idle'}-${activationKey}`) }), _jsxs("span", { className: `relative text-[11px] sm:text-[10px] font-medium tracking-tight transition-colors duration-200 select-none whitespace-nowrap leading-none ${isActive ? 'text-ink' : 'text-silver'}`, children: [_jsx("span", { className: "sm:hidden", children: item.short ?? item.label }), _jsx("span", { className: "hidden sm:inline", children: item.label })] })] }, item.page));
                     }) })] }) }));
 }
 function SvgIcon({ name, size = 20, strokeWidth = 1.75 }) {

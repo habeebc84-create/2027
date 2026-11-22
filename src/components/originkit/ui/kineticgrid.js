@@ -2,7 +2,7 @@
 "use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { useRef, useEffect } from "react";
-const useIsStaticRenderer = () => false;
+import { useReducedMotionPreference } from "../../../lib/motionPreference";
 /**
  * Kinetic Grid
  *
@@ -21,7 +21,7 @@ export default function KineticGrid(props) {
     const canvasRef = useRef(null);
     const mouseRef = useRef({ x: -9999, y: -9999, active: false });
     const trailRef = useRef([]);
-    const isStatic = useIsStaticRenderer();
+    const isStatic = useReducedMotionPreference();
     useEffect(() => {
         const host = hostRef.current;
         const canvas = canvasRef.current;
