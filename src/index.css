@@ -565,7 +565,7 @@
   font-weight: 700;
   color: var(--color-ivory);
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: transform 250ms ease, filter 250ms ease;
   text-decoration: none;
 }
 
@@ -805,7 +805,7 @@
   font-family: inherit;
   font-weight: 800;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: transform 300ms ease, background-color 300ms ease, box-shadow 300ms ease;
 }
 
 .splash-primary-btn {
@@ -931,7 +931,7 @@
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
   box-shadow: 0 12px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18);
-  transition: 0.3s ease;
+  transition: transform 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
 }
 
 .splash-feature-card:hover {
@@ -1227,7 +1227,7 @@
     inset 0 -1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(22px) saturate(150%);
   -webkit-backdrop-filter: blur(22px) saturate(150%);
-  transition: background 0.35s ease;
+  transition: background-color 350ms ease;
 }
 
 /* Graceful fallback when backdrop filters are unavailable */
@@ -1270,7 +1270,7 @@
   color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+  transition: transform 250ms ease, background-color 250ms ease, color 250ms ease;
 }
 
 @media (min-width: 640px) {
@@ -1500,6 +1500,60 @@ svg {
   box-shadow:
     0 28px 70px -34px rgb(0 0 0 / 92%),
     0 0 0 1px rgb(168 169 162 / 8%);
+}
+
+.admin-reset-button {
+  color: var(--color-silver);
+  border: 1px solid transparent;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.admin-reset-button:enabled:is(:hover, :focus-visible) {
+  color: var(--color-ivory);
+  background-color: var(--color-obsidian);
+  border-color: var(--color-brand-500);
+}
+
+.admin-reset-button:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+.admin-reset-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.admin-reset-feedback {
+  padding: 0.75rem 1rem;
+  border: 1px solid;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-align: center;
+  animation: admin-reset-feedback-in 180ms ease-out both;
+}
+
+.admin-reset-feedback--success {
+  color: #a7f3d0;
+  background-color: #153b31;
+  border-color: #36745d;
+}
+
+.admin-reset-feedback--error {
+  color: #fecaca;
+  background-color: #47292d;
+  border-color: #95555a;
+}
+
+@keyframes admin-reset-feedback-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-reset-button { transition: none; }
+  .admin-reset-feedback { animation: none; }
 }
 
 .admin-dashboard {
@@ -1884,5 +1938,26 @@ svg {
   .road::after,
   .lampPost {
     animation: none !important;
+  }
+}
+
+/* Let entry keyframes settle on their visible frame and stop decorative loops. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .splash-navbar, .splash-letter {
+    opacity: 1;
+  }
+
+  .splash-hero, .splash-features {
+    opacity: 1;
+    transform: none;
   }
 }

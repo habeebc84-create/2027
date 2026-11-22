@@ -1,3 +1,4 @@
+import { prefersReducedMotion } from '../lib/motionPreference';
 import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { ORDER_STATUSES } from '../types';
@@ -522,7 +523,7 @@ export function AppProvider({ children }) {
         const path = rm[page] + ((page === 'order-tracking' || page === 'order-success') && orderId ? `/${orderId}` : '');
         if (window.location.pathname !== path)
             window.history.pushState({}, '', path);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
     }, []);
     const dismissSplash = useCallback(() => {
         setSplashDismissed(true);
