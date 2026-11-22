@@ -8,7 +8,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * cloud flag). Same pattern as the Launching Soon poster, but it takes
  * precedence over the poster: if both are ON, visitors see maintenance.
  * BUILD 74: the rotating-dot loader from Uiverse.io (sent by the owner)
- * runs above the heading, re-coloured to HSN champagne/ivory — see the
+ * runs above the heading, re-coloured to HSN lime/ivory — see the
  * .pl rules in index.css. It is decorative only; it does not mean the
  * page is about to open.
  * BUILD 78: Originkit Swell Grid (CLI-added verbatim

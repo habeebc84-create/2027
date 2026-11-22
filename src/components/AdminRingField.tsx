@@ -18,7 +18,7 @@ export default function AdminRingField() {
     <div className="admin-ring-field" aria-hidden="true">
       <CursorRingField
         background="transparent"
-        colors={['#C6A875', '#F7F5F0', '#C2C1BD']}
+        colors={['#C6FF00', '#F7F5F0', '#DDE3E8']}
         style={{ minWidth: 0, minHeight: 0 }}
       />
     </div>

@@ -15,8 +15,8 @@ interface Dot {
 }
 
 const COLORS: [number, number, number][] = [
-  [198, 168, 117], // champagne
-  [198, 168, 117],
+  [198, 255, 0], // lime
+  [198, 255, 0],
   [247, 245, 240], // ivory
   [194, 193, 189], // silver
 ];
@@ -79,9 +79,9 @@ export default function SiteCursorDots() {
 
       if (pointer.active && !reducedMotion) {
         const glow = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 180);
-        glow.addColorStop(0, 'rgba(198, 168, 117, 0.10)');
-        glow.addColorStop(0.55, 'rgba(198, 168, 117, 0.035)');
-        glow.addColorStop(1, 'rgba(198, 168, 117, 0)');
+        glow.addColorStop(0, 'rgba(198, 255, 0, 0.10)');
+        glow.addColorStop(0.55, 'rgba(198, 255, 0, 0.035)');
+        glow.addColorStop(1, 'rgba(198, 255, 0, 0)');
         ctx.fillStyle = glow;
         ctx.fillRect(pointer.x - 180, pointer.y - 180, 360, 360);
       }

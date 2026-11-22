@@ -4,7 +4,7 @@
 // Ported here as the admin-portal background only: it is mounted by
 // AdminRingField, which renders it only on admin-login / admin pages.
 // Normal user pages render no canvas at all.
-// Colours adapted to the HSN palette (champagne / ivory / silver) and the
+// Colours adapted to the HSN palette (lime / ivory / silver) and the
 // background is passed in transparent by the wrapper, so the field sits
 // over the admin pages' own dark background instead of covering them.
 // The simulation, ring behaviour and shader maths are otherwise as sent.
@@ -25,7 +25,7 @@ const DPR_CAP = 2
 const MAX_POINTS = 65536
 const TAU = Math.PI * 2
 const MAX_COLORS = 5
-const DEFAULT_COLORS = ["#C6A875", "#F7F5F0", "#C2C1BD"]
+const DEFAULT_COLORS = ["#C6FF00", "#F7F5F0", "#DDE3E8"]
 const RING_EDGE = 4
 
 const NOISE = `

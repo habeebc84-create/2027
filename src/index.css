@@ -6,49 +6,71 @@
    See COLOR_PALETTE.md for the palette and usage contract.
    ============================================================ */
 @theme {
-  /* Named production tokens */
-  --color-obsidian: #0B0C0E;
-  --color-charcoal: #1A1D21;
-  --color-gunmetal: #34373B;
+  /* Named production tokens — vibrant trio first */
+  --color-ink: #060A08;
+  --color-ink-soft: #0C1210;
+  --color-lime: #C6FF00;
+  --color-lime-bright: #D9FF4D;
+  --color-lime-deep: #8FBF00;
+  --color-silver-glass: #DDE3E8;
+  --color-glass: rgba(221, 227, 232, 0.10);
+  --color-glass-border: rgba(221, 227, 232, 0.28);
+  /* Legacy tokens kept for compatibility / PDF. Champagne is no longer
+     the on-screen brand — Lime is. */
+  --color-obsidian: #060A08;
+  --color-charcoal: #0E1411;
+  --color-gunmetal: #333D38;
   --color-champagne: #C6A875;
   --color-porcelain: #F7F5F0;
   --color-ivory: #F7F5F0;
-  --color-silver: #C2C1BD;
+  --color-silver: #DDE3E8;
   --color-graphite: #17191C;
-  --color-purchase: #F97316;
+  --color-purchase: var(--color-lime);
   --color-success: #166534;
 
   /* Semantic aliases: use these in new UI, not decorative hue names. */
-  --color-background: var(--color-obsidian);
-  --color-surface: var(--color-charcoal);
+  --color-background: var(--color-ink);
+  --color-surface: var(--color-ink-soft);
   --color-surface-light: var(--color-porcelain);
   --color-line: var(--color-gunmetal);
-  --color-brand: var(--color-champagne);
+  --color-brand: var(--color-lime);
   --color-foreground: var(--color-ivory);
   --color-muted: var(--color-silver);
   --color-foreground-light: var(--color-graphite);
-  --color-on-purchase: var(--color-obsidian);
+  --color-on-purchase: var(--color-ink);
   --color-on-success: var(--color-ivory);
 
-  /* Derived interaction tones; the ten production colors stay canonical. */
-  --color-brand-ink: color-mix(in srgb, var(--color-champagne) 55%, var(--color-graphite));
+  /* Derived interaction tones; the production colors stay canonical. */
+  --color-brand-ink: #4A6B00;
   --color-muted-light: color-mix(in srgb, var(--color-graphite) 76%, var(--color-porcelain));
   --color-success-foreground: color-mix(in srgb, var(--color-success) 28%, var(--color-ivory));
-  --color-purchase-hover: color-mix(in srgb, var(--color-purchase) 86%, var(--color-porcelain));
+  --color-purchase-hover: var(--color-lime-bright);
 
-  /* Champagne brand ramp. Legacy orange utilities are brand utilities,
+  /* Lime brand ramp. Legacy orange utilities are brand utilities,
      never purchase utilities: checkout/add-to-cart opt in explicitly. */
-  --color-brand-50: color-mix(in srgb, var(--color-champagne) 8%, var(--color-porcelain));
-  --color-brand-100: color-mix(in srgb, var(--color-champagne) 18%, var(--color-porcelain));
-  --color-brand-200: color-mix(in srgb, var(--color-champagne) 40%, var(--color-porcelain));
-  --color-brand-300: var(--color-champagne);
-  --color-brand-400: var(--color-champagne);
-  --color-brand-500: var(--color-champagne);
-  --color-brand-600: color-mix(in srgb, var(--color-champagne) 85%, var(--color-obsidian));
-  --color-brand-700: color-mix(in srgb, var(--color-champagne) 65%, var(--color-obsidian));
-  --color-brand-800: color-mix(in srgb, var(--color-champagne) 45%, var(--color-obsidian));
-  --color-brand-900: color-mix(in srgb, var(--color-champagne) 28%, var(--color-obsidian));
-  --color-brand-950: color-mix(in srgb, var(--color-champagne) 12%, var(--color-obsidian));
+  --color-brand-50: color-mix(in srgb, var(--color-lime) 8%, var(--color-porcelain));
+  --color-brand-100: color-mix(in srgb, var(--color-lime) 18%, var(--color-porcelain));
+  --color-brand-200: color-mix(in srgb, var(--color-lime) 40%, var(--color-porcelain));
+  --color-brand-300: var(--color-lime);
+  --color-brand-400: var(--color-lime);
+  --color-brand-500: var(--color-lime);
+  --color-brand-600: color-mix(in srgb, var(--color-lime) 85%, var(--color-ink));
+  --color-brand-700: color-mix(in srgb, var(--color-lime) 65%, var(--color-ink));
+  --color-brand-800: color-mix(in srgb, var(--color-lime) 45%, var(--color-ink));
+  --color-brand-900: color-mix(in srgb, var(--color-lime) 28%, var(--color-ink));
+  --color-brand-950: color-mix(in srgb, var(--color-lime) 12%, var(--color-ink));
+  /* Lime ramp for direct lime-* utilities. */
+  --color-lime-50: var(--color-brand-50);
+  --color-lime-100: var(--color-brand-100);
+  --color-lime-200: var(--color-brand-200);
+  --color-lime-300: var(--color-lime);
+  --color-lime-400: var(--color-lime);
+  --color-lime-500: var(--color-lime);
+  --color-lime-600: var(--color-brand-600);
+  --color-lime-700: var(--color-brand-700);
+  --color-lime-800: var(--color-brand-800);
+  --color-lime-900: var(--color-brand-900);
+  --color-lime-950: var(--color-brand-950);
   --color-orange-50: var(--color-brand-50);
   --color-orange-100: var(--color-brand-100);
   --color-orange-200: var(--color-brand-200);
@@ -147,7 +169,7 @@
 @layer base {
   :root {
     color-scheme: dark;
-    accent-color: var(--color-champagne);
+    accent-color: var(--color-lime);
   }
 
   body {
@@ -157,6 +179,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--color-background);
+    background-image:
+      radial-gradient(900px 420px at 88% -8%, rgba(198, 255, 0, 0.07), transparent 60%),
+      radial-gradient(700px 420px at 8% 108%, rgba(221, 227, 232, 0.06), transparent 60%);
+    background-attachment: fixed;
     position: relative;
     overflow-x: hidden;
   }
@@ -177,9 +203,9 @@
 
   button:not(:disabled), select, summary { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
-  ::selection { background: var(--color-champagne); color: var(--color-obsidian); }
-  :focus-visible { outline: 2px solid var(--color-champagne); outline-offset: 3px; }
-  input, textarea, select { caret-color: var(--color-champagne); }
+  ::selection { background: var(--color-lime); color: var(--color-ink); }
+  :focus-visible { outline: 2px solid var(--color-lime); outline-offset: 3px; }
+  input, textarea, select { caret-color: var(--color-lime); }
   input::placeholder, textarea::placeholder { color: var(--color-slate-600); opacity: 1; }
   option { background: var(--color-charcoal); color: var(--color-ivory); }
 
@@ -212,7 +238,7 @@
     border: 1px solid var(--color-gunmetal);
     transition: border-color 180ms ease, background-color 180ms ease;
   }
-  .btn-secondary:hover:not(:disabled) { border-color: var(--color-champagne); }
+  .btn-secondary:hover:not(:disabled) { border-color: var(--color-lime); }
 
   .status-success {
     background: color-mix(in srgb, var(--color-success) 24%, var(--color-charcoal));
@@ -236,7 +262,18 @@
   .market-price-panel { box-shadow: 0 22px 52px -28px rgb(0 0 0 / 65%); }
   .market-price-card { border: 1px solid color-mix(in srgb, var(--color-gunmetal) 30%, transparent); }
   .market-price-row { border-top: 1px solid color-mix(in srgb, var(--color-gunmetal) 16%, transparent); }
-  .market-price-row:hover { background: color-mix(in srgb, var(--color-champagne) 10%, transparent); }
+  .market-price-row:hover { background: color-mix(in srgb, var(--color-lime) 10%, transparent); }
+
+  /* Silver Glass — the shared surface for navbar, dock, cards and pills.
+     Silver-tinted translucent glass over Ink, Lime only for the accent. */
+  .glass-silver {
+    background: linear-gradient(135deg, rgba(221, 227, 232, 0.14), rgba(221, 227, 232, 0.05));
+    border: 1px solid rgba(221, 227, 232, 0.28);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+  .glass-silver:hover { border-color: rgba(198, 255, 0, 0.55); }
 
 }
 
@@ -410,7 +447,7 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(11, 12, 14, 0.62) 0%, rgba(11, 12, 14, 0.35) 45%, rgba(11, 12, 14, 0.03) 100%),
+    linear-gradient(90deg, rgba(6, 10, 8, 0.62) 0%, rgba(6, 10, 8, 0.35) 45%, rgba(6, 10, 8, 0.03) 100%),
     linear-gradient(0deg, rgba(0,0,0,0.55) 0%, transparent 48%, rgba(0,0,0,0.10) 100%);
 }
 
@@ -419,7 +456,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(0,0,0,0.22), transparent 55%, rgba(198, 168, 117, 0.05));
+  background: linear-gradient(90deg, rgba(0,0,0,0.22), transparent 55%, rgba(198, 255, 0, 0.05));
   z-index: 1;
 }
 
@@ -458,7 +495,7 @@
   justify-content: space-between;
   padding: 0 25px;
   border-radius: 20px;
-  background: rgba(26, 29, 33, 0.35);
+  background: rgba(221, 227, 232, 0.10);
   border:  1px solid var(--color-gunmetal);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -583,7 +620,7 @@
   gap: 8px;
   padding: 8px 17px;
   border-radius: 25px;
-  background: rgba(26, 29, 33, 0.45);
+  background: rgba(221, 227, 232, 0.10);
   border:  1px solid var(--color-gunmetal);
   backdrop-filter: blur(10px);
   font-size: 13px;
@@ -680,7 +717,7 @@
   width: 0.3em;
 }
 .gate-letter-gradient {
-  background: linear-gradient(to right, var(--color-champagne), var(--color-champagne));
+  background: linear-gradient(to right, var(--color-lime), var(--color-lime));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -776,7 +813,7 @@
   max-width: 100%;
   padding: 0 27px;
   justify-content: space-between;
-  background: rgba(26, 29, 33, 0.45);
+  background: rgba(221, 227, 232, 0.10);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05);
@@ -803,7 +840,7 @@
   max-width: 100%;
   justify-content: center;
   gap: 10px;
-  background: rgba(26, 29, 33, 0.45);
+  background: rgba(221, 227, 232, 0.10);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border:  1px solid var(--color-gunmetal);
@@ -821,8 +858,8 @@
 /* ENTER button blink: a soft purchase-orange pulse that draws the eye to ENTER
    until it is tapped. Reduced-motion users get a steady button. */
 @keyframes splash-enter-blink {
-  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 0 rgba(249, 115, 22, 0.45); }
-  50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 14px rgba(249, 115, 22, 0); }
+  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 0 rgba(198, 255, 0, 0.45); }
+  50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 14px rgba(198, 255, 0, 0); }
 }
 .splash-primary-btn {
   background: var(--color-purchase);
@@ -849,7 +886,7 @@
   border-radius: 13px;
   /* Clear liquid glass (same treatment as the bottom dock): no white
      fill, no warm tint — the splash photo shows through the glass. */
-  background: rgba(26, 29, 33, 0.30);
+  background: rgba(221, 227, 232, 0.10);
   border:  1px solid var(--color-gunmetal);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
@@ -889,7 +926,7 @@
   border-radius: 19px;
   /* Clear liquid glass (same treatment as the bottom dock): the dark
      purple opaque fill is gone — the splash photo shows through. */
-  background: rgba(26, 29, 33, 0.28);
+  background: rgba(221, 227, 232, 0.10);
   border:  1px solid var(--color-gunmetal);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
@@ -899,7 +936,7 @@
 
 .splash-feature-card:hover {
   transform: translateY(-5px);
-  border-color: var(--color-champagne);
+  border-color: var(--color-lime);
   box-shadow: 0 18px 40px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
@@ -915,10 +952,10 @@
   color: var(--color-obsidian);
 }
 
-.card-1-icon { background: var(--color-champagne); }
-.card-2-icon { background: var(--color-champagne); }
-.card-3-icon { background: var(--color-champagne); }
-.card-4-icon { background: var(--color-champagne); }
+.card-1-icon { background: var(--color-lime); }
+.card-2-icon { background: var(--color-lime); }
+.card-3-icon { background: var(--color-lime); }
+.card-4-icon { background: var(--color-lime); }
 
 /* Feature Text */
 .splash-feature-text {
@@ -1181,7 +1218,7 @@
   padding: 8px;
   list-style: none;
   border-radius: 999px;
-  background: rgba(26, 29, 33, 0.34);
+  background: rgba(221, 227, 232, 0.10);
   border:  1px solid var(--color-gunmetal);
   box-shadow:
     0 18px 45px rgba(0, 0, 0, 0.28),
@@ -1196,12 +1233,12 @@
 /* Graceful fallback when backdrop filters are unavailable */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .floating-bottom-nav-list {
-    background: rgba(26, 29, 33, 0.72);
+    background: rgba(221, 227, 232, 0.10);
   }
 }
 
 .floating-bottom-nav.is-scrolled .floating-bottom-nav-list {
-  background: rgba(26, 29, 33, 0.46);
+  background: rgba(221, 227, 232, 0.10);
 }
 
 .floating-bottom-nav-indicator {
@@ -1210,8 +1247,8 @@
   bottom: 8px;
   left: 0;
   border-radius: 999px;
-  background: var(--color-champagne);
-  box-shadow: 0 6px 20px rgba(198, 168, 117, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: var(--color-lime);
+  box-shadow: 0 6px 20px rgba(198, 255, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   transition: transform 0.55s cubic-bezier(0.22, 1.4, 0.36, 1), width 0.55s cubic-bezier(0.22, 1.4, 0.36, 1);
   pointer-events: none;
 }
@@ -1262,7 +1299,7 @@
 }
 
 .floating-bottom-nav-link:focus-visible {
-  outline: 2px solid var(--color-champagne);
+  outline: 2px solid var(--color-lime);
   outline-offset: 2px;
 }
 
@@ -1302,8 +1339,8 @@
 }
 
 @keyframes logoGlowPulse {
-  0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 0 0 rgba(198, 168, 117, 0.45), inset 0 1px 2px rgba(255,255,255,0.15); }
-  50% { box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 10px rgba(198, 168, 117, 0), inset 0 1px 2px rgba(255,255,255,0.15); }
+  0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 0 0 rgba(198, 255, 0, 0.45), inset 0 1px 2px rgba(255,255,255,0.15); }
+  50% { box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 10px rgba(198, 255, 0, 0), inset 0 1px 2px rgba(255,255,255,0.15); }
 }
 
 @keyframes logoImgIn {
@@ -1568,14 +1605,14 @@ svg {
 }
 
 /* Launching-soon clock animation: each digit pops when it changes, and the
-   whole clock glows softly in the champagne brand colour. */
+   whole clock glows softly in the lime brand colour. */
 @keyframes launch-digit-pop {
   0% { transform: scale(1.3); opacity: 0.35; }
   100% { transform: scale(1); opacity: 1; }
 }
 @keyframes launch-clock-glow {
-  0%, 100% { filter: drop-shadow(0 0 0 rgba(198, 168, 117, 0)); }
-  50% { filter: drop-shadow(0 0 18px rgba(198, 168, 117, 0.45)); }
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(198, 255, 0, 0)); }
+  50% { filter: drop-shadow(0 0 18px rgba(198, 255, 0, 0.45)); }
 }
 .launch-clock {
   animation: launch-clock-glow 3s ease-in-out infinite;
@@ -1600,8 +1637,8 @@ svg {
    Maintenance page, above the heading, with "HSN" in the middle.
    Reduced-motion users get a still ring, not a spinning one. */
 .pl {
-  --bg: #0B0C0E;
-  --primary1: #C6A875;
+  --bg: #060A08;
+  --primary1: #C6FF00;
   --primary2: #F7F5F0;
   --fg-t: rgba(247, 245, 240, 0.9);
   --trans-dur: 0.3s;
