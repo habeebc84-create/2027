@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -18,8 +18,14 @@ import Contact from './pages/Contact';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import OrderTracking from './pages/OrderTracking';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
+// BUILD 94 perf: the admin portal is only ever opened by the owner, so its
+// code (dashboard, login, admin background) is split into its own chunk and
+// downloaded only when /manage-portal-9f3a is opened — visitors no longer
+// download it with the shop.
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const adminFallback = _jsx("div", { role: "status", style: { minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#DDE3E8', fontWeight: 700 }, children: "Loading admin portal\u2026" });
+const withAdminSuspense = (el) => _jsx(Suspense, { fallback: adminFallback, children: el });
 import Terms from './pages/Terms';
 import WelcomeGate from './pages/WelcomeGate';
 import Splash from './components/Splash';
@@ -221,8 +227,8 @@ function AppContent() {
             case 'checkout': return _jsx(Checkout, { onBackToCart: () => setCartOpen(true), onOrderSuccess: (id) => { setSuccessOrderId(id); setPage('order-success', id); } });
             case 'order-success': return _jsx(OrderSuccess, { orderId: successOrderId || '' });
             case 'order-tracking': return _jsx(OrderTracking, { initialOrderId: trackingOrderId }, trackingOrderId || 'manual');
-            case 'admin-login': return _jsx(AdminLogin, {});
-            case 'admin': return isAdmin ? _jsx(AdminDashboard, {}) : _jsx(AdminLogin, {});
+            case 'admin-login': return withAdminSuspense(_jsx(AdminLogin, {}));
+            case 'admin': return withAdminSuspense(isAdmin ? _jsx(AdminDashboard, {}) : _jsx(AdminLogin, {}));
             case 'terms': return _jsx(Terms, {});
             default: return _jsx(Home, {});
         }
