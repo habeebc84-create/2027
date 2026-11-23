@@ -1,3 +1,17 @@
+# HSN production color palette — Ink + Silver Glass (two-colour, BUILD 94)
+
+BUILD 94: the owner asked to remove the third (green) colour. Electric Lime
+`#C6FF00` is gone from the screen. The site is now two colours: Ink base and
+the Silver Glass / white family for accents, buttons, focus rings, glows and
+the delivery truck. Buttons are silver fill with ink text (about 15:1
+contrast). The `--color-lime*` token names remain only as aliases and now
+resolve to silver values (`#DDE3E8`, bright `#F2F5F7`, deep `#A9B3BB`).
+Status "success" is slate `#3A434B` (no green). WhatsApp buttons are silver
+too. Champagne / Construction Orange stay retired. The table below the line
+is the BUILD 93 history, kept for reference.
+
+---
+
 # HSN production color palette — Ink + Silver Glass + Lime
 
 The storefront is a dark, vibrant canvas: Ink base, Silver Glass surfaces,

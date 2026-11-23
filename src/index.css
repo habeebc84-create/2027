@@ -6,17 +6,20 @@
    See COLOR_PALETTE.md for the palette and usage contract.
    ============================================================ */
 @theme {
-  /* Named production tokens — vibrant trio first */
+  /* Named production tokens. BUILD 94: two-colour theme — Ink + Silver
+     Glass. The Electric Lime accent (#C6FF00) was removed at the owner's
+     request; the --color-lime* names are kept only as aliases so existing
+     class names keep working, and they now resolve to the silver family. */
   --color-ink: #060A08;
   --color-ink-soft: #0C1210;
-  --color-lime: #C6FF00;
-  --color-lime-bright: #D9FF4D;
-  --color-lime-deep: #8FBF00;
+  --color-lime: #DDE3E8;
+  --color-lime-bright: #F2F5F7;
+  --color-lime-deep: #A9B3BB;
   --color-silver-glass: #DDE3E8;
   --color-glass: rgba(221, 227, 232, 0.10);
   --color-glass-border: rgba(221, 227, 232, 0.28);
-  /* Legacy tokens kept for compatibility / PDF. Champagne is no longer
-     the on-screen brand — Lime is. */
+  /* Legacy tokens kept for compatibility / PDF. Champagne is not used
+     on-screen; the brand accent is Silver Glass. */
   --color-obsidian: #060A08;
   --color-charcoal: #0E1411;
   --color-gunmetal: #333D38;
@@ -26,7 +29,7 @@
   --color-silver: #DDE3E8;
   --color-graphite: #17191C;
   --color-purchase: var(--color-lime);
-  --color-success: #166534;
+  --color-success: #3A434B;
 
   /* Semantic aliases: use these in new UI, not decorative hue names. */
   --color-background: var(--color-ink);
@@ -41,7 +44,7 @@
   --color-on-success: var(--color-ivory);
 
   /* Derived interaction tones; the production colors stay canonical. */
-  --color-brand-ink: #4A6B00;
+  --color-brand-ink: #2B3238;
   --color-muted-light: color-mix(in srgb, var(--color-graphite) 76%, var(--color-porcelain));
   --color-success-foreground: color-mix(in srgb, var(--color-success) 28%, var(--color-ivory));
   --color-purchase-hover: var(--color-lime-bright);
@@ -180,7 +183,7 @@
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--color-background);
     background-image:
-      radial-gradient(900px 420px at 88% -8%, rgba(198, 255, 0, 0.07), transparent 60%),
+      radial-gradient(900px 420px at 88% -8%, rgba(221, 227, 232, 0.07), transparent 60%),
       radial-gradient(700px 420px at 8% 108%, rgba(221, 227, 232, 0.06), transparent 60%);
     background-attachment: fixed;
     position: relative;
@@ -273,7 +276,7 @@
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22);
   }
-  .glass-silver:hover { border-color: rgba(198, 255, 0, 0.55); }
+  .glass-silver:hover { border-color: rgba(221, 227, 232, 0.55); }
 
 }
 
@@ -456,7 +459,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(0,0,0,0.22), transparent 55%, rgba(198, 255, 0, 0.05));
+  background: linear-gradient(90deg, rgba(0,0,0,0.22), transparent 55%, rgba(221, 227, 232, 0.05));
   z-index: 1;
 }
 
@@ -578,9 +581,9 @@
 
 .splash-whatsapp {
   border-radius: 0;
-  background: #25D366;
+  background: #DDE3E8;
   color: var(--color-obsidian);
-  box-shadow: 0 7px 20px rgba(37, 211, 102, 0.35);
+  box-shadow: 0 7px 20px rgba(221, 227, 232, 0.35);
 }
 
 .splash-nav-btn:hover {
@@ -746,7 +749,7 @@
   position: absolute;
   inset: -12px -16px;
   border-radius: 9999px;
-  background: radial-gradient(ellipse 62% 95% at 50% 0%, rgba(163, 230, 53, 0.22) 0%, rgba(163, 230, 53, 0.07) 55%, rgba(163, 230, 53, 0) 78%);
+  background: radial-gradient(ellipse 62% 95% at 50% 0%, rgba(221, 227, 232, 0.22) 0%, rgba(221, 227, 232, 0.07) 55%, rgba(221, 227, 232, 0) 78%);
   filter: blur(10px);
   pointer-events: none;
 }
@@ -756,7 +759,7 @@
   right: 10%;
   height: 2px;
   border-radius: 9999px;
-  background: linear-gradient(90deg, rgba(163, 230, 53, 0) 0%, rgba(190, 242, 100, 0.8) 50%, rgba(163, 230, 53, 0) 100%);
+  background: linear-gradient(90deg, rgba(221, 227, 232, 0) 0%, rgba(242, 245, 247, 0.8) 50%, rgba(221, 227, 232, 0) 100%);
   pointer-events: none;
 }
 .lime-glass-bead-top { top: -1px; }
@@ -769,7 +772,7 @@
   position: absolute;
   inset: -12px -16px;
   border-radius: 9999px;
-  background: radial-gradient(ellipse 62% 95% at 50% 0%, rgba(163, 230, 53, 0.22) 0%, rgba(163, 230, 53, 0.07) 55%, rgba(163, 230, 53, 0) 78%);
+  background: radial-gradient(ellipse 62% 95% at 50% 0%, rgba(221, 227, 232, 0.22) 0%, rgba(221, 227, 232, 0.07) 55%, rgba(221, 227, 232, 0) 78%);
   filter: blur(10px);
   pointer-events: none;
 }
@@ -781,7 +784,7 @@
   right: 10%;
   height: 2px;
   border-radius: 9999px;
-  background: linear-gradient(90deg, rgba(163, 230, 53, 0) 0%, rgba(190, 242, 100, 0.8) 50%, rgba(163, 230, 53, 0) 100%);
+  background: linear-gradient(90deg, rgba(221, 227, 232, 0) 0%, rgba(242, 245, 247, 0.8) 50%, rgba(221, 227, 232, 0) 100%);
   pointer-events: none;
 }
 .navbar-pill::after { bottom: -1px; }
@@ -858,8 +861,8 @@
 /* ENTER button blink: a soft purchase-orange pulse that draws the eye to ENTER
    until it is tapped. Reduced-motion users get a steady button. */
 @keyframes splash-enter-blink {
-  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 0 rgba(198, 255, 0, 0.45); }
-  50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 14px rgba(198, 255, 0, 0); }
+  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 0 rgba(221, 227, 232, 0.45); }
+  50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05), 0 0 0 14px rgba(221, 227, 232, 0); }
 }
 .splash-primary-btn {
   background: var(--color-purchase);
@@ -1248,7 +1251,7 @@
   left: 0;
   border-radius: 999px;
   background: var(--color-lime);
-  box-shadow: 0 6px 20px rgba(198, 255, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 20px rgba(221, 227, 232, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   transition: transform 0.55s cubic-bezier(0.22, 1.4, 0.36, 1), width 0.55s cubic-bezier(0.22, 1.4, 0.36, 1);
   pointer-events: none;
 }
@@ -1339,8 +1342,8 @@
 }
 
 @keyframes logoGlowPulse {
-  0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 0 0 rgba(198, 255, 0, 0.45), inset 0 1px 2px rgba(255,255,255,0.15); }
-  50% { box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 10px rgba(198, 255, 0, 0), inset 0 1px 2px rgba(255,255,255,0.15); }
+  0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 0 0 rgba(221, 227, 232, 0.45), inset 0 1px 2px rgba(255,255,255,0.15); }
+  50% { box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 10px rgba(221, 227, 232, 0), inset 0 1px 2px rgba(255,255,255,0.15); }
 }
 
 @keyframes logoImgIn {
@@ -1611,8 +1614,8 @@ svg {
   100% { transform: scale(1); opacity: 1; }
 }
 @keyframes launch-clock-glow {
-  0%, 100% { filter: drop-shadow(0 0 0 rgba(198, 255, 0, 0)); }
-  50% { filter: drop-shadow(0 0 18px rgba(198, 255, 0, 0.45)); }
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(221, 227, 232, 0)); }
+  50% { filter: drop-shadow(0 0 18px rgba(221, 227, 232, 0.45)); }
 }
 .launch-clock {
   animation: launch-clock-glow 3s ease-in-out infinite;
@@ -1638,7 +1641,7 @@ svg {
    Reduced-motion users get a still ring, not a spinning one. */
 .pl {
   --bg: #060A08;
-  --primary1: #C6FF00;
+  --primary1: #DDE3E8;
   --primary2: #F7F5F0;
   --fg-t: rgba(247, 245, 240, 0.9);
   --trans-dur: 0.3s;

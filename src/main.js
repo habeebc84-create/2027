@@ -34,7 +34,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
                 'position:fixed;top:max(12px, env(safe-area-inset-top));left:50%;transform:translateX(-50%);' +
                     'width:calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right));max-width:640px;z-index:9999;' +
                     'display:flex;align-items:center;gap:8px;flex-wrap:wrap;' +
-                    'background:#C6FF00;color:#0B0C0E;border-radius:16px;' +
+                    'background:#DDE3E8;color:#0B0C0E;border-radius:16px;' +
                     'padding:12px 14px;box-shadow:0 12px 32px rgba(0,0,0,0.45);' +
                     'font-family:system-ui,sans-serif;font-size:14px;font-weight:700;';
             const text = document.createElement('span');
