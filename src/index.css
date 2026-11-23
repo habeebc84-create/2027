@@ -1886,3 +1886,17 @@ svg {
     animation: none !important;
   }
 }
+
+/* BUILD 94 a11y: reduced-motion safety net for Tailwind's looping
+   utilities (the welcome-screen glow blobs pulse forever) and smooth
+   scrolling. Component-specific reduced-motion rules above still apply. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-ping,
+  .animate-bounce {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}
