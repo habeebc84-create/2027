@@ -165,10 +165,12 @@ export function AppProvider({ children }) {
             const version = await pushRemoteContent(payload);
             if (version) {
                 remoteVersionRef.current = version;
-                showToast('Saved — updating on all devices…');
+                if (isAdminRef.current)
+                    showToast('Saved — updating on all devices…');
             }
             else {
-                showToast('Cloud sync failed — change stays on this device only', 'error');
+                if (isAdminRef.current)
+                    showToast('Cloud sync failed — change stays on this device only', 'error');
             }
         }
         finally {
@@ -196,6 +198,8 @@ export function AppProvider({ children }) {
     useEffect(() => { save('hsn_categories', categories); }, [categories]);
     useEffect(() => { save('hsn_notifications', notifications); }, [notifications]);
     useEffect(() => { isAdminRef.current = isAdmin; }, [isAdmin]);
+    // BUILD 96: pull Postgres orders as soon as the admin session is known.
+    useEffect(() => { if (isAdmin) void applyDbOrdersRef.current?.(); }, [isAdmin]);
     useEffect(() => { save('hsn_notif_seen', seenNotificationKeys); }, [seenNotificationKeys]);
     // Tombstones are also kept in localStorage so the other tabs of the same
     // browser can drop a deleted alert instead of merging it back in.
@@ -368,7 +372,14 @@ export function AppProvider({ children }) {
     // for an order whose first insert failed). A null fetch means the table
     // is not there yet — in that case do nothing and the JSON cloud sync
     // below keeps working exactly as before.
+    const applyDbOrdersRef = useRef(null);
     const applyDbOrders = useCallback(async () => {
+        // BUILD 96 security fix: only the signed-in admin reads the whole
+        // orders table. Visitors used to download (and re-upload) EVERY
+        // customer's order — names, phones, addresses — on every page load.
+        // Customers track their own order through /api/track instead.
+        if (!isAdminRef.current)
+            return;
         const dbOrders = await fetchOrdersDb();
         if (dbOrders === null)
             return;
@@ -402,6 +413,7 @@ export function AppProvider({ children }) {
             window.removeEventListener('focus', onVisible);
         };
     }, [applyDbOrders]);
+    useEffect(() => { applyDbOrdersRef.current = applyDbOrders; }, [applyDbOrders]);
     // First load: pull the latest shared content from the cloud.
     useEffect(() => {
         let cancelled = false;
@@ -685,8 +697,14 @@ export function AppProvider({ children }) {
         });
         clearCart();
         showToast(`Order ${orderId} placed successfully!`);
-        // Customer orders with a shared location reach the owner's other devices too.
-        localEditRef.current = true;
+        // BUILD 96: when the server saved the order (Postgres), do NOT push this
+        // visitor's whole snapshot to the PUBLIC site-content.json — that put
+        // the customer's name/phone/address in a world-readable file and could
+        // overwrite the owner's newer prices with this visitor's stale copy.
+        // The legacy push stays only while the backend is not configured, so
+        // orders still reach the owner until the dashboard steps are done.
+        if (!api)
+            localEditRef.current = true;
         return orderId; // BUILD 65: Checkout uses this id, instead of computing
         // its own from the counter — the two could drift and the success page
         // would then open an order that does not exist.

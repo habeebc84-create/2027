@@ -72,7 +72,7 @@ export default function Home() {
                             lineHeight: '1em',
                             letterSpacing: '-0.01em',
                             textAlign: 'left',
-                        }, background: "#0B0C0E", textColor: "#F7F5F0", shade: "#DDE3E8", accent: "rgba(221, 227, 232, 0.7)", reach: isPhone ? 150 : 290, handles: isPhone ? { size: 48, spread: 44, labels: true } : { size: 72, spread: 27, labels: true }, style: {
+                        }, background: "#060A08", textColor: "#F7F5F0", shade: "#DDE3E8", accent: "rgba(221, 227, 232, 0.7)", reach: isPhone ? 150 : 290, handles: isPhone ? { size: 48, spread: 44, labels: true } : { size: 72, spread: 27, labels: true }, style: {
                             minWidth: 0,
                             minHeight: 0,
                             width: '100%',

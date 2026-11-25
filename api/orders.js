@@ -38,8 +38,17 @@ function validCustomer(c) {
   if (!/^[6-9]\d{9}$/.test(mobile)) {
     return 'Enter a valid 10-digit Indian mobile number.';
   }
-  if (!address) return 'Please enter your delivery address.';
-  if (!landmark) return 'Please enter a landmark.';
+  if (!address || address.length > 500) return 'Please enter your delivery address.';
+  if (!landmark || landmark.length > 200) return 'Please enter a landmark.';
+  // BUILD 96: cap every free-text field so one order cannot store megabytes.
+  for (const k of ['email', 'village', 'mandal']) {
+    if (c[k] !== undefined && (typeof c[k] !== 'string' || c[k].length > 120)) {
+      return 'Please check your contact details.';
+    }
+  }
+  if (typeof c.email === 'string' && c.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email.trim())) {
+    return 'Please enter a valid email address.';
+  }
   if (pincode && !/^\d{6}$/.test(pincode)) return 'Pincode must be 6 digits.';
   return null;
 }
@@ -66,7 +75,7 @@ export default async function handler(req, res) {
     return json(res, 400, { error: 'Invalid delivery method.' });
   }
   const deliveryLocation =
-    typeof body.deliveryLocation === 'string' ? body.deliveryLocation : '';
+    typeof body.deliveryLocation === 'string' ? body.deliveryLocation.slice(0, 120) : '';
   const deliveryNote =
     typeof body.deliveryNote === 'string' ? body.deliveryNote.slice(0, 500) : '';
 

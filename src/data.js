@@ -22,7 +22,7 @@ export const brands = [
     { id: 'brand-drfixit', name: 'Dr. Fixit', logo: '/cement_banner_new.png', categories: ['cat-chemicals'] },
     { id: 'brand-supreme', name: 'Supreme Pipes', logo: '/img-steel.png', categories: ['cat-pipes'] },
     { id: 'brand-jsw-roofing', name: 'JSW Everglow', logo: '/roofing-jsw.png', categories: ['cat-roofing'] },
-    { id: 'brand-tata-roofing', name: 'Tata BlueScope', logo: '/roofing-tata.png', categories: ['cat-roofing'] },
+    { id: 'brand-tata-roofing', name: 'Tata BlueScope', logo: '/roofing-tata.svg', categories: ['cat-roofing'] },
 ];
 export const products = [
     {
@@ -126,7 +126,7 @@ export const products = [
     {
         id: 'prod-tata-roofing', name: 'Tata BlueScope Durashine Roofing Sheet', category: 'Roofing Sheets', brand: 'Tata BlueScope',
         description: 'Premium anti-corrosion steel roofing with patented Activate technology.',
-        image: '/roofing-tata.png', price: 550, stock: 120, type: 'general', grade: 'Durashine Plus (Per Ft)',
+        image: '/roofing-tata.svg', price: 550, stock: 120, type: 'general', grade: 'Durashine Plus (Per Ft)',
         sizes: [{ size: '8 ft', price: 550, stock: 30 }, { size: '10 ft', price: 690, stock: 25 }, { size: '12 ft', price: 825, stock: 25 }, { size: '14 ft', price: 965, stock: 20 }, { size: '16 ft', price: 1100, stock: 20 }],
         featured: true, enabled: true,
     },

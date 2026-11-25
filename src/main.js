@@ -34,7 +34,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
                 'position:fixed;top:max(12px, env(safe-area-inset-top));left:50%;transform:translateX(-50%);' +
                     'width:calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right));max-width:640px;z-index:9999;' +
                     'display:flex;align-items:center;gap:8px;flex-wrap:wrap;' +
-                    'background:#DDE3E8;color:#0B0C0E;border-radius:16px;' +
+                    'background:#DDE3E8;color:#060A08;border-radius:16px;' +
                     'padding:12px 14px;box-shadow:0 12px 32px rgba(0,0,0,0.45);' +
                     'font-family:system-ui,sans-serif;font-size:14px;font-weight:700;';
             const text = document.createElement('span');
@@ -44,7 +44,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
             updateBtn.type = 'button';
             updateBtn.textContent = 'Update now';
             updateBtn.style.cssText =
-                'background:#0B0C0E;color:#F7F5F0;border:none;border-radius:12px;' +
+                'background:#060A08;color:#F7F5F0;border:none;border-radius:12px;' +
                     'padding:10px 16px;font-weight:800;font-size:14px;cursor:pointer;';
             updateBtn.addEventListener('click', () => {
                 window.location.reload();
@@ -54,7 +54,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
             laterBtn.textContent = 'Later';
             laterBtn.setAttribute('aria-label', 'Dismiss update notification');
             laterBtn.style.cssText =
-                'background:transparent;color:#0B0C0E;border:1px solid #0B0C0E;' +
+                'background:transparent;color:#060A08;border:1px solid #060A08;' +
                     'border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;';
             laterBtn.addEventListener('click', () => {
                 banner.remove();

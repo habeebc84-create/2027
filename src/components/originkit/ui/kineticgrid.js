@@ -2,7 +2,10 @@
 "use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { useRef, useEffect } from "react";
-const useIsStaticRenderer = () => false;
+// BUILD 96: honour prefers-reduced-motion — draw one still frame, no rAF loop.
+const useIsStaticRenderer = () => typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 /**
  * Kinetic Grid
  *

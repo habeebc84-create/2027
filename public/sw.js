@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hsn-pwa-v63';
+const CACHE_NAME = 'hsn-pwa-v64';
 const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/windows-h-logo.png', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-maskable-192.png', '/icons/icon-maskable-512.png', '/icons/apple-touch-icon.png', '/icons/favicon-32.png'];
 
 self.addEventListener('install', (event) => {
@@ -21,6 +21,10 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  // BUILD 96: never cache the API. /api/track answers were cached and served
+  // stale-first, so a customer saw an old order status, and the response
+  // (with their address/phone when unlocked) stayed in the device cache.
+  if (url.pathname.startsWith('/api/')) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(

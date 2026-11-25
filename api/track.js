@@ -41,8 +41,18 @@ export default async function handler(req, res) {
   const rawId = query.orderId;
   const orderId = (Array.isArray(rawId) ? rawId[0] : rawId || '').trim();
   if (!orderId) return json(res, 400, { error: 'Order ID is required.' });
+  // BUILD 96 security fix: the id went straight into ILIKE, so "%" matched
+  // ANY order and leaked other customers' order status/items/total. Only
+  // accept the real id shape and escape LIKE wildcards before matching.
+  if (orderId.length > 40 || !/^HSN-[A-Za-z0-9-]+$/.test(orderId)) {
+    return json(res, 404, { error: 'not_found' });
+  }
+  const likeSafeId = orderId.replace(/[\\%_]/g, (c) => `\\${c}`);
   const rawMobile = query.mobile;
   const mobile = (Array.isArray(rawMobile) ? rawMobile[0] : rawMobile || '').trim();
+  if (mobile && !/^\d{10}$/.test(mobile)) {
+    return json(res, 400, { error: 'Enter the 10-digit mobile number.' });
+  }
 
   const client = getServiceClient();
   if (!client) {
@@ -51,7 +61,7 @@ export default async function handler(req, res) {
   const { data, error } = await client
     .from('hsn_orders')
     .select('*')
-    .ilike('order_id', orderId)
+    .ilike('order_id', likeSafeId)
     .limit(1);
   if (error) {
     return json(res, 503, { error: 'server_not_configured' });
