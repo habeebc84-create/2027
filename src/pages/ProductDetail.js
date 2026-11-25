@@ -44,7 +44,7 @@ export default function ProductDetail() {
         return products.filter(p => p.id !== product.id && p.enabled && (p.category === product.category || p.brand === product.brand)).slice(0, 4);
     }, [product, products]);
     if (!product) {
-        return (_jsx("div", { className: "min-h-screen flex items-center justify-center bg-obsidian", children: _jsxs("div", { className: "text-center space-y-4", children: [_jsx("h2", { className: "text-xl font-bold text-ivory", children: "Product not found" }), _jsx("button", { onClick: () => setPage('products'), className: "btn-brand px-5 py-2.5 rounded-xl text-xs", children: "Back to Products" })] }) }));
+        return (_jsx("div", { className: "min-h-screen flex items-center justify-center bg-obsidian", children: _jsxs("div", { className: "text-center space-y-4", children: [_jsx("h1", { className: "text-xl font-bold text-ivory", children: "Product not found" }), _jsx("button", { onClick: () => setPage('products'), className: "btn-brand px-5 py-2.5 rounded-xl text-xs", children: "Back to Products" })] }) }));
     }
     const sizeData = selectedSize && product.sizes ? product.sizes.find(s => s.size === selectedSize) : null;
     const currentPrice = sizeData ? sizeData.price : product.price;

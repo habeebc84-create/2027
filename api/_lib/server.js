@@ -217,6 +217,11 @@ const rateBuckets = new Map();
 export function rateLimited(req, key, limit, windowMs) {
   const bucketKey = `${key}:${clientIp(req)}`;
   const now = Date.now();
+  // BUILD 97: drop expired buckets so a long-lived instance cannot grow the
+  // map without limit (one entry per IP that ever called the API).
+  if (rateBuckets.size > 5000) {
+    for (const [k, v] of rateBuckets) if (now > v.resetAt) rateBuckets.delete(k);
+  }
   const bucket = rateBuckets.get(bucketKey);
   if (!bucket || now > bucket.resetAt) {
     rateBuckets.set(bucketKey, { count: 1, resetAt: now + windowMs });

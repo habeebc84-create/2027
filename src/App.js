@@ -114,6 +114,30 @@ function AppContent() {
         if (currentPage === 'admin' || currentPage === 'admin-login') return;
         trackVisit(currentPage);
     }, [currentPage]);
+    // BUILD 97 SEO/a11y: every page used the same <title> and a canonical
+    // link pointing at the home page, which tells search engines that
+    // /products, /services etc. are duplicates of Home. Give each public page
+    // its own title + canonical; private/order pages keep the home canonical
+    // and are never listed in the sitemap.
+    useEffect(() => {
+        const SITE = 'HSN CEMENT AND STEEL';
+        const ORIGIN = 'https://hsncementandsteel-sigma.vercel.app';
+        const titles = {
+            home: SITE, splash: SITE, products: 'Products | ' + SITE, 'product-detail': 'Product | ' + SITE,
+            services: 'Services | ' + SITE, gallery: 'Gallery | ' + SITE, contact: 'Contact | ' + SITE,
+            checkout: 'Checkout | ' + SITE, terms: 'Terms & Conditions | ' + SITE,
+            'order-tracking': 'Track Order | ' + SITE, 'order-success': 'Order Placed | ' + SITE,
+            admin: 'Admin | ' + SITE, 'admin-login': 'Admin | ' + SITE,
+        };
+        document.title = titles[currentPage] || SITE;
+        const publicPaths = { products: '/products', services: '/services', gallery: '/gallery', contact: '/contact', terms: '/terms' };
+        let href = ORIGIN + '/';
+        if (publicPaths[currentPage]) href = ORIGIN + publicPaths[currentPage];
+        else if (currentPage === 'product-detail' && /^\/product\/[^/]+\/?$/.test(window.location.pathname))
+            href = ORIGIN + window.location.pathname.replace(/\/+$/, '');
+        const link = document.querySelector('link[rel="canonical"]');
+        if (link) link.setAttribute('href', href);
+    }, [currentPage]);
     const [successOrderId, setSuccessOrderId] = useState(null);
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
