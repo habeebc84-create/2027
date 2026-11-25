@@ -559,11 +559,17 @@ export function AppProvider({ children }) {
     const deleteAchievement = useCallback((id) => { localEditRef.current = true; setAchievements(prev => prev.filter(a => a.id !== id)); showToast('Removed'); }, [showToast]);
     const addToCart = useCallback((product, quantity, selectedSize) => {
         const qty = Math.max(1, Math.floor(quantity) || 1);
+        // BUILD 95 fix: adding the same item again (Add to Cart twice, or Buy
+        // Now after Add to Cart) summed past stock — only the drawer +/- was
+        // capped. Cap the combined line at the product/size stock here.
+        const sizeData = selectedSize && product.sizes ? product.sizes.find(s => s.size === selectedSize) : undefined;
+        const maxStock = sizeData ? sizeData.stock : product.stock;
+        const cap = (n) => (Number.isFinite(maxStock) && maxStock > 0 ? Math.min(n, maxStock) : n);
         setCart(prev => {
             const ex = prev.find(i => i.product.id === product.id && i.selectedSize === selectedSize);
             if (ex)
-                return prev.map(i => i.product.id === product.id && i.selectedSize === selectedSize ? { ...i, quantity: i.quantity + qty } : i);
-            return [...prev, { product, quantity: qty, selectedSize }];
+                return prev.map(i => i.product.id === product.id && i.selectedSize === selectedSize ? { ...i, quantity: cap(i.quantity + qty) } : i);
+            return [...prev, { product, quantity: cap(qty), selectedSize }];
         });
         showToast(`Added "${product.name}" to cart`);
     }, [showToast]);
@@ -612,6 +618,14 @@ export function AppProvider({ children }) {
             deliveryLocation: data.deliveryLocation,
             deliveryMethod: data.deliveryMethod,
         });
+        // BUILD 95 fix: the server answered but REFUSED the order (bad
+        // quantity, out of stock, invalid details, rate limit). That used to
+        // look like "backend offline" and silently fell back to the
+        // browser-direct save — skipping the server checks. Stop and show
+        // the server's message instead.
+        if (api && api.rejected) {
+            throw new Error(api.error || 'Could not place the order. Please try again.');
+        }
         if (api) {
             orderId = api.orderId;
             total = api.total;

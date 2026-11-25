@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .originkit/
+
+# Environment files (BUILD 95): never commit real keys; .env.example is fine
+.env
+.env.*
+!.env.example

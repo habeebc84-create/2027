@@ -63,10 +63,20 @@ function getPageFromPath(path, isAdmin) {
 // link showed only the splash, and Enter sent the visitor to Home instead
 // of the page they were sent — the shared link effectively did not work.
 // Home (/) and /splash still show the splash as before.
+// BUILD 95: product links are /product/<id> (decoded, trailing slash ignored).
+function productIdFromPath(path) {
+    const raw = path.replace(/\/+$/, '').replace('/product/', '');
+    try {
+        return decodeURIComponent(raw);
+    }
+    catch {
+        return raw;
+    }
+}
 function isOrderDeepLink() {
     if (new URLSearchParams(window.location.search).has('track'))
         return true;
-    if (/^\/(track-order|order-success)\/.+/.test(window.location.pathname))
+    if (/^\/(track-order|order-success|product)\/.+/.test(window.location.pathname))
         return true;
     const clean = window.location.pathname.replace(/\/+$/, '');
     return ['/products', '/services', '/gallery', '/contact', '/checkout', '/terms', '/track-order'].includes(clean);
@@ -122,9 +132,15 @@ function AppContent() {
             window.history.replaceState({}, '', `/track-order/${encodeURIComponent(trackParam)}`);
             return;
         }
+        // BUILD 95 fix: a shared page link (/products, /product/<id>, ...)
+        // skips the splash on first paint, but the dismissal was never saved.
+        // The moment the visitor opened a product (URL /product) the splash
+        // check ran again and threw them back to the splash screen. Persist it.
+        if (isOrderDeepLink())
+            dismissSplash();
         const result = getPageFromPath(path, isAdmin);
         if (result.page === 'product-detail') {
-            const productId = path.replace('/product/', '');
+            const productId = productIdFromPath(path);
             setSelectedProductId(productId);
             setPage('product-detail');
         }
@@ -147,7 +163,7 @@ function AppContent() {
             const path = window.location.pathname;
             const result = getPageFromPath(path, isAdmin);
             if (result.page === 'product-detail') {
-                const productId = path.replace('/product/', '');
+                const productId = productIdFromPath(path);
                 setSelectedProductId(productId);
                 setPage('product-detail');
             }
@@ -236,7 +252,7 @@ function AppContent() {
     const hideNavPages = ['checkout', 'admin-login', 'admin', 'product-detail', 'order-success', 'welcome-gate', 'splash'];
     const showNav = !hideNavPages.includes(currentPage);
     const showTopBar = currentPage === 'home' || (isLaptop && showNav);
-    return (_jsx(PageErrorBoundary, { children: _jsxs("div", { className: "min-h-screen", children: [globalError && (_jsxs("div", { style: { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, background: '#DDE3E8', color: '#060A08', padding: '10px 16px', fontSize: 13, display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'space-between' }, children: [_jsxs("span", { style: { wordBreak: 'break-word' }, children: ["Site error: ", globalError] }), _jsxs("span", { style: { display: 'flex', gap: 8, flexShrink: 0 }, children: [_jsx("button", { type: "button", onClick: () => window.location.reload(), style: { background: '#fff', color: '#060A08', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer' }, children: "Reload" }), _jsx("button", { type: "button", onClick: () => setGlobalError(null), style: { background: 'transparent', color: '#060A08', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: '1px solid #060A08', cursor: 'pointer' }, children: "Dismiss" })] })] })), showTopBar && _jsx(Navbar, { onCartClick: () => setCartOpen(true) }), _jsx("div", { className: showTopBar ? 'pt-[92px]' : '', children: renderPage() }), showNav && currentPage !== 'home' && _jsx(Footer, {}), showNav && _jsx(FloatingButtons, { onCartClick: () => setCartOpen(true) }), showNav && !cartOpen && _jsx("div", { className: "lg:hidden", children: _jsx(ScrollAwareBottomNav, {}) }), "  ", _jsx(CartDrawer, { isOpen: cartOpen, onClose: () => setCartOpen(false), onProceedToCheckout: () => { setCartOpen(false); setPage('checkout'); } }), _jsx(ToastContainer, {}), !isAdmin && _jsx(NotificationPopup, {})] }) }));
+    return (_jsx(PageErrorBoundary, { children: _jsxs("div", { className: "min-h-screen", children: [globalError && (_jsxs("div", { style: { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, background: '#DDE3E8', color: '#060A08', padding: '10px 16px', fontSize: 13, display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'space-between' }, children: [_jsxs("span", { style: { wordBreak: 'break-word' }, children: ["Site error: ", globalError] }), _jsxs("span", { style: { display: 'flex', gap: 8, flexShrink: 0 }, children: [_jsx("button", { type: "button", onClick: () => window.location.reload(), style: { background: '#fff', color: '#060A08', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer' }, children: "Reload" }), _jsx("button", { type: "button", onClick: () => setGlobalError(null), style: { background: 'transparent', color: '#060A08', fontWeight: 800, padding: '6px 12px', borderRadius: 8, border: '1px solid #060A08', cursor: 'pointer' }, children: "Dismiss" })] })] })), showTopBar && _jsx(Navbar, { onCartClick: () => setCartOpen(true) }), _jsx("main", { id: "main-content", className: showTopBar ? 'pt-[92px]' : '', children: renderPage() }), showNav && currentPage !== 'home' && _jsx(Footer, {}), showNav && _jsx(FloatingButtons, { onCartClick: () => setCartOpen(true) }), showNav && !cartOpen && _jsx("div", { className: "lg:hidden", children: _jsx(ScrollAwareBottomNav, {}) }), "  ", _jsx(CartDrawer, { isOpen: cartOpen, onClose: () => setCartOpen(false), onProceedToCheckout: () => { setCartOpen(false); setPage('checkout'); } }), _jsx(ToastContainer, {}), !isAdmin && _jsx(NotificationPopup, {})] }) }));
 }
 function ScrollAwareBottomNav() {
     // Apple-style bottom bar, shown on every screen size (phone, tablet

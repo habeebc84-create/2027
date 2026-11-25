@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "test": "node tests/invoice.mjs",
+    "test": "node tests/invoice.mjs && node tests/orders.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

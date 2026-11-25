@@ -103,7 +103,10 @@ export function priceItems(rawItems, products) {
     const productId = typeof raw.productId === 'string' ? raw.productId : '';
     const size = typeof raw.size === 'string' ? raw.size : undefined;
     const quantity = raw.quantity;
-    if (!productId || !Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
+    // BUILD 95: the old cap of 100 refused normal bulk orders (steel is sold
+    // per kg — 500 kg is a small job) while the shop allows up to stock.
+    // Keep a sanity ceiling; the stock check below still applies.
+    if (!productId || !Number.isInteger(quantity) || quantity < 1 || quantity > 10000) {
       return { ok: false, error: 'Invalid item quantity.' };
     }
     const product = byId.get(productId);

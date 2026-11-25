@@ -1,26 +1,33 @@
-async function fetchJson(url, init, timeoutMs) {
+/**
+ * Create an order through the server.
+ * Null = backend not live (404/503/network); the caller falls back.
+ * { rejected: true, error } = the server refused the order (400/429); the
+ * caller must NOT fall back, or the server checks could be skipped.
+ */
+export async function createOrderViaApi(payload) {
+    let data = null;
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    const timer = setTimeout(() => ctrl.abort(), 15000);
     try {
-        const res = await fetch(url, { ...init, signal: ctrl.signal });
-        if (!res.ok)
-            return null;
-        return (await res.json());
+        const res = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: ctrl.signal,
+        });
+        if (res.status === 400 || res.status === 429) {
+            const body = await res.json().catch(() => null);
+            const error = body && typeof body.error === 'string' ? body.error.slice(0, 200) : '';
+            return { rejected: true, error };
+        }
+        data = res.ok ? await res.json().catch(() => null) : null;
     }
     catch {
-        return null;
+        data = null;
     }
     finally {
         clearTimeout(timer);
     }
-}
-/** Create an order through the server. Null = backend not live; fall back. */
-export async function createOrderViaApi(payload) {
-    const data = await fetchJson('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-    }, 15000);
     if (!data || typeof data !== 'object')
         return null;
     const d = data;
