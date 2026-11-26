@@ -6,27 +6,26 @@
    See COLOR_PALETTE.md for the palette and usage contract.
    ============================================================ */
 @theme {
-  /* Named production tokens. BUILD 94: two-colour theme — Ink + Silver
-     Glass. The Electric Lime accent (#C6FF00) was removed at the owner's
-     request; the --color-lime* names are kept only as aliases so existing
-     class names keep working, and they now resolve to the silver family. */
-  --color-ink: #060A08;
-  --color-ink-soft: #0C1210;
-  --color-lime: #DDE3E8;
-  --color-lime-bright: #F2F5F7;
-  --color-lime-deep: #A9B3BB;
-  --color-silver-glass: #DDE3E8;
+  /* HSN mark: charcoal field, steel lettering and a bronze-gold S.
+     Use the lighter gold tone on interactive controls for legibility. */
+  --color-ink: #0D0D0D;
+  --color-ink-soft: #171615;
+  --color-logo-gold: #D4A458;
+  --color-lime: var(--color-logo-gold);
+  --color-lime-bright: #E7BB79;
+  --color-lime-deep: #A27027;
+  --color-silver-glass: #D6D2CB;
   --color-glass: rgba(221, 227, 232, 0.10);
   --color-glass-border: rgba(221, 227, 232, 0.28);
   /* Legacy tokens kept for compatibility / PDF. Champagne is not used
      on-screen; the brand accent is Silver Glass. */
-  --color-obsidian: #060A08;
-  --color-charcoal: #0E1411;
-  --color-gunmetal: #333D38;
+  --color-obsidian: var(--color-ink);
+  --color-charcoal: #201F1D;
+  --color-gunmetal: #4A4641;
   --color-champagne: #C6A875;
   --color-porcelain: #F7F5F0;
   --color-ivory: #F7F5F0;
-  --color-silver: #DDE3E8;
+  --color-silver: var(--color-silver-glass);
   --color-graphite: #17191C;
   --color-purchase: var(--color-lime);
   --color-success: #3A434B;
@@ -183,7 +182,7 @@
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--color-background);
     background-image:
-      radial-gradient(900px 420px at 88% -8%, rgba(221, 227, 232, 0.07), transparent 60%),
+      radial-gradient(900px 420px at 88% -8%, rgba(162, 112, 39, 0.13), transparent 60%),
       radial-gradient(700px 420px at 8% 108%, rgba(221, 227, 232, 0.06), transparent 60%);
     background-attachment: fixed;
     position: relative;

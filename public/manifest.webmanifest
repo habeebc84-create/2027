@@ -1,5 +1,5 @@
 {
-  "background_color": "#0B0C0E",
+  "background_color": "#0D0D0D",
   "description": "HSN CEMENT AND STEEL",
   "display": "standalone",
   "icons": [
@@ -35,5 +35,5 @@
   "scope": "/",
   "short_name": "HSN",
   "start_url": "/",
-  "theme_color": "#0B0C0E"
+  "theme_color": "#0D0D0D"
 }

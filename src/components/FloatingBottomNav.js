@@ -56,7 +56,7 @@ export default function FloatingBottomNav({ visible }) {
         }, animate: visible ? { opacity: 1, y: 0 } : { opacity: 0, y: animate ? 12 : 0 }, transition: { duration: animate ? 0.32 : 0, ease: 'easeOut' }, "aria-label": "Primary navigation", "aria-hidden": !visible, inert: !visible, children: _jsxs("div", { className: "dock-glass relative rounded-full w-[calc(100vw-16px)] sm:w-auto p-1.5 border border-gunmetal", style: {
                 pointerEvents: visible ? 'auto' : 'none',
                 maxWidth: 'calc(100vw - 16px)',
-                background: 'linear-gradient(180deg, var(--color-brand-800), var(--color-ink-soft))',
+                background: 'linear-gradient(180deg, var(--color-charcoal), var(--color-ink-soft))',
                 backdropFilter: 'blur(28px) saturate(135%)',
                 WebkitBackdropFilter: 'blur(28px) saturate(135%)',
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -1px 0 rgba(0,0,0,0.30), 0 24px 48px -20px rgba(0,0,0,0.65), 0 10px 24px -12px rgba(0,0,0,0.45)',

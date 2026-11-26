@@ -1,3 +1,19 @@
+# HSN storefront palette
+
+The header and splash use `public/windows-h-logo.png`. Its black background,
+silver steel lettering and gold S guide the shared theme.
+
+| Role | Colour | Use |
+| --- | --- | --- |
+| Logo black | #0D0D0D | Page canvas and installed-app chrome |
+| Charcoal | #201F1D | Panels and navigation |
+| Steel silver | #D6D2CB | Secondary text |
+| Bronze | #A27027 | Deep accent sampled from the S |
+| Highlight gold | #D4A458 | Primary actions, active navigation and focus |
+| Light gold | #E7BB79 | Hover on primary actions |
+
+The earlier palette decisions below are historical.
+
 # HSN production color palette — Ink + Silver Glass (two-colour, BUILD 94)
 
 BUILD 94: the owner asked to remove the third (green) colour. Electric Lime
