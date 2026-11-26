@@ -56,7 +56,7 @@ export default function FloatingBottomNav({ visible }) {
         }, animate: visible ? { opacity: 1, y: 0 } : { opacity: 0, y: animate ? 12 : 0 }, transition: { duration: animate ? 0.32 : 0, ease: 'easeOut' }, "aria-label": "Primary navigation", "aria-hidden": !visible, inert: !visible, children: _jsxs("div", { className: "dock-glass relative rounded-full w-[calc(100vw-16px)] sm:w-auto p-1.5 border border-gunmetal", style: {
                 pointerEvents: visible ? 'auto' : 'none',
                 maxWidth: 'calc(100vw - 16px)',
-                background: 'linear-gradient(180deg, rgba(221,227,232,0.16) 0%, rgba(221,227,232,0.08) 55%, rgba(221,227,232,0.05) 100%)',
+                background: 'linear-gradient(180deg, var(--color-brand-800), var(--color-ink-soft))',
                 backdropFilter: 'blur(28px) saturate(135%)',
                 WebkitBackdropFilter: 'blur(28px) saturate(135%)',
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -1px 0 rgba(0,0,0,0.30), 0 24px 48px -20px rgba(0,0,0,0.65), 0 10px 24px -12px rgba(0,0,0,0.45)',
@@ -89,7 +89,7 @@ export default function FloatingBottomNav({ visible }) {
                                             borderRadius: { duration: 0.35, ease: 'easeOut' },
                                         } })), _jsx(motion.span, { className: "relative flex items-center justify-center", style: { color: isActive ? 'var(--color-ink)' : 'var(--color-silver)' }, variants: { pressed: { scale: 0.88, rotate: item.page === 'services' ? -12 : 0 } }, transition: { duration: 0.12 }, children: _jsx(motion.span, { className: "flex items-center justify-center", animate: isActive && animate ? iconAnimations[item.page] : undefined, transition: isActive && animate
                                             ? { duration: 0.7, ease: 'easeInOut', repeat: Infinity, repeatDelay: 4.5 }
-                                            : { duration: 0 }, children: _jsx(SvgIcon, { name: item.label, size: 22 }) }, `${item.page}-${isActive ? 'active' : 'idle'}-${activationKey}`) }), _jsxs("span", { className: `relative text-[11px] sm:text-[10px] font-medium tracking-tight select-none whitespace-nowrap leading-none ${isActive ? 'text-ink' : 'text-silver'}`, children: [_jsx("span", { className: "sm:hidden", children: item.short ?? item.label }), _jsx("span", { className: "hidden sm:inline", children: item.label })] })] }, item.page));
+                                            : { duration: 0 }, children: _jsx(SvgIcon, { name: item.label, size: 22 }) }, `${item.page}-${isActive ? 'active' : 'idle'}-${activationKey}`) }), _jsxs("span", { className: `relative text-[11px] sm:text-xs font-medium tracking-tight select-none whitespace-nowrap leading-none ${isActive ? 'text-ink' : 'text-silver'}`, children: [_jsx("span", { className: "sm:hidden", children: item.short ?? item.label }), _jsx("span", { className: "hidden sm:inline", children: item.label })] })] }, item.page));
                     }) })] }) }));
 }
 function SvgIcon({ name, size = 20, strokeWidth = 1.75 }) {
